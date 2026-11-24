@@ -1,8 +1,10 @@
 # La Malédiction de Brumefer
 
-> **Branche `voix` : ouverte aux contributions.** La lecture à voix haute (voix du navigateur et [VoiceStudio](https://github.com/debpalash/VoiceStudio), une voix par personnage) a été retirée de la branche `main` à la version 0.89.0. Elle est conservée ici, dans l'état de la version 0.88.0, pour que la communauté puisse la reprendre et l'améliorer : fiabilité, voix plus naturelles, prise en charge des téléphones, réglages plus simples…
+> **`voix` branch: open to contributions.** Read-aloud narration (browser voices and [VoiceStudio](https://github.com/debpalash/VoiceStudio), one voice per character) was removed from the `main` branch in version 0.89.0. It is kept here, as of version 0.88.0, so the community can take it up and improve it: reliability, more natural voices, phone support, simpler settings… See [issue #1](https://github.com/ornacea/brumefer/issues/1).
 >
-> Pour proposer une amélioration : fais une copie (**Fork**), crée une branche à partir de `voix`, puis ouvre une **pull request vers `voix`** (pas vers `main`). Les règles de [CONTRIBUTING.md](CONTRIBUTING.md) s'appliquent : seul l'auteur décide de ce qui est intégré, et si la lecture à voix haute redevient assez solide, elle reviendra dans `main`.
+> To propose an improvement: fork the repository, create a branch from `voix`, then open a **pull request to `voix`** (not to `main`). The rules in [CONTRIBUTING.md on `main`](https://github.com/ornacea/brumefer/blob/main/CONTRIBUTING.md) apply: only the author decides what is integrated, and once read-aloud narration is solid enough, it will come back to `main`.
+>
+> The rest of this page, and the other documents of this branch, are the French documentation of version 0.88.0. The current English documentation is on [`main`](https://github.com/ornacea/brumefer).
 
 Jeu de rôle **en solo**, en français, dans un univers de dark fantasy, aux règles de la 5ᵉ édition (SRD 5.1). Le joueur crée son héros, puis un **meneur de jeu joué par Claude** raconte l'aventure, joue les personnages et arbitre les actions. La page, elle, tient les règles : jets de dés, combats, inventaire, argent, temps qui passe et cartes.
 
