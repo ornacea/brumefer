@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.93.0 — 2026-11-24
+- Améliorations : cohérence de l'intrigue.
+
 ## 0.92.2 — 2026-11-24
 - Corrections et améliorations : le dépôt s'appelle désormais ornacea/ironhaze.
 
