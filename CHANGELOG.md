@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.94.0 — 2026-11-24
+- Améliorations : carte de Brumefer (quartier des tanneurs, fonderies, portes de l'enceinte).
+
 ## 0.93.1 — 2026-11-24
 - Améliorations : cohérence de l'intrigue.
 
