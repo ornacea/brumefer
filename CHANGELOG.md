@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.98.0 — 2026-11-24
+- Corrections et améliorations : carte de Brumefer et demeures des habitants.
+
 ## 0.97.0 — 2026-11-24
 - Corrections et améliorations : carte de Brumefer et cohérence d'un objet de quête.
 
