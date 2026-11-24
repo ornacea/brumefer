@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.96.4 — 2026-11-24
+- Corrections et améliorations : carte de Brumefer.
+
 ## 0.96.3 — 2026-11-24
 - Corrections et améliorations : carte de Brumefer.
 
