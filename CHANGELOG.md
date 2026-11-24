@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.97.0 — 2026-11-24
+- Corrections et améliorations : carte de Brumefer et cohérence d'un objet de quête.
+
 ## 0.96.4 — 2026-11-24
 - Corrections et améliorations : carte de Brumefer.
 
