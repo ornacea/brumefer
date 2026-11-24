@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.90.4 — 2026-11-24
+- Améliorations : documentation.
+
 ## 0.90.3 — 2026-11-24
 - Améliorations : documentation.
 

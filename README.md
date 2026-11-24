@@ -59,7 +59,7 @@ Version numbers follow semantic versioning, `MAJOR.MINOR.PATCH`. While the game 
 
 ## Contributing
 
-Contributions go through a fork and a pull request; only the author decides what goes into the game. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions go through a fork and a pull request; for now, only the author decides what goes into the game. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Calls for contributions
 

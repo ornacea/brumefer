@@ -6,7 +6,8 @@ The game itself is in French. You can contribute in English: issues, pull reques
 
 ## Repository rules
 
-- **Only the author (@ornacea) decides** what goes into the game. The `main` and `voix` branches are protected: nobody else can write to them, either directly or through a merge.
+- **For now, only the author (@ornacea) decides** what goes into the game. The `main` and `voix` branches are protected: nobody else can write to them, either directly or through a merge.
+- This rule is not set in stone: if the number of contributors grows and the project lives on over time, it may evolve towards something more open and democratic.
 - This repository is the **public export** of the game. Each version arrives here as a single "Version X.Y.Z" commit, from the author's working source. An accepted proposal is therefore **not merged as is**: the author carries it over into the source, and it ships in the next version. The pull request is then closed with a note naming the version that includes it.
 
 ## Proposing a change
