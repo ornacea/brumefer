@@ -3,7 +3,7 @@
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
 ## 0.96.1 — 2026-11-24
-- Corrections : icônes et tracés de la carte de Brumefer.
+- Corrections et améliorations : icônes et tracés de la carte de Brumefer.
 
 ## 0.96.0 — 2026-11-24
 - Améliorations : cartes de Brumefer et du pays de la Grise.
