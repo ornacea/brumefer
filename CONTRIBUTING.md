@@ -19,6 +19,14 @@ Merci de vouloir aider ! Les propositions sont les bienvenues : corrections de r
 
 Une pull request courte, qui fait une seule chose, a beaucoup plus de chances d'être acceptée.
 
+## Branche `voix` : la lecture à voix haute
+
+La lecture du récit à voix haute a été retirée de `main` à la version 0.89.0. Son code est conservé dans la branche [`voix`](https://github.com/ornacea/brumefer/tree/voix), dans l'état de la version 0.88.0, et la communauté est invitée à la reprendre : fiabilité, voix plus naturelles, téléphones, réglages plus simples.
+
+1. Dans ton fork, crée ta branche **à partir de `voix`**.
+2. Ouvre ta pull request **vers `voix`**, pas vers `main`.
+3. Les mêmes règles s'appliquent : seul l'auteur décide de ce qui est intégré. Quand la lecture à voix haute sera assez solide, elle reviendra dans `main`.
+
 ## Signaler un problème ou proposer une idée
 
 Ouvre un ticket (**Issues → New issue**) avec :

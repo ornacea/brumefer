@@ -59,6 +59,8 @@ Le numéro de version suit le versioning sémantique `MAJEUR.MINEUR.CORRECTIF`. 
 
 Les propositions passent par un fork et une pull request ; seul l'auteur décide de ce qui entre dans le jeu. Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
+**Appel à contributions : la lecture à voix haute.** Retirée de `main` à la version 0.89.0, elle est conservée dans la branche [`voix`](https://github.com/ornacea/brumefer/tree/voix) (état de la version 0.88.0 : voix du navigateur et VoiceStudio, une voix par personnage). Toute amélioration y est bienvenue, par une pull request vers `voix`.
+
 ## Licence
 
 **CC BY-NC-SA 4.0** : tu peux jouer, copier, partager et modifier le jeu en créditant « La Malédiction de Brumefer, par Orna », sans usage commercial, et en diffusant tes modifications sous la même licence. Détails dans [LICENSE](LICENSE).
