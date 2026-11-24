@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.101.1 — 2026-11-24
+- Améliorations : nouveau rang de renommée au sommet de l'échelle, avec ses avantages.
+
 ## 0.101.0 — 2026-11-24
 - Améliorations : plan de Brumefer redessiné (nouvelles rues nommées, quartiers réorganisés), nouvelle boutique de tisserand, échelle de renommée recalibrée et titres de campagne plus souples.
 

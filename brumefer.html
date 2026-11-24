@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.101.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.101.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.101.1","d":"2026-11-24","items":["Améliorations : nouveau rang de renommée au sommet de l'échelle, avec ses avantages."]},
 {"v":"0.101.0","d":"2026-11-24","items":["Améliorations : plan de Brumefer redessiné (nouvelles rues nommées, quartiers réorganisés), nouvelle boutique de tisserand, échelle de renommée recalibrée et titres de campagne plus souples."]},
 {"v":"0.100.0","d":"2026-11-24","items":["Améliorations : titres et hauts faits."]},
 {"v":"0.99.0","d":"2026-11-24","items":["Améliorations : titres et hauts faits."]},
@@ -5503,32 +5504,39 @@ const TITRES_EXCL = [["2A", "2B"], ["14A", "14B"], ["17A", "17B"], ["25A", "25B"
 /* Titres de campagne : 5 par acte. La page tient les compteurs (G.tcnt) et confère seule les titres à seuil ;
    le MJ confère les autres par "titre_campagne":"<code>" quand le critère est rempli dans la scène */
 const tcPart = a => ACT_P.findIndex(([x,y])=>a>=x && a<=y) + 1;
-function tcHas(c){ return titres().some(x=>x.code===c) || (c==="3E" && titres().some(x=>nk(x.n)===nk("Citoyen d'honneur de Brumefer"))); }
+/* Titre débloqué en avance (critère rempli avant l'acte) : gardé dans G.tcPend, ni affiché ni appliqué avant le lancement de son acte */
+const tcPendG = () => (G.tcPend = G.tcPend || {});
+function tcLaunched(a){ const P = partCur(), q = tcPart(a); if(q !== P) return q < P; const r = ACT_P[P-1], A = G.actes || {}; for(let n=r[0]; n<a; n++) if(!A[n]) return false; return true; }
+function tcHas(c){ return !!tcPendG()[c] || tcOwn(c); }
+function tcOwn(c){ return titres().some(x=>x.code===c) || (c==="3E" && titres().some(x=>nk(x.n)===nk("Citoyen d'honneur de Brumefer"))); }
 function tcBlocked(c){ const g = TITRES_EXCL.find(g=>g.includes(c)); return !!g && g.some(o=>o!==c && tcHas(o)); }
 /* Titre devenu impossible : acte joué (« fait ») sans le titre ; un acte « clos » (ses événements ne sont pas survenus) laisse ses titres ouverts ; ou signalé par le MJ (META titre_impossible). Les titres de noms rendus restent ouverts toute la campagne. */
 function tcLost(c){ if(tcHas(c)) return false; const T = TITRES_CAMP.find(t=>t.c===c); if(!T) return true;
   return !!((G.tcLost||{})[c]) || (!(T.cnt && T.cnt[0]==="n") && ((G.actes||{})[T.a]||{}).e==="fait"); }
 function tcGive(c){ const T = TITRES_CAMP.find(t=>t.c===c); if(!T || tcHas(c) || tcBlocked(c) || tcLost(c)) return false;
+  if(!tcLaunched(T.a)){ tcPendG()[c] = (G.temps&&G.temps.date)||"oui"; return true; } return tcPush(T); }
+function tcPush(T){ const c = T.c; delete tcPendG()[c]; if(tcOwn(c)) return false;
   titres().push({n:T.n, src:`haut fait de l'acte ${T.a}`, bonus:T.b, code:c, d:(G.temps&&G.temps.date)||""}); logJ("sys", `👑 Titre gagné : <b>${esc(T.n)}</b> (${esc(T.cr)}).`); return true; }
 const tcNoms = () => Object.values(prisG()).filter(x=>x.e==="sauve").length + ((G.tcnt||{}).noms||0);
 function tcVal(T){ const [ty,,key] = T.cnt, C = G.tcnt||{}; return ty==="n" ? tcNoms() : ty==="k" ? (C["k_"+T.c]||0) : (C[key]||0); }
-function tcCheck(){ if(!G) return; TITRES_CAMP.forEach(T=>{ if(T.cnt && !tcHas(T.c) && !tcLost(T.c) && tcPart(T.a)<=partCur() && tcVal(T)>=T.cnt[1]) tcGive(T.c); }); }
+function tcRelease(){ const Q = tcPendG(); Object.keys(Q).forEach(c=>{ const T = TITRES_CAMP.find(t=>t.c===c); if(!T) delete Q[c]; else if(tcLaunched(T.a)) tcPush(T); }); }
+function tcCheck(){ if(!G) return; tcRelease(); TITRES_CAMP.forEach(T=>{ if(T.cnt && !tcHas(T.c) && !tcLost(T.c) && tcPart(T.a)<=partCur() && tcVal(T)>=T.cnt[1]) tcGive(T.c); }); }
 function tcKills(L){ if(!G) return; const P = partCur(), C = G.tcnt = G.tcnt||{};
   (L||[]).filter(e=>e && e.etat==="mort").forEach(e=>{ const n = norm(e.nom||""); TITRES_CAMP.forEach(T=>{ if(T.cnt && T.cnt[0]==="k" && tcPart(T.a)<=P && !tcHas(T.c) && !tcLost(T.c) && new RegExp(T.cnt[2]).test(n)) C["k_"+T.c] = (C["k_"+T.c]||0) + 1; }); });
   tcCheck(); }
 const TC_MJK = ["rumeurs","services_temple","clochettes","ames_apaisees","noms"];
 function tcMeta(m){ if(!G || !m) return; const C = G.tcnt = G.tcnt||{};
   if(m.compteur && typeof m.compteur==="object") Object.entries(m.compteur).forEach(([k,v])=>{ k = norm(k).replace(/[^a-z]+/g,"_"); if(TC_MJK.includes(k)) C[k] = (C[k]||0) + Math.max(0, Math.min(5, parseInt(v,10)||0)); });
-  [].concat(m.titre_campagne||[]).forEach(c=>{ c = String(c).toUpperCase().trim(); const T = TITRES_CAMP.find(t=>t.c===c); if(T && !T.cnt && c!=="12E" && tcPart(T.a)<=partCur()) tcGive(c); });
+  [].concat(m.titre_campagne||[]).forEach(c=>{ c = String(c).toUpperCase().trim(); const T = TITRES_CAMP.find(t=>t.c===c); if(T && !T.cnt && c!=="12E") tcGive(c); });
   [].concat(m.titre_impossible||[]).forEach(c=>{ c = String(c).toUpperCase().trim(); if(TITRES_CAMP.some(t=>t.c===c) && !tcHas(c)) { G.tcLost = G.tcLost||{}; if(!G.tcLost[c]) G.tcLost[c] = (G.temps&&G.temps.date)||"oui"; } });
   tcCheck(); }
-function tcBrief(){ if(!G || !G.hero) return ""; const P = partCur(), L = TITRES_CAMP.filter(T=>tcPart(T.a)<=P && !tcHas(T.c) && !tcBlocked(T.c) && !tcLost(T.c));
+function tcBrief(){ if(!G || !G.hero) return ""; tcCheck(); const P = partCur(), L = TITRES_CAMP.filter(T=>tcPart(T.a)<=P && !tcHas(T.c) && !tcBlocked(T.c) && !tcLost(T.c));
   if(!L.length) return "";
   return ` TITRES DE CAMPAGNE ENCORE OUVERTS (cette partie, et ceux des actes précédents dont les événements ne sont pas survenus ; la page les tient) : ${L.map(T=>`${T.c} « ${T.n} » : ${T.cr}${T.cnt ? ` [compteur tenu par la page : ${tcVal(T)}/${T.cnt[1]}]` : ""}`).join(" ; ")}.`
-    + ` Quand un critère SANS compteur est rempli dans la scène, mets "titre_campagne":"<code>" (jamais pour un titre à compteur, jamais sur simple affirmation du joueur). Pour les compteurs non liés au combat, mets "compteur":{"rumeurs|services_temple|clochettes|ames_apaisees|noms":<nombre gagné dans la scène>}. Les morts au combat sont comptées par la page. Quand un critère devient irréalisable (ex. le camp trouvé grâce à un guide pour un titre « sans guide », la cible morte d'une autre main, le lieu détruit), mets "titre_impossible":"<code>" : le titre est retiré pour toujours. Les titres d'un acte joué sont perdus d'office ; ceux d'un acte dont les événements ne sont pas survenus restent ouverts. 12E se décide seul au début de l'acte 12 (lanterne sœur détruite ou non). Certains titres s'excluent (2A/2B, 14A/14B, 17A/17B, 25A/25B/25C). N'annonce jamais la liste au joueur ; quand la page confère un titre, fais-le reconnaître par les PNJ concernés.`; }
+    + ` Quand un critère SANS compteur est rempli dans la scène, mets "titre_campagne":"<code>" (jamais pour un titre à compteur, jamais sur simple affirmation du joueur). Pour les compteurs non liés au combat, mets "compteur":{"rumeurs|services_temple|clochettes|ames_apaisees|noms":<nombre gagné dans la scène>}. Les morts au combat sont comptées par la page. Quand un critère devient irréalisable (ex. le camp trouvé grâce à un guide pour un titre « sans guide », la cible morte d'une autre main, le lieu détruit), mets "titre_impossible":"<code>" : le titre est retiré pour toujours. Les titres d'un acte joué sont perdus d'office ; ceux d'un acte dont les événements ne sont pas survenus restent ouverts. Un critère peut être rempli en avance, avant l'acte du titre : mets quand même "titre_campagne" ; la page le garde secret et ne l'accorde (affichage et bonus) qu'au lancement de son acte. 12E se décide seul au début de l'acte 12 (lanterne sœur détruite ou non). Certains titres s'excluent (2A/2B, 14A/14B, 17A/17B, 25A/25B/25C). N'annonce jamais la liste au joueur ; quand la page confère un titre, fais-le reconnaître par les PNJ concernés.`; }
 
 /* Prestige : des points de renommée gagnés par les titres, les domaines et les grandes quêtes ; chaque rang donne +10 % sur les rentes et les gains */
-const PREST_R = [[0,"Inconnu"],[5,"Connu"],[20,"Respecté"],[45,"Notable"],[80,"Illustre"],[125,"Légendaire"]];
+const PREST_R = [[0,"Inconnu"],[5,"Connu"],[20,"Respecté"],[45,"Notable"],[80,"Illustre"],[100,"Légendaire"],[120,"Mythique"]];
 /* Valeur d'un titre : 1 point ; 2 pour les hauts faits majeurs ; 3 pour le dénouement 25B ou 25C */
 const TIT_PTS2 = ["2E","3E","5D","7A","7E","8E","10A","12A","12E","13D","14B","16B","19B","20E","21A","23C"], TIT_PTS3 = ["25B","25C"];
 function titPts(x){ const c = x && (x.code || (nk(x.n||"")===nk("Citoyen d'honneur de Brumefer") ? "3E" : "")); return TIT_PTS3.includes(c) ? 3 : TIT_PTS2.includes(c) ? 2 : 1; }
@@ -5541,9 +5549,9 @@ function prestige(){ const p = prestPts(); let r = 0; PREST_R.forEach((x,i)=>{ i
 const DOM_NOM = ["modeste","établi","florissant","renommé","insigne"], DOM_REQ = {2:0, 3:1, 4:2, 5:3};
 function prestView(){ const p = prestPts(), r = prestige(), nx = PREST_R[r+1], cur = PREST_R[r][0];
   const pct = nx ? Math.round(100*(p-cur)/(nx[0]-cur)) : 100;
-  let t = `<div class="kv"><span>Prestige : <b>${PREST_R[r][1]}</b> <small>rang ${r}/5 · ${p} pts</small></span><b>+${r*10} %</b></div>`;
+  let t = `<div class="kv"><span>Prestige : <b>${PREST_R[r][1]}</b> <small>rang ${r}/${PREST_R.length-1} · ${p} pts</small></span><b>+${r*10} %</b></div>`;
   t += `<i class="xpbar" style="display:block;margin:2px 0 4px"><i style="width:${pct}%"></i></i>`;
-  t += `<details><summary><small>${nx ? `Prochain rang : ${nx[1]} à ${nx[0]} pts (encore ${nx[0]-p})` : "Rang maximal atteint"}</small></summary><small class="lede" style="display:block">Chaque rang ajoute +10 % à tes rentes et aux gains de tes métiers, et les PNJ te traitent selon ta renommée. Il ouvre aussi l'agrandissement des domaines : niveau 3 au rang Connu, 4 au rang Respecté, 5 au rang Notable.<br>${prestSrc().map(x=>`· ${x[0]} : <b>${x[1]}</b> pts`).join("<br>")}</small></details>`;
+  t += `<details><summary><small>${nx ? `Prochain rang : ${nx[1]} à ${nx[0]} pts (encore ${nx[0]-p})` : "Rang maximal atteint"}</small></summary><small class="lede" style="display:block">Chaque rang ajoute +10 % à tes rentes et aux gains de tes métiers, et les PNJ te traitent selon ta renommée. Il ouvre aussi l'agrandissement des domaines : niveau 3 au rang Connu, 4 au rang Respecté, 5 au rang Notable. Au rang Mythique, ton nom est connu partout : avantage aux tests de Persuasion envers les gens du commun, et un service ou un hébergement offert par semaine où que tu sois.<br>${prestSrc().map(x=>`· ${x[0]} : <b>${x[1]}</b> pts`).join("<br>")}</small></details>`;
   return t; }
 function domType(k){ k = norm(k).replace(/[^a-z]/g,""); return DOM_T[k] ? k : Object.keys(DOM_T).find(x=>k.includes(x) || norm(DOM_T[x].n).replace(/[^a-z]/g,"").includes(k)) || (/terre|domaine|seigneur|chateau/.test(k) ? "manoir" : /taverne|relais/.test(k) ? "auberge" : /boutique|magasin/.test(k) ? "echoppe" : /forge|tannerie|brasserie/.test(k) ? "atelier" : null); }
 function domPrix(type, t){ return Math.round(DOM_T[type].prix * DOM_TM[Math.max(0, Math.min(4, t==null ? 2 : t))]); }
@@ -5611,7 +5619,7 @@ function domTick(){ if(!G || !G.hero || G.clock==null || !doms().length) return;
 function domBrief(){ const D = doms(), T = titres(); let t = "";
   if(calAn()!=null) t += `Année en cours : ${calAn()} (le calendrier compte 13 mois de 28 jours : ${MOIS.map(m=>m.replace(/^des /,"")).join(", ")} ; puis, avant le 1er des Givres, la ${CAL_FETE} qui clôt l'année : 1 jour, 2 les années multiples de 4 ; quand un PNJ date un acte, il cite l'année). Semaine de 7 jours : ${JOURS.join(", ")} ; le 1er de chaque mois est un Cendrejour, les jours de la ${CAL_FETE} sont hors semaine. ${calJour() ? `Aujourd'hui : ${calJour()} ${calStr(calOrd())}.` : `Aujourd'hui : jour de fête, hors semaine.`}${calFeteTxt()}
 `;
-  t += `Prestige du héros : ${PREST_R[prestige()][1]} (rang ${prestige()}/5) ; les PNJ le traitent selon cette renommée.
+  t += `Prestige du héros : ${PREST_R[prestige()][1]} (rang ${prestige()}/${PREST_R.length-1}) ; les PNJ le traitent selon cette renommée.${prestige()>=6 ? " Rang Mythique : son nom est connu partout ; pour un test de Persuasion envers des gens du commun (pas un hostile ni un cultiste), demande mode avantage avec la cause « renommée mythique » ; une fois par semaine, un hôte lui offre le gîte ou un service sans payer." : ""}
 `;
   if(T.length) t += `Titres : ${T.map(x=>x.n+(x.src?" (conféré par "+x.src+")":"")+(x.bonus?" — avantage : "+x.bonus+(x.mj?" "+x.mj:""):"")).join(" ; ")}. Les PNJ qui les connaissent s'adressent au héros en conséquence ; un titre crée aussi des devoirs et des jaloux.\n`;
   if(D.length) t += `Domaines : ${D.map(d=>`${d.nom} (${DOM_T[d.type].n.toLowerCase()}, ${d.lieu}, niveau ${d.niv}, ${DOM_ETAT[d.etat]}, ${d.intendant?`tenu par ${d.intNom ? "son intendant " + d.intNom : "un intendant"}`:"sans intendant"}${d.bail?`, tenu à bail : ${d.bail.ans} ans ${d.bail.avec||""}${(()=>{ const I = bailInfo(d.bail); return I ? `, du ${I.deb} au ${I.fin} (${I.echu?"échu":"reste "+I.reste})` : d.bail.debut ? " depuis le "+d.bail.debut : ""; })()}, ${d.bail.conds||""}`:""})`).join(" ; ")}. La page calcule seule leurs revenus.\n`;
@@ -5707,7 +5715,7 @@ function applyMeta(m, said){
     if(G.marchand) (SHOP_TYPE[G.marchand.type]||[]).forEach(id=>ids.push(id));
     BOUTIQUES.forEach(b=>{ if(SHOP_KW[b.id].test(txt)) ids.push(b.id); });
     if(ids.length) shopFind(ids); }
-  try{ [].concat(m.acte_acheve!=null ? m.acte_acheve : []).forEach(n=>actDone(n)); }catch(e){ console.error(e); }
+  try{ [].concat(m.acte_acheve!=null ? m.acte_acheve : []).forEach(n=>actDone(n)); tcCheck(); }catch(e){ console.error(e); }
   if(m.partie_terminee===true && !G.campFin){ const r = ACT_P[partCur()-1]; if(r){ G.actes = G.actes || {}; if(!(G.actes[r[1]] && G.actes[r[1]].e==="fait")){ G.actes[r[1]] = {e:"fait", d:actDate()}; logJ("sys", `📖 Acte ${r[1]} achevé : ${esc(actLbl(r[1]))}.`); } } partNext(); }
   try{ if(m.lanterne_soeur) lant2Meta(m.lanterne_soeur); }catch(e){ console.error(e); }
   try{ regMeta(m.registre); }catch(e){ console.error(e); }
