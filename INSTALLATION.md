@@ -1,53 +1,55 @@
-# Installer et jouer à La Malédiction de Brumefer
+# Installing and playing La Malédiction de Brumefer
 
-Ce guide décrit tout ce qu'il faut installer pour profiter de **toutes** les fonctions du jeu. Il se lit par paliers : le palier 1 suffit pour jouer, le second permet de modifier le jeu.
+This guide covers everything you need to install to use **all** of the game's features. It has two levels: level 1 is enough to play, level 2 lets you modify the game.
 
-| Palier | Ce que tu obtiens | Ce qu'il faut |
+> The game itself is in **French only** for now: interface, story and game master.
+
+| Level | What you get | What you need |
 |---|---|---|
-| 1. Jouer | création du héros, meneur de jeu Claude, cartes, Carnet, sauvegardes | l'application Claude pour ordinateur, un abonnement donnant accès à Claude Code |
-| 2. Modifier le jeu | ta propre version du jeu | Git |
+| 1. Play | hero creation, Claude as game master, maps, Notebook, saves | the Claude desktop app, a subscription that includes Claude Code |
+| 2. Modify the game | your own version of the game | Git |
 
 ---
 
-## Palier 1 : jouer
+## Level 1: play
 
-Le jeu est une seule page, `brumefer.html`. Son **meneur de jeu est Claude** : la page lui pose ses questions par la fonction `sample` des artefacts Claude. Le jeu ne marche donc pleinement **que publié comme artefact sur claude.ai**. Ouvert directement depuis ton disque, il permet de créer un héros et de relire une partie, mais le meneur de jeu affiche : « Le maître du jeu n'est pas disponible : ouvre cette page sur claude.ai, connecté à ton compte. »
+The game is a single page, `brumefer.html`. Its **game master is Claude**: the page asks Claude through the `sample` function of Claude artifacts. The game therefore only works fully **when published as an artifact on claude.ai**. Opened directly from your disk, it lets you create a hero and read back a game, but the game master displays: "Le maître du jeu n'est pas disponible : ouvre cette page sur claude.ai, connecté à ton compte." (the game master is not available: open this page on claude.ai, signed in to your account).
 
-Pour jouer, **chacun publie sa propre copie** du jeu, sous son propre compte Claude. Aucun lien de partie n'est mis à disposition : n'utilise pas un lien qui circulerait, il ne te donnerait de toute façon ni les voix VoiceStudio ni ta propre version à jour.
+To play, **everyone publishes their own copy** of the game under their own Claude account. No game link is provided: do not use a link that is going around, as it would not give you your own up-to-date version.
 
-### Publier ta propre copie
+### Publishing your own copy
 
-Il faut un abonnement Claude qui donne accès à **Claude Code** (offre Pro ou supérieure).
+You need a Claude subscription that includes **Claude Code** (Pro plan or higher).
 
-1. Installe l'application Claude pour ordinateur depuis [claude.ai/download](https://claude.ai/download) et connecte-toi.
-2. Récupère le jeu :
-   - sans Git : sur la page GitHub du dépôt, **Code → Download ZIP**, puis décompresse le dossier ;
-   - avec Git : `git clone https://github.com/ornacea/brumefer.git`
-3. Dans l'application Claude, ouvre l'onglet **Code** et choisis le dossier `brumefer` comme dossier de travail.
-4. Demande à Claude, mot pour mot :
+1. Install the Claude desktop app from [claude.ai/download](https://claude.ai/download) and sign in.
+2. Get the game:
+   - without Git: on the repository's GitHub page, **Code → Download ZIP**, then unzip the folder;
+   - with Git: `git clone https://github.com/ornacea/brumefer.git`
+3. In the Claude app, open the **Code** tab and choose the `brumefer` folder as the working folder.
+4. Ask Claude, word for word:
 
-   > Publie `brumefer.html` comme artefact, avec tout le dossier `carto/` en fichiers joints aux mêmes chemins, et les capacités `sample`, `downloads`, `db` et `user`.
+   > Publish `brumefer.html` as an artifact, with the whole `carto/` folder as attached files at the same paths, and the `sample`, `downloads`, `db` and `user` capabilities.
 
-   Le dossier `carto/` contient les images des cartes : sans lui, les cartes s'affichent vides.
+   The `carto/` folder holds the map images: without it, the maps are empty.
 
-5. Claude te donne un lien `claude.ai/artifact/…` : c'est ton jeu, privé, visible de toi seul. Ouvre-le et commence par forger ton héros. Au premier tour, la page demande l'autorisation d'interroger Claude : accepte. Le meneur de jeu utilise ton compte et ton quota d'utilisation.
+5. Claude gives you a `claude.ai/artifact/…` link: this is your game, private and visible only to you. Open it and start by creating your hero. On the first turn, the page asks for permission to use Claude: accept. The game master uses your account and your usage quota.
 
-Pour une nouvelle version du jeu : récupère la mise à jour (nouveau ZIP ou `git pull`), puis demande à Claude de republier `brumefer.html` **sur le même lien** (le dossier `carto/` déjà publié est conservé ; republie-le seulement s'il a changé). Si ta copie a été publiée avant la sauvegarde en ligne, demande une fois de republier avec la liste complète des capacités de l'étape 4 : `db` et `user` s'ajoutent alors aux autres.
+For a new version of the game: get the update (new ZIP or `git pull`), then ask Claude to republish `brumefer.html` **to the same link** (the `carto/` folder already published is kept; republish it only if it changed). If your copy was published before online saving existed, ask once to republish with the full list of capabilities from step 4: `db` and `user` are then added to the others.
 
-### Sauvegardes
+### Saves
 
-- La partie en cours est enregistrée automatiquement sur l'appareil **et en ligne**, dans un espace privé de ton compte Claude propre à ta copie du jeu (capacités `db` et `user`) : personne d'autre ne le lit.
-- **Changer d'appareil** : ouvre le même lien `claude.ai/artifact/…`, connecté au même compte Claude, sur claude.ai dans un navigateur, dans l'application Claude pour ordinateur ou dans l'application Claude sur iPhone, iPad ou Android. Tes parties y sont, là où tu les as laissées. La pastille **☁ En ligne**, à côté des emplacements, confirme la sauvegarde en ligne.
-- Si une même partie a avancé sur deux appareils sans synchronisation entre-temps (par exemple hors connexion), le jeu te demande laquelle garder.
-- Pour la garder vraiment : **Sauvegarde → Télécharger la sauvegarde (.txt)**. Tu obtiens un fichier `brumefer-<héros>-niv<N>-<date>.txt`.
-- Pour la reprendre, ailleurs ou plus tard : **Sauvegarde → Charger un fichier .txt**.
-- Si tu modifies un fichier de sauvegarde à la main, charge-le avant de rejouer : sinon la copie enregistrée l'écrasera à la sauvegarde automatique suivante.
+- The current game is saved automatically on the device **and online**, in a private space of your Claude account that belongs to your copy of the game (`db` and `user` capabilities): nobody else can read it.
+- **Switching devices**: open the same `claude.ai/artifact/…` link, signed in to the same Claude account, on claude.ai in a browser, in the Claude desktop app, or in the Claude app on iPhone, iPad or Android. Your games are there, where you left them. The **☁ En ligne** badge next to the save slots confirms online saving.
+- If the same game moved forward on two devices without syncing in between (for example while offline), the game asks which version to keep.
+- To keep a game for good: **Sauvegarde → Télécharger la sauvegarde (.txt)** (Save → Download the save). You get a file named `brumefer-<hero>-niv<N>-<date>.txt`.
+- To resume it, elsewhere or later: **Sauvegarde → Charger un fichier .txt** (Save → Load a .txt file).
+- If you edit a save file by hand, load it before playing again: otherwise the stored copy will overwrite it at the next automatic save.
 
 ---
 
-## Palier 2 : modifier le jeu
+## Level 2: modify the game
 
-1. Installe [Git](https://git-scm.com) et clone le dépôt : `git clone https://github.com/ornacea/brumefer.git`
-2. Modifie `brumefer.html` : interface, règles et consignes du meneur de jeu sont lisibles directement. Les textes du scénario sont encodés pour éviter les révélations ; la page les décode au chargement.
-3. Republie ta copie (palier 1, étape 4) pour jouer avec tes modifications.
-4. La licence (voir `LICENSE`) te demande de créditer « La Malédiction de Brumefer, par Orna », de ne pas en faire un usage commercial et de partager tes modifications sous la même licence.
+1. Install [Git](https://git-scm.com) and clone the repository: `git clone https://github.com/ornacea/brumefer.git`
+2. Edit `brumefer.html`: the interface, rules and game master instructions are directly readable. The story texts are encoded to avoid spoilers; the page decodes them when it loads.
+3. Republish your copy (level 1, step 4) to play with your changes.
+4. The license (see `LICENSE`) requires you to credit "La Malédiction de Brumefer, by Orna", to make no commercial use of it, and to share your changes under the same license.
