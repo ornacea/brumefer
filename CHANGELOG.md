@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.95.0 — 2026-11-24
+- Améliorations : cartes de la vallée et de Brumefer (routes de sortie).
+
 ## 0.94.0 — 2026-11-24
 - Améliorations : carte de Brumefer (quartier des tanneurs, fonderies, portes de l'enceinte).
 
