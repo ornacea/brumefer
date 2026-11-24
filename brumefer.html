@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.93.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.93.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.93.1","d":"2026-11-24","items":["Améliorations : cohérence de l'intrigue."]},
 {"v":"0.93.0","d":"2026-11-24","items":["Améliorations : cohérence de l'intrigue."]},
 {"v":"0.92.2","d":"2026-11-24","items":["Corrections et améliorations : le dépôt s'appelle désormais ornacea/ironhaze."]},
 {"v":"0.92.1","d":"2026-11-24","items":["Corrections et améliorations : titre « Ironhaze's Curse »."]},
@@ -3583,7 +3584,7 @@ function lantClair(){ return !G.lanterne && partCur()===1 && lantLieu(); }
 /* la lanterne de la Mère-Brume ne se détruit que sur la pierre plate, au centre de la clairière, par le rituel */
 function lantLieu(){ return /clairiere des (veilleurs|sapins noirs)|cercle de mousse|pierre plate/.test(norm(G.lieu||"")); }
 /* Lanterne sœur : dans un coffre sous les gravats de la halle des fonderies mortes, avec le carnet des douze noms barrés (les « apôtres » de la seconde vague).
-   Trouvée seulement par la fouille de la halle (Perception, DD 17, −1 toutes les 3 actions passées dans la halle). Au début de l'acte 12 (5e partie),
+   Trouvée seulement par la fouille de la halle (Perception, DD 17, −1 toutes les 3 actions passées dans la halle, jamais moins de 10). Au début de l'acte 12 (5e partie),
    si elle n'est pas détruite, la Mère-Brume reprend d'un coup ceux des douze qui ont été sauvés et vivent encore. G.lant2 = {vu:date, det:date} ; G.halle = {n} */
 const LANT2_NOMS = ["Maren Corbel", "Brek Dolan", "Jorane Merle", "Pip Merle", "Tomas Brelle", "Wren Hollard", "Ida Lorne", "Colette Lorne", "Joss Varenne", "Garrick Roux", "Clément Aubry", "Aimé Fargue"];
 const lant2Det = () => !!(G.lant2 && G.lant2.det);
@@ -3591,7 +3592,7 @@ function lant2Meta(v){ const t = norm(String(v||"")), L = G.lant2 = G.lant2 || {
   if(/detrui|bris/.test(t) && L.vu && !L.det){ L.det = gDate(); logJ("sys", "🏮 La lanterne sœur est détruite : la Mère-Brume a perdu les douze noms qu'elle gardait."); return true; }
   return false; }
 const HALLE_RE = /fonderies? mortes?|halle des fonderies|halle abandonnee/, HALLE_ACT = /deblai|deblay|nettoi|nettoy|range|rangement|ordonn|degag|evacu|balai|balay|trie|trier|deterr|creus|fouill|souleve|remue|dégage/;
-function halleDD(){ return Math.max(5, 17 - Math.floor(((G.halle||{}).n||0) / 3)); }
+function halleDD(){ return Math.max(10, 17 - Math.floor(((G.halle||{}).n||0) / 3)); }
 /* tour du héros dans la halle : jet de Perception quand il déblaie ; renvoie la consigne du MJ pour ce tour */
 function halleTour(action){ if(!G || !G.hero || partCur()>=5) return ""; const a = norm(action||"");
   if(!(HALLE_RE.test(norm(G.lieu||"")) || HALLE_RE.test(a))) return ""; const L = G.lant2 = G.lant2 || {}, H = G.halle = G.halle || {n:0};
