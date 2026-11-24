@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.92.0 — 2026-11-24
+- Améliorations : cohérence de l'intrigue.
+
 ## 0.91.1 — 2026-11-24
 - Améliorations : le jeu s'appelle désormais « Ironhaze's curse ».
 
