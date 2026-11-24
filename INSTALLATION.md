@@ -24,8 +24,8 @@ Il faut un abonnement Claude qui donne accès à **Claude Code** (offre Pro ou s
 1. Installe l'application Claude pour ordinateur depuis [claude.ai/download](https://claude.ai/download) et connecte-toi.
 2. Récupère le jeu :
    - sans Git : sur la page GitHub du dépôt, **Code → Download ZIP**, puis décompresse le dossier ;
-   - avec Git : `git clone https://github.com/ornacea/brumefer.git`
-3. Dans l'application Claude, ouvre l'onglet **Code** et choisis le dossier `brumefer` comme dossier de travail.
+   - avec Git : `git clone https://github.com/ornacea/ironhaze.git`
+3. Dans l'application Claude, ouvre l'onglet **Code** et choisis le dossier `ironhaze` (`ironhaze-voix` si tu as téléchargé le ZIP) comme dossier de travail.
 4. Demande à Claude, mot pour mot :
 
    > Publie `brumefer.html` comme artefact, avec tout le dossier `carto/` en fichiers joints aux mêmes chemins, et les capacités `sample`, `downloads`, `db`, `user` et `mcp` (serveur `host:voicestudio`, outils `generate_speech`, `design_voice`, `check_health`, `list_voices`).
@@ -99,7 +99,7 @@ Si la voix ne change pas, le message du jeu indique la cause :
 
 ## Palier 4 : modifier le jeu
 
-1. Installe [Git](https://git-scm.com) et clone le dépôt : `git clone https://github.com/ornacea/brumefer.git`
+1. Installe [Git](https://git-scm.com) et clone le dépôt : `git clone https://github.com/ornacea/ironhaze.git`
 2. Modifie `brumefer.html` : interface, règles et consignes du meneur de jeu sont lisibles directement. Les textes du scénario sont encodés pour éviter les révélations ; la page les décode au chargement.
 3. Republie ta copie (palier 1, étape 4) pour jouer avec tes modifications.
 4. La licence (voir `LICENSE`) te demande de créditer « La Malédiction de Brumefer, par Orna », de ne pas en faire un usage commercial et de partager tes modifications sous la même licence.
