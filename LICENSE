@@ -1,0 +1,32 @@
+La Malédiction de Brumefer
+Copyright (c) 2026 Orna
+
+Sauf mention contraire ci-dessous, ce dépôt (le jeu brumefer.html, son scénario,
+ses textes, les documents, les scripts et les tests) est mis à disposition selon
+les termes de la licence Creative Commons Attribution - Pas d'Utilisation
+Commerciale - Partage dans les Mêmes Conditions 4.0 International
+(CC BY-NC-SA 4.0).
+
+  Résumé : https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr
+  Texte juridique : https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr
+
+Tu peux jouer, copier, partager et modifier le jeu, à trois conditions :
+  - créditer « La Malédiction de Brumefer, par Orna » et indiquer les modifications ;
+  - ne pas en faire un usage commercial ;
+  - diffuser tes modifications sous la même licence.
+
+Éléments repris d'autres projets, qui gardent leur propre licence :
+
+  - Règles : éléments du System Reference Document 5.1 de Wizards of the Coast LLC,
+    sous licence Creative Commons Attribution 4.0
+    (https://creativecommons.org/licenses/by/4.0). Jeu non officiel, sans lien avec
+    Wizards of the Coast.
+  - carto/wn/ : tuiles et villages de Battle for Wesnoth (https://wesnoth.org),
+    sous licence GNU GPL v2 ou ultérieure / CC BY-SA 4.0.
+  - carto/icon/ : icônes de game-icons.net (https://game-icons.net) par Lorc,
+    Delapouite, Skoll, sbed et faithtoken, sous licence CC BY 3.0.
+  - carto/tex/ : textures d'ambientCG (https://ambientcg.com), domaine public (CC0).
+
+Ces fichiers sont distribués à côté du jeu, sans en être fusionnés : leurs
+licences s'appliquent à eux seuls, et la restriction commerciale ci-dessus ne
+s'étend pas à eux.
