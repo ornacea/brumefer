@@ -51,9 +51,14 @@ Pour reprendre une partie exportée : **Sauvegarde → Charger un fichier .txt**
 | `carto/` | tuiles, icônes et textures des cartes |
 | `CHANGELOG.md` | journal des versions (le même que dans le jeu, bouton de version) |
 | `INSTALLATION.md` | guide d'installation |
+| `CONTRIBUTING.md` | comment proposer une modification ou une idée |
 | `LICENSE` | licence du projet et des éléments repris |
 
 Le numéro de version suit le versioning sémantique `MAJEUR.MINEUR.CORRECTIF`. Tant que le jeu est en `0.x`, le format des sauvegardes peut encore changer ; les anciennes sauvegardes sont migrées au chargement.
+
+## Contribuer
+
+Les propositions passent par un fork et une pull request ; seul l'auteur décide de ce qui entre dans le jeu. Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licence
 
