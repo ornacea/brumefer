@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.91.0 — 2026-11-24
+- Améliorations : cohérence de l'intrigue de la première partie.
+
 ## 0.90.4 — 2026-11-24
 - Améliorations : documentation.
 
