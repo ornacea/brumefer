@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.101.2 — 2026-11-24
+- Corrections et améliorations : titres de campagne accordés au bon moment.
+
 ## 0.101.1 — 2026-11-24
 - Améliorations : nouveau rang de renommée au sommet de l'échelle, avec ses avantages.
 

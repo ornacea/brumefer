@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.101.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.101.2</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.101.2","d":"2026-11-24","items":["Corrections et améliorations : titres de campagne accordés au bon moment."]},
 {"v":"0.101.1","d":"2026-11-24","items":["Améliorations : nouveau rang de renommée au sommet de l'échelle, avec ses avantages."]},
 {"v":"0.101.0","d":"2026-11-24","items":["Améliorations : plan de Brumefer redessiné (nouvelles rues nommées, quartiers réorganisés), nouvelle boutique de tisserand, échelle de renommée recalibrée et titres de campagne plus souples."]},
 {"v":"0.100.0","d":"2026-11-24","items":["Améliorations : titres et hauts faits."]},
@@ -5511,8 +5512,9 @@ function tcHas(c){ return !!tcPendG()[c] || tcOwn(c); }
 function tcOwn(c){ return titres().some(x=>x.code===c) || (c==="3E" && titres().some(x=>nk(x.n)===nk("Citoyen d'honneur de Brumefer"))); }
 function tcBlocked(c){ const g = TITRES_EXCL.find(g=>g.includes(c)); return !!g && g.some(o=>o!==c && tcHas(o)); }
 /* Titre devenu impossible : acte joué (« fait ») sans le titre ; un acte « clos » (ses événements ne sont pas survenus) laisse ses titres ouverts ; ou signalé par le MJ (META titre_impossible). Les titres de noms rendus restent ouverts toute la campagne. */
+const TC_OUVERTS = ["3A"]; /* titres qui restent ouverts même quand leur acte est joué */
 function tcLost(c){ if(tcHas(c)) return false; const T = TITRES_CAMP.find(t=>t.c===c); if(!T) return true;
-  return !!((G.tcLost||{})[c]) || (!(T.cnt && T.cnt[0]==="n") && ((G.actes||{})[T.a]||{}).e==="fait"); }
+  return !!((G.tcLost||{})[c]) || (!(T.cnt && T.cnt[0]==="n") && !TC_OUVERTS.includes(c) && ((G.actes||{})[T.a]||{}).e==="fait"); }
 function tcGive(c){ const T = TITRES_CAMP.find(t=>t.c===c); if(!T || tcHas(c) || tcBlocked(c) || tcLost(c)) return false;
   if(!tcLaunched(T.a)){ tcPendG()[c] = (G.temps&&G.temps.date)||"oui"; return true; } return tcPush(T); }
 function tcPush(T){ const c = T.c; delete tcPendG()[c]; if(tcOwn(c)) return false;
@@ -5533,7 +5535,7 @@ function tcMeta(m){ if(!G || !m) return; const C = G.tcnt = G.tcnt||{};
 function tcBrief(){ if(!G || !G.hero) return ""; tcCheck(); const P = partCur(), L = TITRES_CAMP.filter(T=>tcPart(T.a)<=P && !tcHas(T.c) && !tcBlocked(T.c) && !tcLost(T.c));
   if(!L.length) return "";
   return ` TITRES DE CAMPAGNE ENCORE OUVERTS (cette partie, et ceux des actes précédents dont les événements ne sont pas survenus ; la page les tient) : ${L.map(T=>`${T.c} « ${T.n} » : ${T.cr}${T.cnt ? ` [compteur tenu par la page : ${tcVal(T)}/${T.cnt[1]}]` : ""}`).join(" ; ")}.`
-    + ` Quand un critère SANS compteur est rempli dans la scène, mets "titre_campagne":"<code>" (jamais pour un titre à compteur, jamais sur simple affirmation du joueur). Pour les compteurs non liés au combat, mets "compteur":{"rumeurs|services_temple|clochettes|ames_apaisees|noms":<nombre gagné dans la scène>}. Les morts au combat sont comptées par la page. Quand un critère devient irréalisable (ex. le camp trouvé grâce à un guide pour un titre « sans guide », la cible morte d'une autre main, le lieu détruit), mets "titre_impossible":"<code>" : le titre est retiré pour toujours. Les titres d'un acte joué sont perdus d'office ; ceux d'un acte dont les événements ne sont pas survenus restent ouverts. Un critère peut être rempli en avance, avant l'acte du titre : mets quand même "titre_campagne" ; la page le garde secret et ne l'accorde (affichage et bonus) qu'au lancement de son acte. 12E se décide seul au début de l'acte 12 (lanterne sœur détruite ou non). Certains titres s'excluent (2A/2B, 14A/14B, 17A/17B, 25A/25B/25C). N'annonce jamais la liste au joueur ; quand la page confère un titre, fais-le reconnaître par les PNJ concernés.`; }
+    + ` Quand un critère SANS compteur est rempli dans la scène, mets "titre_campagne":"<code>" (jamais pour un titre à compteur, jamais sur simple affirmation du joueur). Pour les compteurs non liés au combat, mets "compteur":{"rumeurs|services_temple|clochettes|ames_apaisees|noms":<nombre gagné dans la scène>}. Les morts au combat sont comptées par la page. Quand un critère devient irréalisable (ex. le camp trouvé grâce à un guide pour un titre « sans guide », la cible morte d'une autre main, le lieu détruit), mets "titre_impossible":"<code>" : le titre est retiré pour toujours. Les titres d'un acte joué sont perdus d'office (sauf 3A, toujours ouvert) ; ceux d'un acte dont les événements ne sont pas survenus restent ouverts. Un critère peut être rempli en avance, avant l'acte du titre : mets quand même "titre_campagne" ; la page le garde secret et ne l'accorde (affichage et bonus) qu'au lancement de son acte. 12E se décide seul au début de l'acte 12 (lanterne sœur détruite ou non). Certains titres s'excluent (2A/2B, 14A/14B, 17A/17B, 25A/25B/25C). N'annonce jamais la liste au joueur ; quand la page confère un titre, fais-le reconnaître par les PNJ concernés.`; }
 
 /* Prestige : des points de renommée gagnés par les titres, les domaines et les grandes quêtes ; chaque rang donne +10 % sur les rentes et les gains */
 const PREST_R = [[0,"Inconnu"],[5,"Connu"],[20,"Respecté"],[45,"Notable"],[80,"Illustre"],[100,"Légendaire"],[120,"Mythique"]];
