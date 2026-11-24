@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.100.0 — 2026-11-24
+- Améliorations : titres et hauts faits.
+
 ## 0.99.0 — 2026-11-24
 - Améliorations : titres et hauts faits.
 

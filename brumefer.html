@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.99.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.100.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.100.0","d":"2026-11-24","items":["Améliorations : titres et hauts faits."]},
 {"v":"0.99.0","d":"2026-11-24","items":["Améliorations : titres et hauts faits."]},
 {"v":"0.98.0","d":"2026-11-24","items":["Corrections et améliorations : carte de Brumefer et demeures des habitants."]},
 {"v":"0.97.0","d":"2026-11-24","items":["Corrections et améliorations : carte de Brumefer et cohérence d'un objet de quête."]},
@@ -5502,11 +5503,14 @@ const TITRES_EXCL = [["2A", "2B"], ["14A", "14B"], ["17A", "17B"], ["25A", "25B"
 const tcPart = a => ACT_P.findIndex(([x,y])=>a>=x && a<=y) + 1;
 function tcHas(c){ return titres().some(x=>x.code===c) || (c==="3E" && titres().some(x=>nk(x.n)===nk("Citoyen d'honneur de Brumefer"))); }
 function tcBlocked(c){ const g = TITRES_EXCL.find(g=>g.includes(c)); return !!g && g.some(o=>o!==c && tcHas(o)); }
-function tcGive(c){ const T = TITRES_CAMP.find(t=>t.c===c); if(!T || tcHas(c) || tcBlocked(c)) return false;
+/* Titre devenu impossible : acte achevé (« fait » ou « clos ») sans le titre, ou signalé par le MJ (META titre_impossible). Les titres de noms rendus restent ouverts toute la campagne. */
+function tcLost(c){ if(tcHas(c)) return false; const T = TITRES_CAMP.find(t=>t.c===c); if(!T) return true;
+  return !!((G.tcLost||{})[c]) || (!(T.cnt && T.cnt[0]==="n") && !!(G.actes||{})[T.a]); }
+function tcGive(c){ const T = TITRES_CAMP.find(t=>t.c===c); if(!T || tcHas(c) || tcBlocked(c) || tcLost(c)) return false;
   titres().push({n:T.n, src:`haut fait de l'acte ${T.a}`, bonus:T.b, code:c, d:(G.temps&&G.temps.date)||""}); logJ("sys", `👑 Titre gagné : <b>${esc(T.n)}</b> (${esc(T.cr)}).`); return true; }
 const tcNoms = () => Object.values(prisG()).filter(x=>x.e==="sauve").length + ((G.tcnt||{}).noms||0);
 function tcVal(T){ const [ty,,key] = T.cnt, C = G.tcnt||{}; return ty==="n" ? tcNoms() : ty==="k" ? (C["k_"+T.c]||0) : (C[key]||0); }
-function tcCheck(){ if(!G) return; TITRES_CAMP.forEach(T=>{ if(T.cnt && !tcHas(T.c) && tcPart(T.a)<=partCur() && tcVal(T)>=T.cnt[1]) tcGive(T.c); }); }
+function tcCheck(){ if(!G) return; TITRES_CAMP.forEach(T=>{ if(T.cnt && !tcHas(T.c) && !tcLost(T.c) && tcPart(T.a)<=partCur() && tcVal(T)>=T.cnt[1]) tcGive(T.c); }); }
 function tcKills(L){ if(!G) return; const P = partCur(), C = G.tcnt = G.tcnt||{};
   (L||[]).filter(e=>e && e.etat==="mort").forEach(e=>{ const n = norm(e.nom||""); TITRES_CAMP.forEach(T=>{ if(T.cnt && T.cnt[0]==="k" && tcPart(T.a)===P && new RegExp(T.cnt[2]).test(n)) C["k_"+T.c] = (C["k_"+T.c]||0) + 1; }); });
   tcCheck(); }
@@ -5514,11 +5518,12 @@ const TC_MJK = ["rumeurs","services_temple","clochettes","ames_apaisees","noms"]
 function tcMeta(m){ if(!G || !m) return; const C = G.tcnt = G.tcnt||{};
   if(m.compteur && typeof m.compteur==="object") Object.entries(m.compteur).forEach(([k,v])=>{ k = norm(k).replace(/[^a-z]+/g,"_"); if(TC_MJK.includes(k)) C[k] = (C[k]||0) + Math.max(0, Math.min(5, parseInt(v,10)||0)); });
   [].concat(m.titre_campagne||[]).forEach(c=>{ c = String(c).toUpperCase().trim(); const T = TITRES_CAMP.find(t=>t.c===c); if(T && !T.cnt && tcPart(T.a)<=partCur()) tcGive(c); });
+  [].concat(m.titre_impossible||[]).forEach(c=>{ c = String(c).toUpperCase().trim(); if(TITRES_CAMP.some(t=>t.c===c) && !tcHas(c)) { G.tcLost = G.tcLost||{}; if(!G.tcLost[c]) G.tcLost[c] = (G.temps&&G.temps.date)||"oui"; } });
   tcCheck(); }
-function tcBrief(){ if(!G || !G.hero) return ""; const P = partCur(), L = TITRES_CAMP.filter(T=>tcPart(T.a)===P && !tcHas(T.c) && !tcBlocked(T.c));
+function tcBrief(){ if(!G || !G.hero) return ""; const P = partCur(), L = TITRES_CAMP.filter(T=>tcPart(T.a)===P && !tcHas(T.c) && !tcBlocked(T.c) && !tcLost(T.c));
   if(!L.length) return "";
   return ` TITRES DE CAMPAGNE À GAGNER DANS CETTE PARTIE (la page les tient) : ${L.map(T=>`${T.c} « ${T.n} » : ${T.cr}${T.cnt ? ` [compteur tenu par la page : ${tcVal(T)}/${T.cnt[1]}]` : ""}`).join(" ; ")}.`
-    + ` Quand un critère SANS compteur est rempli dans la scène, mets "titre_campagne":"<code>" (jamais pour un titre à compteur, jamais sur simple affirmation du joueur). Pour les compteurs non liés au combat, mets "compteur":{"rumeurs|services_temple|clochettes|ames_apaisees|noms":<nombre gagné dans la scène>}. Les morts au combat sont comptées par la page. Certains titres s'excluent (2A/2B, 14A/14B, 17A/17B, 25A/25B/25C). N'annonce jamais la liste au joueur ; quand la page confère un titre, fais-le reconnaître par les PNJ concernés.`; }
+    + ` Quand un critère SANS compteur est rempli dans la scène, mets "titre_campagne":"<code>" (jamais pour un titre à compteur, jamais sur simple affirmation du joueur). Pour les compteurs non liés au combat, mets "compteur":{"rumeurs|services_temple|clochettes|ames_apaisees|noms":<nombre gagné dans la scène>}. Les morts au combat sont comptées par la page. Quand un critère devient irréalisable (ex. le camp trouvé grâce à un guide pour un titre « sans guide », la cible morte d'une autre main, le lieu détruit), mets "titre_impossible":"<code>" : le titre est retiré pour toujours. Les titres d'un acte achevé sont perdus d'office. Certains titres s'excluent (2A/2B, 14A/14B, 17A/17B, 25A/25B/25C). N'annonce jamais la liste au joueur ; quand la page confère un titre, fais-le reconnaître par les PNJ concernés.`; }
 
 /* Prestige : des points de renommée gagnés par les titres, les domaines et les grandes quêtes ; chaque rang donne +10 % sur les rentes et les gains */
 const PREST_R = [[0,"Inconnu"],[3,"Connu"],[8,"Respecté"],[15,"Notable"],[25,"Illustre"],[40,"Légendaire"]];
