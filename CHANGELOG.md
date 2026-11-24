@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.102.0 — 2026-11-24
+- Améliorations : titres et domaines présentés dans deux onglets distincts, titres classés par acte.
+
 ## 0.101.2 — 2026-11-24
 - Corrections et améliorations : titres de campagne accordés au bon moment.
 

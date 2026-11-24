@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.101.2</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.102.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.102.0","d":"2026-11-24","items":["Améliorations : titres et domaines présentés dans deux onglets distincts, titres classés par acte."]},
 {"v":"0.101.2","d":"2026-11-24","items":["Corrections et améliorations : titres de campagne accordés au bon moment."]},
 {"v":"0.101.1","d":"2026-11-24","items":["Améliorations : nouveau rang de renommée au sommet de l'échelle, avec ses avantages."]},
 {"v":"0.101.0","d":"2026-11-24","items":["Améliorations : plan de Brumefer redessiné (nouvelles rues nommées, quartiers réorganisés), nouvelle boutique de tisserand, échelle de renommée recalibrée et titres de campagne plus souples."]},
@@ -4686,7 +4687,7 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   else { const mp = N.cartes[cur];
     h += `<div class="maptabs">${M.map(([k,m])=>`<button type="button" class="chip ${k===cur?"sel":""}" data-g="mapview" data-v="${esc(k)}">${esc(m.nom)} <small>${m.lbl||MAPT[m.type]||""}</small></button>`).join("")}${mp.atlas?"":`<button type="button" class="ndel" data-g="ndel" data-v="c:${esc(cur)}" title="Supprimer la carte ${esc(mp.nom)}" aria-label="Supprimer la carte ${esc(mp.nom)}">×</button>`}</div>`;
     h += `<div class="mapbox"><button type="button" class="btn sm mapbig" data-g="mapbig">Agrandir</button>${mapBody(mp)}`; }
-  { let dv = ""; try{ dv = domView(); }catch(e){} if(dv) h += `<button type="button" class="btn sm ghost" data-g="mapbig" title="Titres, domaines et offres : sous la carte agrandie">👑 Titres et domaines</button>`; }
+  { let dv = ""; try{ dv = domView(); }catch(e){} if(dv) h += `<button type="button" class="btn sm ghost" data-g="mapbig" title="Titres et domaines : sous la carte agrandie, un onglet pour chacun">👑 Titres · 🏰 Domaines</button>`; }
   h += `</details>`;
   SEC.map = h; h = h0; }
   SEC.lieux = `<details class="nsec" open><summary>Lieux <small>${Lx.length}</small></summary>${Lx.length?Lx.map(([k,l])=>`<div class="nent"><button type="button" class="ndel" data-g="ndel" data-v="l:${esc(k)}" title="Retirer ${esc(l.nom)} du carnet et des cartes" aria-label="Retirer ${esc(l.nom)}">×</button><b>${esc(l.nom)}</b>${l.etat?` <small class="ltag">${ATL_LBL[l.etat]}</small>`:""}${isNew("l:"+k)||(l.nw&&isNew(l.nw))?` <span class="badge-new">nouveau</span>`:""}${l.info||l.carte?`<small>${esc(l.info||"")}${l.carte?`${l.info?" · ":""}carte : ${esc(l.carte)}`:""}</small>`:""}</div>`).join(""):`<p class="lede">Aucun lieu noté.</p>`}</details>`;
@@ -5656,11 +5657,22 @@ function actRun(id, days){ const a = ACTS.find(x=>x.id===id); if(!a || !actCan()
   clockAdd(days===7 ? 7*1440 : 600); if(G.compagnon) G.compagnon.mange = G.clock; G.cu += cu;
   logJ("de", `${esc(a.n)} (${dur}, ${esc(lieu)}) : ${esc(label)}, d20 (${d.txt}) ${sg(b)} = <b>${tot}</b> → <b>+ ${money(cu)}</b>${d.r===1?" (1 naturel : rien gagné)":""}. Bourse : ${money(G.cu)}.`);
   mj(`[ACTIVITÉ] Le héros vient de passer ${dur} à ${a.n.toLowerCase()} à ${lieu} (test de ${label} : ${tot}${d.r===1?", échec cuisant":tot>=20?", brillant":""}). Il a gagné ${moneyTxt(cu)}, déjà versés par la page : ne verse AUCUN argent dans "effets". Raconte brièvement cette période (une rencontre, une rumeur, un détail) et rends la main au joueur.`, `${a.n} (${dur})`, {noRenc:true}); }
+/* Titres classés par acte croissant, un sous-titre repliable par acte (le plus récent ouvert) ; les titres hors campagne à la fin */
+function titAct(x){ const c = x && (x.code || (nk(x.n||"")===nk("Citoyen d'honneur de Brumefer") ? "3E" : "")), m = /^(\d+)([A-Z]?)$/.exec(c||""); return m ? [+m[1], m[2]] : [999, ""]; }
+function titActs(T){ const G2 = {}; T.forEach(x=>{ const [n] = titAct(x); (G2[n] = G2[n] || []).push(x); });
+  const ks = Object.keys(G2).map(Number).sort((a,b)=>a-b), last = Math.max(...ks.filter(n=>n<999), 0);
+  const one = x=>`<div>👑 <b>${esc(x.n)}</b>${x.src?` <small>(${esc(x.src)})</small>`:""}${x.bonus?`<small class="lede" style="display:block;margin:1px 0 4px 18px">${esc(x.bonus)}</small>`:""}</div>`;
+  return `<div class="titacts" style="font-size:.88rem">${ks.map(n=>{ const L = G2[n].slice().sort((a,b)=>titAct(a)[1].localeCompare(titAct(b)[1])), lb = n===999 ? "Autres titres" : `Acte ${n}`;
+    return `<details class="titact" ${n===last || (n===999 && !last) ? "open" : ""}><summary><b>${lb}</b> <small class="ltag">${L.length}</small></summary>${L.map(one).join("")}</details>`; }).join("")}</div>`; }
 function domView(){ const D = doms(), T = titres(), ok = shopCanGo(); let t = "";
   if(!D.length && !T.length && !G.offre && !G.localite) return "";
-  t += `<h4>Titres et domaines</h4>`;
-  t += T.length ? `<div style="font-size:.88rem">${T.map(x=>`<div>👑 <b>${esc(x.n)}</b>${x.src?` <small>(${esc(x.src)})</small>`:""}${x.bonus?`<small class="lede" style="display:block;margin:1px 0 4px 18px">${esc(x.bonus)}</small>`:""}</div>`).join("")}</div>` : `<small class="lede" style="display:block;margin:-2px 0 6px">Aucun titre : seule une autorité peut t'en conférer un, au fil de l'histoire.</small>`;
+  const tab = domTab === "domaines" ? "domaines" : "titres";
+  t += `<div class="chips slots domtabs" role="tablist" aria-label="Titres ou domaines"><button type="button" class="chip ${tab==="titres"?"sel":""}" role="tab" aria-selected="${tab==="titres"}" data-g="domtab" data-v="titres">👑 Titres <small>${T.length}</small></button><button type="button" class="chip ${tab==="domaines"?"sel":""}" role="tab" aria-selected="${tab==="domaines"}" data-g="domtab" data-v="domaines">🏰 Domaines <small>${D.length}</small></button></div>`;
+  if(tab==="titres"){
+  t += T.length ? titActs(T) : `<small class="lede" style="display:block;margin:-2px 0 6px">Aucun titre : seule une autorité peut t'en conférer un, au fil de l'histoire.</small>`;
   t += prestView();
+  return t; }
+  if(!D.length && !G.offre) t += `<small class="lede" style="display:block">Aucun domaine pour l'instant : achète un bien là où il s'en vend, ou reçois-en un en récompense.</small>`;
   if(G.offre){ const o = G.offre, T2 = DOM_T[o.type], can = ok && G.cu >= o.prix*CU_PO;
     t += `<div class="kv"><span>${T2.ic} À vendre : <b>${esc(o.nom)}</b> <small>${esc(T2.n.toLowerCase())}, ${esc(o.lieu)}, ~${money(Math.round(T2.rev*CU_PO))}/sem.</small></span><button type="button" class="btn sm" data-g="domoffre" ${can?"":"disabled"} title="${can?"":"Pas assez d'argent, ou impossible maintenant"}">Acheter ${money(o.prix*CU_PO)}</button></div>`; }
   D.forEach(d=>{ const T2 = DOM_T[d.type], here = domHere(d), up = Math.round(T2.prix*0.5*d.niv*(d.tm||1)), fix = Math.round(T2.prix*0.15*(2-d.etat)*(d.tm||1)), hire = 10*d.niv;
@@ -5678,7 +5690,9 @@ function domView(){ const D = doms(), T = titres(), ok = shopCanGo(); let t = ""
     t += `<details><summary><small>💼 Travailler à ${esc(L.nom)}</small></summary>${ACTS.map(a=>{ const be = actBest(a), can = actCan();
       return `<div class="kv"><span>${esc(a.n)} <small>${esc(be.label)} ${sg(be.b)}</small></span><span style="display:flex;gap:4px"><button type="button" class="btn sm" data-g="act" data-v="${a.id}" data-l="1" ${can?"":"disabled"}>1 jour</button><button type="button" class="btn sm" data-g="act" data-v="${a.id}" data-l="7" ${can?"":"disabled"}>1 semaine</button></span></div>`; }).join("")}<small class="lede" style="display:block">La page tire le test et verse le gain ; le temps passe d'autant.</small></details>`; }
   return t; }
-function domClick(a, v, el){ const d = doms().find(x=>x.id===v);
+var domTab = "titres";
+function domClick(a, v, el){ if(a==="domtab"){ domTab = v==="domaines" ? "domaines" : "titres"; grender(); return true; }
+  const d = doms().find(x=>x.id===v);
   if(a==="act"){ actRun(v, +el.dataset.l); return true; }
   if(!shopCanGo()) return true;
   if(a==="dombuy"){ const L = G.localite, T2 = DOM_T[v]; if(!L || !T2 || T2.min>L.t) return true; const p = domPrix(v, L.t)*CU_PO; if(G.cu < p) return true; G.cu -= p; logJ("sys", `Achat : − ${money(p)} (bourse : ${money(G.cu)}).`); domAdd(v, `${T2.n} de ${L.nom}`, L.nom, "acheté"); }
