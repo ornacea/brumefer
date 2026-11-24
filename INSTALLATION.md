@@ -28,20 +28,23 @@ Il faut un abonnement Claude qui donne accès à **Claude Code** (offre Pro ou s
 3. Dans l'application Claude, ouvre l'onglet **Code** et choisis le dossier `brumefer` comme dossier de travail.
 4. Demande à Claude, mot pour mot :
 
-   > Publie `brumefer.html` comme artefact, avec tout le dossier `carto/` en fichiers joints aux mêmes chemins, et les capacités `sample`, `downloads` et `mcp` (serveur `host:voicestudio`, outils `generate_speech`, `design_voice`, `check_health`, `list_voices`).
+   > Publie `brumefer.html` comme artefact, avec tout le dossier `carto/` en fichiers joints aux mêmes chemins, et les capacités `sample`, `downloads`, `db`, `user` et `mcp` (serveur `host:voicestudio`, outils `generate_speech`, `design_voice`, `check_health`, `list_voices`).
 
    Le dossier `carto/` contient les images des cartes : sans lui, les cartes s'affichent vides.
 
 5. Claude te donne un lien `claude.ai/artifact/…` : c'est ton jeu, privé, visible de toi seul. Ouvre-le et commence par forger ton héros. Au premier tour, la page demande l'autorisation d'interroger Claude : accepte. Le meneur de jeu utilise ton compte et ton quota d'utilisation.
 
-Pour une nouvelle version du jeu : récupère la mise à jour (nouveau ZIP ou `git pull`), puis demande à Claude de republier `brumefer.html` **sur le même lien** (le dossier `carto/` déjà publié est conservé ; republie-le seulement s'il a changé).
+Pour une nouvelle version du jeu : récupère la mise à jour (nouveau ZIP ou `git pull`), puis demande à Claude de republier `brumefer.html` **sur le même lien** (le dossier `carto/` déjà publié est conservé ; republie-le seulement s'il a changé). Si ta copie a été publiée avant la sauvegarde en ligne, demande une fois de republier avec la liste complète des capacités de l'étape 4 : `db` et `user` s'ajoutent alors aux autres.
 
 ### Sauvegardes
 
-- La partie en cours est enregistrée automatiquement dans ton navigateur, pour cet artefact. Elle peut disparaître si tu vides les données du site ou changes de navigateur.
+- La partie en cours est enregistrée automatiquement sur l'appareil **et en ligne**, dans un espace privé de ton compte Claude propre à ta copie du jeu (capacités `db` et `user`) : personne d'autre ne le lit.
+- **Changer d'appareil** : ouvre le même lien `claude.ai/artifact/…`, connecté au même compte Claude, sur claude.ai dans un navigateur, dans l'application Claude pour ordinateur ou dans l'application Claude sur iPhone, iPad ou Android. Tes parties y sont, là où tu les as laissées. La pastille **☁ En ligne**, à côté des emplacements, confirme la sauvegarde en ligne.
+- Si une même partie a avancé sur deux appareils sans synchronisation entre-temps (par exemple hors connexion), le jeu te demande laquelle garder.
+- Sur téléphone et tablette, VoiceStudio n'est pas disponible (il tourne sur ton ordinateur) : le jeu utilise les voix du système.
 - Pour la garder vraiment : **Sauvegarde → Télécharger la sauvegarde (.txt)**. Tu obtiens un fichier `brumefer-<héros>-niv<N>-<date>.txt`.
 - Pour la reprendre, ailleurs ou plus tard : **Sauvegarde → Charger un fichier .txt**.
-- Si tu modifies un fichier de sauvegarde à la main, charge-le avant de rejouer : sinon la copie du navigateur l'écrasera à la sauvegarde automatique suivante.
+- Si tu modifies un fichier de sauvegarde à la main, charge-le avant de rejouer : sinon la copie enregistrée l'écrasera à la sauvegarde automatique suivante.
 
 ---
 

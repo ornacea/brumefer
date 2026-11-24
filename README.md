@@ -33,7 +33,7 @@ Une longue campagne mène le héros du niveau 1 au niveau 40. Le joueur reste li
   - les titres.
 - **Mémoires du héros** : un chapitre par jour de jeu, exportable en document Word.
 - **Voix** : lecture du récit par la voix du navigateur ou par VoiceStudio en local, avec une voix par personnage.
-- **Sauvegardes** : plusieurs emplacements, export et import d'une partie en fichier `.txt`.
+- **Sauvegardes** : plusieurs emplacements, sauvegarde en ligne sur ton compte Claude pour reprendre ta partie sur un autre appareil (ordinateur, iPhone, iPad, Android), export et import en fichier `.txt`.
 
 ## Jouer
 

@@ -368,6 +368,8 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .terr{display:block;font-size:.75rem;color:var(--brass);font-weight:400}
 .comp-tr{font-size:.8rem;margin:4px 0 6px;line-height:1.35}.comp-tr .off{opacity:.5}
 .comp-c{margin-top:6px;font-size:.85rem}
+.slots .chip.cloud-st{border-style:dotted;opacity:.85;cursor:help}.slots .chip.cloud-ro,.slots .chip.cloud-err{color:var(--accent)}
+.cloud-conf{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;width:min(560px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:2px solid var(--accent);border-radius:12px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.45)}.cloud-conf p{margin:0 0 10px}.cloud-btns{display:flex;gap:8px;flex-wrap:wrap}.cloud-btns .btn{flex:1 1 200px;text-align:left}.cloud-btns small{opacity:.75;font-weight:400}
 .slots .chip.slot-del{border-style:dashed;color:var(--accent)}.slots .chip.slot-del.sel{background:var(--accent);color:var(--accent-ink);border-style:solid}
 .towns .chip.shop-unk{filter:grayscale(1);opacity:.45;border-style:dashed;cursor:not-allowed}
 .towns{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}.towns .chip{font-size:.8rem;padding:4px 10px}.towns .lede{font-size:.85rem;margin-right:2px}
@@ -489,7 +491,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1>La Malédiction de <span>Brumefer</span></h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.87.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.88.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +907,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.88.0","d":"2026-11-24","items":["Nouveauté : sauvegarde en ligne, pour reprendre ta partie sur un autre appareil (ordinateur, iPhone, iPad, Android)."]},
 {"v":"0.87.0","d":"2026-11-24","items":["Améliorations : journal des versions, sauvegardes."]},
 {"v":"0.86.4","d":"2026-11-24","items":["Améliorations : inventaire et équipement, campagne."]},
 {"v":"0.86.3","d":"2026-11-24","items":["Corrections et améliorations : création du héros, meneur de jeu, inventaire et équipement, carnet."]},
@@ -1524,7 +1527,7 @@ let S = blank();
 try{ const raw = LS.get(skey(KEY)); if(raw) S = Object.assign(blank(), JSON.parse(raw)); }catch(e){}
 if(window.claude && window.claude.hot && window.claude.hot.data && window.claude.hot.data.S && (window.claude.hot.data.SLOT||1)===SLOT) S = Object.assign(blank(), window.claude.hot.data.S);
 window.claude?.hot?.snapshot?.(()=>({S}));
-function persist(){ try{ LS.set(skey(KEY), JSON.stringify(S)); }catch(e){} if(typeof G!=="undefined") slotSum(); }
+function persist(){ try{ LS.set(skey(KEY), JSON.stringify(S)); }catch(e){} if(typeof G!=="undefined") slotSum(); cloudDirty(); }
 function slotSum(){ try{ const g = typeof G!=="undefined" ? G : null; const t = g && g.hero ? `${g.hero.nom} · ${g.hero.classe} niv. ${g.niveau}` : (S.name && S.name.trim() ? `${S.name.trim()} (en création)` : "");
   LS.set(skey("brumefer.sum"), t); }catch(e){} }
 
@@ -2553,7 +2556,7 @@ function vSheet(){
   const pr=ch.perso; if(pr.apparence||pr.trait||pr.ideal||pr.lien||pr.defaut) h+=`<div class="blk"><h4>Personnalité</h4><div class="prose">${[["Apparence",pr.apparence],["Trait",pr.trait],["Idéal",pr.ideal],["Lien",pr.lien],["Défaut",pr.defaut]].filter(x=>x[1]).map(x=>`<p><b>${x[0]} :</b> ${esc(x[1])}</p>`).join("")}</div></div>`;
   h+=`</div></div></div>`;
   h+=`<div class="navrow"><button type="button" class="btn ghost" data-act="prev">Modifier</button><div class="top-actions"><button type="button" class="btn" data-act="herodl">Télécharger le héros (.txt)</button><button type="button" class="btn primary" data-act="enter">Entrer à Brumefer</button></div></div>`;
-  h+=`<div class="detail io"><h3>Fichier du héros</h3><p class="lede" style="margin:0">Ton héros est gardé dans ce navigateur. Télécharge-le en fichier .txt pour le garder ailleurs, ou charge un fichier de héros pour le reprendre.</p><div class="top-actions">${fileBtn("hero", "Importer un héros (.txt)")}</div></div>`;
+  h+=`<div class="detail io"><h3>Fichier du héros</h3><p class="lede" style="margin:0">Ton héros est gardé automatiquement, sur cet appareil et en ligne quand la pastille ☁ En ligne s'affiche. Télécharge-le en fichier .txt pour le garder ailleurs, ou charge un fichier de héros pour le reprendre.</p><div class="top-actions">${fileBtn("hero", "Importer un héros (.txt)")}</div></div>`;
   return h;
 }
 
@@ -2776,19 +2779,19 @@ const norm = s => String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/
 const active = e => ["ok","paralyse","etourdi","renverse"].includes(e.etat);
 function foeFix(e){ if(e && e.etat==="renverse"){ e.etat = "ok"; e.aterre = true; } return e; }
 let sumT = 0;
-function gsave(){ try{ ageTick(); }catch(e){} try{ domTick(); }catch(e){} try{ LS.set(skey(GKEY), JSON.stringify(G)); }catch(e){} clearTimeout(sumT); sumT = setTimeout(slotSum, 300); }
+function gsave(){ try{ ageTick(); }catch(e){} try{ domTick(); }catch(e){} try{ LS.set(skey(GKEY), JSON.stringify(G)); }catch(e){} clearTimeout(sumT); sumT = setTimeout(slotSum, 300); cloudDirty(); }
 function slotsView(){ const el = $("slots"); if(!el) return; let o = "";
   for(let n=1;n<=NSLOTS;n++){ let t = ""; try{ t = LS.get(skeyN("brumefer.sum", n)) || ""; }catch(e){}
     if(n===SLOT) t = G && G.hero ? `${G.hero.nom} · ${G.hero.classe} niv. ${G.niveau}` : (S.name && S.name.trim() ? `${S.name.trim()} (en création)` : t);
     o += `<button type="button" class="chip ${n===SLOT?"sel":""}" data-g="slot" data-v="${n}" title="Partie ${n}${n===SLOT?" (affichée)":" : y passer (la partie en cours reste sauvegardée)"}">${t ? esc(t) : `<span style="opacity:.6">Libre</span>`}</button>`; }
   const full = !!(G && G.hero) || !!(S.name && S.name.trim()) || !!S.race || !!S.cls;
   if(full) o += `<button type="button" class="chip slot-del ${slotDelArmed?"sel":""}" data-g="slotdel" title="Effacer la partie ${SLOT} pour y charger une autre sauvegarde (télécharge-la d'abord si tu veux la garder)">${slotDelArmed ? `Confirmer : effacer la partie ${SLOT}` : `🗑️ Vider la partie ${SLOT}`}</button>`;
-  el.innerHTML = o; }
+  el.innerHTML = o + clChip(); }
 var slotDelArmed = false, slotDelT = null;
 function slotClear(){ if(busy || notesBusy || persoBusy){ toastBusy(); return; }
   if(!slotDelArmed){ slotDelArmed = true; slotsView(); clearTimeout(slotDelT); slotDelT = setTimeout(()=>{ slotDelArmed = false; slotsView(); }, 4000); return; }
   slotDelArmed = false; clearTimeout(slotDelT);
-  [KEY, GKEY, "brumefer.sum"].forEach(k=>LS.del(skey(k)));
+  [KEY, GKEY, "brumefer.sum"].forEach(k=>LS.del(skey(k))); cloudFlush();
   S = blank(); G = null; if(window.claude && window.claude.hot && window.claude.hot.data) window.claude.hot.data.S = null;
   uiReset();
   setView("forge"); render(); slotsView(); window.scrollTo({top:0}); toast(`Partie ${SLOT} effacée : charge une sauvegarde ou forge un nouveau héros.`); }
@@ -2802,6 +2805,106 @@ function slotSwitch(n){ n = n>=1 && n<=NSLOTS ? Math.floor(n) : 1; if(n===SLOT) 
   uiReset();
   try{ migrate(); }catch(e){ console.error(e); }
   render(); setView(G ? "jeu" : "forge"); toast(`Partie ${n}${G ? " : "+G.hero.nom : " : forge un nouveau héros"}.`); }
+/* ===================== Sauvegarde en ligne =====================
+   Chaque emplacement est aussi gardé dans l'espace privé du joueur (capacités db et user) :
+   data/users/<id>/s<N> = {v, t, n, z, s, h} (version, date, nombre de morceaux, compression, résumé, empreinte)
+   data/users/<id>/s<N>c<i> = {v, d} (morceaux de 180 000 caractères, sous la limite de 256 Kio par document).
+   Le contenu = {c: création, p: partie, s: résumé}, tel que stocké localement. Sur cet appareil,
+   brumefer.cloud.s<N> = {v, h} retient la version en ligne déjà connue et l'empreinte du contenu à ce moment-là :
+   empreinte locale différente = modifications locales à envoyer ; version en ligne différente = autre appareil. */
+var CL = {db:null, uid:null, on:false, ro:false, st:"", q:Promise.resolve(), t:0, conf:{}, poll:0};
+const CL_CH = 180000;
+function clKey(n){ return "brumefer.cloud.s"+n; }
+function clRec(n){ try{ return JSON.parse(LS.get(clKey(n))||"null"); }catch(e){ return null; } }
+function clRecSet(n, r){ LS.set(clKey(n), JSON.stringify(r)); }
+function clDoc(id){ return CL.db.collection("data/users/"+CL.uid).doc(id); }
+function clPay(n){ const o = {c:LS.get(skeyN(KEY,n)), p:LS.get(skeyN(GKEY,n)), s:LS.get(skeyN("brumefer.sum",n))};
+  return JSON.stringify({c:o.c||null, p:o.p||null, s:o.s||""}); }
+function clEmpty(pay){ const o = JSON.parse(pay); return !o.c && !o.p; }
+function clHash(s){ let h = 2166136261 >>> 0; for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36)+"."+s.length; }
+function clB64(u8){ let s = ""; for(let i=0;i<u8.length;i+=0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i+0x8000)); return btoa(s); }
+function clUnB64(b){ const s = atob(b), u = new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i] = s.charCodeAt(i); return u; }
+async function clPipe(u8, T){ return new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(T)).arrayBuffer()); }
+async function clEnc(str){ let u = new TextEncoder().encode(str), z = 0;
+  if(typeof CompressionStream==="function"){ try{ u = await clPipe(u, new CompressionStream("gzip")); z = 1; }catch(e){ u = new TextEncoder().encode(str); } }
+  return {z, b:clB64(u)}; }
+async function clDec(b, z){ let u = clUnB64(b);
+  if(z){ if(typeof DecompressionStream!=="function") throw new Error("decompression"); u = await clPipe(u, new DecompressionStream("gzip")); }
+  return new TextDecoder().decode(u); }
+function clWhen(t){ try{ return new Date(t).toLocaleString("fr-FR", {weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}); }catch(e){ return ""; } }
+function clStatus(st){ CL.st = st; try{ slotsView(); }catch(e){} }
+function clChip(){ if(!CL || !CL.st) return "";
+  const t = {ok:["☁ En ligne", "Tes parties sont aussi sauvegardées en ligne, sur ton compte Claude : rouvre cette même page sur un autre appareil pour les reprendre."],
+    sync:["☁ Envoi…", "Sauvegarde en ligne en cours."],
+    ro:["☁ Hors ligne", "Ton accès à cette page ne permet pas d'y sauvegarder en ligne : tes parties restent sur cet appareil. Utilise ta propre copie du jeu pour les retrouver partout."],
+    err:["☁ Hors ligne", "La sauvegarde en ligne est momentanément indisponible : tes parties restent sur cet appareil et partiront en ligne dès que possible."]}[CL.st];
+  return t ? `<span class="chip cloud-st cloud-${CL.st}" title="${esc(t[1])}">${t[0]}</span>` : ""; }
+/* File d'attente : une opération en ligne à la fois */
+function clRun(fn){ const p = CL.q.then(()=>CL.on ? fn() : null).catch(e=>{ clFail(e); }); CL.q = p; return p; }
+function clFail(e){ const c = e && e.code; CL.err = String((e && (e.message || e.code)) || e); console.warn("sauvegarde en ligne", c || e);
+  if(c==="invalid_argument"){ CL.ro = true; clStatus("ro"); }
+  else if(c==="revoked" || c==="not_granted" || c==="capability_disabled" || c==="capability_removed"){ CL.on = false; clStatus(""); }
+  else clStatus("err"); }
+async function clMeta(n){ const d = await clDoc("s"+n).get(); return d.exists ? d.data() : null; }
+async function clPush(n, force){ if(CL.ro || CL.conf[n]) return;
+  const pay = clPay(n), h = clHash(pay), rec = clRec(n);
+  if(rec && rec.h===h && !force) return;
+  const m = await clMeta(n);
+  if(m && (!rec || m.v!==rec.v) && !force){ if(m.h===h){ clRecSet(n, {v:m.v, h}); return; } return clConflict(n, m); }
+  if(!m && clEmpty(pay)){ clRecSet(n, {v:"", h}); return; }
+  clStatus("sync");
+  const e = await clEnc(pay), parts = [], v = Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  for(let i=0;i<e.b.length;i+=CL_CH) parts.push(e.b.slice(i, i+CL_CH));
+  if(!parts.length) parts.push("");
+  for(let i=0;i<parts.length;i++) await clDoc("s"+n+"c"+i).set({v, d:parts[i]});
+  await clDoc("s"+n).set({v, t:Date.now(), n:parts.length, z:e.z, s:JSON.parse(pay).s||"", h});
+  for(let i=parts.length;i<((m&&m.n)||0);i++){ try{ await clDoc("s"+n+"c"+i).delete(); }catch(err){} }
+  clRecSet(n, {v, h}); clStatus("ok"); }
+async function clPull(n){ if(CL.conf[n]) return;
+  const m = await clMeta(n), rec = clRec(n);
+  if(!m || (rec && rec.v===m.v)) return clPush(n);
+  const h = clHash(clPay(n));
+  if(h===m.h){ clRecSet(n, {v:m.v, h}); return; }
+  const local = rec ? h!==rec.h : !clEmpty(clPay(n));
+  if(local) return clConflict(n, m);
+  return clApply(n, m); }
+async function clApply(n, m){
+  if(n===SLOT && (busy || notesBusy || persoBusy)) return;   /* le MJ répond : nouvel essai à la prochaine vérification */
+  let b = ""; for(let i=0;i<m.n;i++){ const d = await clDoc("s"+n+"c"+i).get(), x = d.exists ? d.data() : null;
+    if(!x || x.v!==m.v) return; b += x.d; }   /* envoi en cours ailleurs : on réessaiera */
+  const o = JSON.parse(await clDec(b, m.z));
+  [[KEY,o.c],[GKEY,o.p],["brumefer.sum",o.s]].forEach(([k,v])=>{ if(v) LS.set(skeyN(k,n), v); else LS.del(skeyN(k,n)); });
+  clRecSet(n, {v:m.v, h:clHash(clPay(n))});
+  if(n===SLOT){ S = blank(); try{ if(o.c) S = Object.assign(blank(), JSON.parse(o.c)); }catch(e){}
+    G = null; try{ if(o.p) G = JSON.parse(o.p); }catch(e){}
+    if(window.claude && window.claude.hot && window.claude.hot.data){ window.claude.hot.data.S = null; window.claude.hot.data.G = null; }
+    uiReset(); try{ migrate(); }catch(e){ console.error(e); }
+    render(); setView(G ? "jeu" : "forge");
+    toast(G && G.hero ? `Partie ${n} reprise là où tu l'as laissée sur ton autre appareil.` : `Partie ${n} mise à jour depuis ton autre appareil.`); }
+  clStatus("ok"); }
+/* Conflit : la partie a changé ici et sur un autre appareil depuis la dernière synchronisation */
+function clConflict(n, m){ CL.conf[n] = m; clConfShow(); }
+function clConfShow(){ let el = document.getElementById("cloud-conf"); const n = +Object.keys(CL.conf)[0];
+  if(!n){ if(el) el.remove(); return; }
+  const m = CL.conf[n], here = LS.get(skeyN("brumefer.sum",n)) || (n===SLOT && G && G.hero ? G.hero.nom : "partie de cet appareil");
+  if(!el){ el = document.createElement("div"); el.id = "cloud-conf"; el.className = "cloud-conf"; el.setAttribute("role","alertdialog"); document.body.appendChild(el); }
+  el.innerHTML = `<p><b>Partie ${n} : deux versions différentes.</b> Elle a avancé sur cet appareil et sur un autre depuis la dernière synchronisation. Laquelle veux-tu garder ? L'autre sera remplacée.</p>
+    <div class="cloud-btns"><button type="button" class="btn" data-cl="here">Celle de cet appareil<br><small>${esc(here)}</small></button>
+    <button type="button" class="btn primary" data-cl="cloud">Celle en ligne<br><small>${esc(m.s||"partie vide")} · ${esc(clWhen(m.t))}</small></button></div>`;
+  el.onclick = ev=>{ const b = ev.target.closest("[data-cl]"); if(!b) return; const k = b.dataset.cl; delete CL.conf[n]; clConfShow();
+    clRun(()=> k==="here" ? clPush(n, true) : clApply(n, m)); }; }
+/* Déclencheurs */
+function cloudDirty(){ if(!CL || !CL.on) return; clearTimeout(CL.t); CL.t = setTimeout(()=>clRun(()=>clPush(SLOT)), 6000); }
+function cloudFlush(){ if(!CL || !CL.on) return; clearTimeout(CL.t); clRun(()=>clPush(SLOT)); }
+function cloudPullAll(){ if(!CL || !CL.on) return; for(let n=1;n<=NSLOTS;n++) clRun(()=>clPull(n)); }
+function cloudInit(db, uid){ if(!db || !uid) return; CL.db = db; CL.uid = uid; CL.on = true; CL.ro = false; clStatus("ok"); cloudPullAll();
+  clearInterval(CL.poll); CL.poll = setInterval(()=>{ if(document.visibilityState!=="hidden") clRun(()=>clPull(SLOT)); }, 60000); }
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden") cloudFlush(); else cloudPullAll(); });
+window.addEventListener("pagehide", cloudFlush);
+(async()=>{ try{ if(!(window.claude && typeof window.claude.use==="function")) return;
+  const [db, u] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+  const uid = u && typeof u.id==="function" ? await u.id() : null;
+  cloudInit(db, uid); }catch(e){ console.warn("sauvegarde en ligne indisponible", e); } })();
 function toastBusy(){ toast("Attends que le maître du jeu ait fini de répondre."); }
 const NO_MJ = "Le maître du jeu n'est pas disponible : ouvre cette page sur claude.ai, connecté à ton compte.";
 function getSample(){ return window.__mockSample || SAMPLE; }

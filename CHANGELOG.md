@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.88.0 — 2026-11-24
+- Nouveauté : sauvegarde en ligne, pour reprendre ta partie sur un autre appareil (ordinateur, iPhone, iPad, Android).
+
 ## 0.87.0 — 2026-11-24
 - Améliorations : journal des versions, sauvegardes.
 
