@@ -1,4 +1,4 @@
-# Contributing to La Malédiction de Brumefer
+# Contributing to Ironhaze's curse
 
 Thank you for wanting to help! Proposals are welcome: rule fixes, bugs, interface, accessibility, maps, adventure ideas.
 

@@ -1,6 +1,9 @@
-# Journal des versions — La Malédiction de Brumefer
+# Journal des versions — Ironhaze's curse
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
+
+## 0.91.1 — 2026-11-24
+- Améliorations : le jeu s'appelle désormais « Ironhaze's curse ».
 
 ## 0.91.0 — 2026-11-24
 - Améliorations : cohérence de l'intrigue de la première partie.
