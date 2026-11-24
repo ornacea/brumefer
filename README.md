@@ -32,14 +32,13 @@ Une longue campagne mène le héros du niveau 1 au niveau 40. Le joueur reste li
   - les domaines et leurs rentes hebdomadaires ;
   - les titres.
 - **Mémoires du héros** : un chapitre par jour de jeu, exportable en document Word.
-- **Voix** : lecture du récit par la voix du navigateur ou par VoiceStudio en local, avec une voix par personnage.
 - **Sauvegardes** : plusieurs emplacements, sauvegarde en ligne sur ton compte Claude pour reprendre ta partie sur un autre appareil (ordinateur, iPhone, iPad, Android), export et import en fichier `.txt`.
 
 ## Jouer
 
 Le jeu est fait pour tourner comme **artefact Claude** sur claude.ai : le meneur de jeu passe par la capacité `sample` de l'artefact. Ouvert directement dans un navigateur, le fichier permet de créer un héros et de consulter une partie, mais le meneur de jeu ne répond pas.
 
-Chaque joueur publie **sa propre copie** du jeu, sous son propre compte Claude : aucun lien de partie n'est diffusé. Le guide [INSTALLATION.md](INSTALLATION.md) détaille toutes les étapes : publication de sa copie, voix du navigateur, voix VoiceStudio, outils de développement.
+Chaque joueur publie **sa propre copie** du jeu, sous son propre compte Claude : aucun lien de partie n'est diffusé. Le guide [INSTALLATION.md](INSTALLATION.md) détaille toutes les étapes : publication de sa copie, reprise sur un autre appareil, outils de développement.
 
 Pour reprendre une partie exportée : **Sauvegarde → Charger un fichier .txt**. Les parties exportées (`brumefer-<héros>-niv<N>-<date>.txt`) restent sur le disque et ne sont pas envoyées sur GitHub.
 

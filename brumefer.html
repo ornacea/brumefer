@@ -222,7 +222,6 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .hud{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;padding-block:14px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .hud .who h2{font-size:1.5rem}
 .hud .who p{margin:0;color:var(--muted);font-size:.9rem}
-.vx-sel{font:inherit;font-size:.78rem;padding:2px 4px;max-width:100%;background:var(--panel,transparent);color:inherit;border:1px solid var(--line);border-radius:6px}
 .hpbar{min-width:180px;flex:1 1 180px;max-width:320px}
 .hpbar .lbl{display:flex;justify-content:space-between;font-size:.82rem;font-variant-numeric:tabular-nums}
 .hpbar .bar{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden;border:1px solid var(--line)}
@@ -484,18 +483,17 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .lu .mini-ab .pb{display:flex;gap:4px;margin-top:4px}
 .lu .mini-ab .pb button{width:24px;height:24px}
 @media (prefers-reduced-motion: reduce){.spin{animation:none}.hpbar .bar i{transition:none}}
-.vx-b{float:right;border:0;background:transparent;cursor:pointer;font-size:.95rem;opacity:.55;padding:0 0 0 6px}.vx-b:hover,.vx-b.on{opacity:1}.vx-b.on{animation:vxp 1s infinite alternate}@keyframes vxp{to{opacity:.4}}
 </style>
 
 <div class="wrap">
   <header class="top">
     <div class="brand">
       <h1>La Malédiction de <span>Brumefer</span></h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.88.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.89.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
-      <span class="chips" role="tablist"><button type="button" class="chip" id="nav-forge" data-g="view" data-v="forge">Forge du héros</button><button type="button" class="chip" id="nav-game" data-g="view" data-v="jeu" hidden>Partie</button><button type="button" class="chip gear" id="nav-mem" data-g="memopen" hidden title="Journal : les mémoires du héros" aria-label="Journal : les mémoires du héros" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7.5h7M9 11h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><button type="button" class="chip gear" id="nav-set" data-g="setopen" hidden title="Paramètres" aria-label="Paramètres" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button><button type="button" class="chip gear" id="nav-vx" data-g="vxquick" hidden title="Lire le récit à voix haute" aria-label="Lire le récit à voix haute" aria-pressed="false"></button><button type="button" class="chip gear" id="nav-sav" data-g="savopen" hidden title="Sauvegarde" aria-label="Sauvegarde" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 1-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 3v5h7V3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="7.5" y="13" width="9" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button></span>
+      <span class="chips" role="tablist"><button type="button" class="chip" id="nav-forge" data-g="view" data-v="forge">Forge du héros</button><button type="button" class="chip" id="nav-game" data-g="view" data-v="jeu" hidden>Partie</button><button type="button" class="chip gear" id="nav-mem" data-g="memopen" hidden title="Journal : les mémoires du héros" aria-label="Journal : les mémoires du héros" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7.5h7M9 11h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><button type="button" class="chip gear" id="nav-set" data-g="setopen" hidden title="Paramètres" aria-label="Paramètres" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button><button type="button" class="chip gear" id="nav-sav" data-g="savopen" hidden title="Sauvegarde" aria-label="Sauvegarde" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 1-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 3v5h7V3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="7.5" y="13" width="9" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button></span>
       <span class="top-actions" id="forge-actions"><button class="btn" data-act="random" type="button">Héros tiré au sort</button>
       <button class="btn ghost" data-act="reset-ask" type="button">Recommencer</button></span>
     </div>
@@ -907,7 +905,8 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
-{"v":"0.88.0","d":"2026-11-24","items":["Nouveauté : sauvegarde en ligne, pour reprendre ta partie sur un autre appareil (ordinateur, iPhone, iPad, Android)."]},
+{"v":"0.89.0","d":"2026-11-24","items":["Améliorations : réglages ; la lecture à voix haute est retirée."]},
+{"v":"0.88.0","d":"2026-11-24","items":["Améliorations : sauvegarde en ligne, pour reprendre sa partie sur un autre appareil."]},
 {"v":"0.87.0","d":"2026-11-24","items":["Améliorations : journal des versions, sauvegardes."]},
 {"v":"0.86.4","d":"2026-11-24","items":["Améliorations : inventaire et équipement, campagne."]},
 {"v":"0.86.3","d":"2026-11-24","items":["Corrections et améliorations : création du héros, meneur de jeu, inventaire et équipement, carnet."]},
@@ -3905,7 +3904,7 @@ function applyNotes(m, keep){ const N = notesG(); if(!keep) N.neuf = [];
       if(!mr && p.vrai){ try{ const x = prisFind(p.vrai); if(x && x.b && x.e==="pris" && nk(x.b)===nk(String(p.nom).replace(/\s*\([^)]*\)/g, ""))){ if(N.pnj[nk(p.nom)]) delete N.pnj[nk(p.nom)]; p.nom = x.nom; prisSet(x, "sauve", "rendu à son nom"); } }catch(e){} delete p.vrai; }
       if(mr && p.vrai){ if(pnjReg(p.vrai)===mr){ N.ident = N.ident || {}; if(!N.ident[nk(mr[0])]){ N.ident[nk(mr[0])] = String(p.nom).slice(0,60); idn++; prisSet(mr[0], "sauve", "rendu à son nom"); } } delete p.vrai; }
       const rg = pnjReg(p.nom) || (mr && pnjIdent(mr) ? mr : null); if(rg) p.nom = rg[0]; const k = nk(p.nom); if(!k) return; const o = N.pnj[k] || {nom:String(p.nom).slice(0,60), t:Date.now()};
-      if(p.info){ const ni = String(p.info).slice(0,200), rr = pnjReg(o.nom); if(!(pnjCreux(ni) && o.info && !pnjCreux(o.info))) o.info = pnjCreux(ni) && rr ? (rr[2] + " ; " + ni).slice(0,200) : ni; } if(p.voix) o.voix = String(p.voix).slice(0,120); if(p.relation) o.rel = String(p.relation).slice(0,30); if(p.statut) o.statut = String(p.statut).slice(0,80); o.lieu = o.lieu || G.lieu; N.pnj[k] = o; markNew(N, "p:"+k);
+      if(p.info){ const ni = String(p.info).slice(0,200), rr = pnjReg(o.nom); if(!(pnjCreux(ni) && o.info && !pnjCreux(o.info))) o.info = pnjCreux(ni) && rr ? (rr[2] + " ; " + ni).slice(0,200) : ni; } if(p.relation) o.rel = String(p.relation).slice(0,30); if(p.statut) o.statut = String(p.statut).slice(0,80); o.lieu = o.lieu || G.lieu; N.pnj[k] = o; markNew(N, "p:"+k);
       try{ const ti = norm([p.info, p.statut].join(" ")); if(/\bintendant/.test(ti)){ const D = doms(), d = D.find(x=>ti.includes(norm(x.nom))) || (D.length===1 && /intendant (du|de|des) (domaine|fours?|atelier|bail)/.test(ti) ? D[0] : null); if(d && !/(ancien|ex-|futur|propose|candidat)\w* intendant/.test(ti)) domIntendant(d, o.nom); } }catch(e){} }); if(idn) pnjSync();
     (asArr(n.lieux)).slice(0,12).forEach(l=>{ if(!l||!l.nom) return; const rs = atlRes(l.nom), r0 = rs.find(r=>r.t==="l"||r.t==="x"), cn = r0 ? (atlIdx().L[r0.k]||atlExt(r0.k)||{}).nom : null;
       rs.forEach(r=>atlApply(r, "rumeur")); const k = nk(cn || l.nom); if(!k) return; const o = N.lieux[k] || {nom:String(cn || l.nom).slice(0,60), t:Date.now()};
@@ -3922,7 +3921,7 @@ function applyNotes(m, keep){ const N = notesG(); if(!keep) N.neuf = [];
   atlSync(); }
 let notesBusy = false;
 let notesDraft = "", corrCat = "Tout le carnet";
-const NCORR = ["Tout le carnet","Personnages","Voix des personnages","Intrigue et objectifs","Lieux","Cartes","Faits établis","Divers"];
+const NCORR = ["Tout le carnet","Personnages","Intrigue et objectifs","Lieux","Cartes","Faits établis","Divers"];
 /* ===== OBJECTIFS : seuls les buts encore actifs de la campagne ===== */
 const OBJ_NOTVERB = /^(notre|votre|leur|autre|entre|contre|centre|libre|pierre|terre|lettre|maitre|maître|prêtre|pretre|ombre|chambre|sombre|noire?|premier|dernier|entier|guerrier|chevalier|forgeron|mineur)$/i;
 function objSplit(t){ t = String(t||"").trim().replace(/\s+/g," ").replace(/[.;]+$/,""); const out = []; let cur = "";
@@ -4069,10 +4068,10 @@ function lakeStatic(){ const L = G.niveau||1; if(lakeStatic._L===L) return lakeS
   BESTIAIRE.split(/\n/)[1].split(/\s*;\s*/).forEach(x=>{ if(x.trim()) R.push({ty:"monstre", txt:"MONSTRE "+x.trim().replace(/\.$/,"")}); });
   return lakeStatic._c = R; }
 const LK_MEM = new Set(["pnj","lieu","fait","objectif","evenement","note","domaine"]);
-function lakeDocs(){ if(lakeDocs._c && lakeDocs._g===G && Date.now()-lakeDocs._t < 300) return lakeDocs._c; const N = notesG(), L = lakeG(), D = [], vx = vxG().on, h = G.hero || {};
+function lakeDocs(){ if(lakeDocs._c && lakeDocs._g===G && Date.now()-lakeDocs._t < 300) return lakeDocs._c; const N = notesG(), L = lakeG(), D = [], h = G.hero || {};
   const pos = {}; Object.values(N.cartes).forEach(mp=>Object.values(mp.lieux).forEach(l=>{ const k = nk(l.nom), p = `carte ${mp.nom}, ${l.etat}`; pos[k] = pos[k] ? pos[k]+" ; "+p : p; }));
   const pv = new Set(); Object.values(N.pnj).forEach(p=>{ const rg = pnjReg(p.nom); if(rg) pv.add(rg);
-    D.push({ty:"pnj", txt:`PNJ ${p.nom} — ${[p.info, p.rel&&"relation : "+p.rel, p.statut&&"statut : "+p.statut, p.lieu&&"vu à "+p.lieu, vx&&p.voix&&"voix : "+p.voix, rg&&"registre : "+pnjTxt(rg), rg&&pnjMasks(rg).length&&"nom de Brume : "+pnjMasks(rg).join(" / ")+(pnjIdent(rg)?" (rapprochement fait par le héros)":" (le héros n'a pas fait le rapprochement)"),
+    D.push({ty:"pnj", txt:`PNJ ${p.nom} — ${[p.info, p.rel&&"relation : "+p.rel, p.statut&&"statut : "+p.statut, p.lieu&&"vu à "+p.lieu, rg&&"registre : "+pnjTxt(rg), rg&&pnjMasks(rg).length&&"nom de Brume : "+pnjMasks(rg).join(" / ")+(pnjIdent(rg)?" (rapprochement fait par le héros)":" (le héros n'a pas fait le rapprochement)"),
       !rg&&pnjMask(p.nom)&&!pnjIdent(pnjMask(p.nom))&&"NOM DE BRUME ; vrai nom secret : "+pnjMask(p.nom)[0]+" — "+pnjTxt(pnjMask(p.nom))].filter(Boolean).join(" ; ")}`}); });
   PNJR.forEach(r=>{ if(!pv.has(r)) D.push({ty:"pnj", txt:`PNJ ${r[0]} (registre ; pas encore rencontré par le héros) — ${pnjTxt(r)}${pnjMasks(r).length ? " ; nom de Brume : " + pnjMasks(r).join(" / ") : ""}`}); });
   const seen = new Set(); Object.values(N.lieux).forEach(l=>{ const k = nk(l.nom); seen.add(k); D.push({ty:"lieu", txt:`LIEU ${l.nom}${l.info?" — "+l.info:""}${pos[k]?" ("+pos[k]+")":l.carte?" (carte "+l.carte+")":""}`}); });
@@ -4160,8 +4159,7 @@ LIEU ACTUEL : ${G.lieu}
 MÉMOIRE DU MJ : ${G.memoire||"(vide)"}
 CARNET ACTUEL : ${notesBrief()}
 ATLAS (géographie fixe ; noms exacts des lieux) : ${atlNames(3000)}
-REGISTRE DES PNJ (noms complets exacts ; un PNJ du carnet qui en fait partie prend ce nom) : ${PNJR.map(r=>r[0]).join(", ")}. Un PNJ connu sous un nom de Brume (cultiste, clochette, silhouette sans nom…) garde ce nom dans le carnet : ne lui donne jamais un nom du registre que le héros ignore. "info" dit ce que le héros sait de lui (métier, liens, faits marquants, en 200 caractères) : jamais une simple relation comme « Allié de Vornadar » ; garde l'info existante si tu n'as rien de plus précis${info ? `
-VOIX ACTUELLES DES PNJ : ${Object.values((G.notes||{}).pnj||{}).filter(p=>p.voix).map(p=>p.nom+" : "+p.voix).join(" ; ").slice(0,1200) || "(aucune)"}` : ""}
+REGISTRE DES PNJ (noms complets exacts ; un PNJ du carnet qui en fait partie prend ce nom) : ${PNJR.map(r=>r[0]).join(", ")}. Un PNJ connu sous un nom de Brume (cultiste, clochette, silhouette sans nom…) garde ce nom dans le carnet : ne lui donne jamais un nom du registre que le héros ignore. "info" dit ce que le héros sait de lui (métier, liens, faits marquants, en 200 caractères) : jamais une simple relation comme « Allié de Vornadar » ; garde l'info existante si tu n'as rien de plus précis${info ? `` : ""}
 FAITS ÉTABLIS : ${(G.faits||[]).join(" | ")||"(aucun)"}
 OBJECTIFS ACTIFS :
 ${objBrief()}
@@ -4172,7 +4170,7 @@ INFORMATIONS DU JOUEUR À INTÉGRER EN PRIORITÉ (elles font foi, même si elles
 """${info}"""
 `:""}
 Réponds UNIQUEMENT avec un objet JSON :
-{"notes":{"pnj":[{"nom":"…","info":"qui il est, en quelques mots","relation":"allié|ami|neutre|méfiant|hostile|ennemi|famille|amour|rival|employeur|créancier|débiteur","statut":"où il est, dans quel état","voix":"genre, âge, timbre (et spectrale ou gutturale si besoin), seulement si connue ou corrigée"}],"lieux":[{"nom":"…","info":"…"}]},
+{"notes":{"pnj":[{"nom":"…","info":"qui il est, en quelques mots","relation":"allié|ami|neutre|méfiant|hostile|ennemi|famille|amour|rival|employeur|créancier|débiteur","statut":"où il est, dans quel état"}],"lieux":[{"nom":"…","info":"…"}]},
 "decouvre":[{"nom":"nom exact d'un lieu de l'ATLAS","etat":"visite|connu|rumeur"}],
 "faits":{"ajouter":["fait durable de l'intrigue"],"retirer":["fait exact devenu faux"]},
 "objectifs":[{"titre":"objectif ou sous-objectif ENCORE ACTIF","parent":"titre de l'objectif parent ou null"}],${info?`
@@ -4591,7 +4589,7 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   h += `</details>`;
   SEC.map = h; h = h0; }
   SEC.lieux = `<details class="nsec" open><summary>Lieux <small>${Lx.length}</small></summary>${Lx.length?Lx.map(([k,l])=>`<div class="nent"><button type="button" class="ndel" data-g="ndel" data-v="l:${esc(k)}" title="Retirer ${esc(l.nom)} du carnet et des cartes" aria-label="Retirer ${esc(l.nom)}">×</button><b>${esc(l.nom)}</b>${l.etat?` <small class="ltag">${ATL_LBL[l.etat]}</small>`:""}${isNew("l:"+k)||(l.nw&&isNew(l.nw))?` <span class="badge-new">nouveau</span>`:""}${l.info||l.carte?`<small>${esc(l.info||"")}${l.carte?`${l.info?" · ":""}carte : ${esc(l.carte)}`:""}</small>`:""}</div>`).join(""):`<p class="lede">Aucun lieu noté.</p>`}</details>`;
-  SEC.corr = `<details class="nsec ncorr" open><summary>Corriger le carnet</summary><p class="lede">Une consigne de correction : le carnet est réécrit en la suivant.</p><div class="ninfo ncorr-f"><select id="n-corr-cat" aria-label="Catégorie à corriger">${NCORR.map(c=>`<option ${c===corrCat?"selected":""}>${c}</option>`).join("")}</select><textarea id="notes-info" rows="2" maxlength="1500" placeholder="Ex. : Corvin a une voix spectrale ; Hob est un nain, pas un halfelin ; la tour est au nord du village…">${esc(notesDraft)}</textarea><button type="button" class="btn sm" data-g="notesinfo" ${notesBusy||busy?"disabled":""}>Corriger</button></div></details>`;
+  SEC.corr = `<details class="nsec ncorr" open><summary>Corriger le carnet</summary><p class="lede">Une consigne de correction : le carnet est réécrit en la suivant.</p><div class="ninfo ncorr-f"><select id="n-corr-cat" aria-label="Catégorie à corriger">${NCORR.map(c=>`<option ${c===corrCat?"selected":""}>${c}</option>`).join("")}</select><textarea id="notes-info" rows="2" maxlength="1500" placeholder="Ex. : Hob est un nain, pas un halfelin ; la tour est au nord du village…">${esc(notesDraft)}</textarea><button type="button" class="btn sm" data-g="notesinfo" ${notesBusy||busy?"disabled":""}>Corriger</button></div></details>`;
   { let pv = ""; try{ pv = G.pris ? prisView() : ""; }catch(e){}
     SEC.pris = pv ? `<details class="nsec" open><summary>Pris de la Brume${prisClos() ? "" : ` <small>${prisCount().zz} sous son emprise</small>`}</summary>${pv.replace(/^<h4>Pris de la Brume<\/h4>/, "")}</details>` : ""; }
   /* Ordre du carnet : Divers, Cartes, Intrigue, Pris de la Brume, Personnages, Lieux, Corriger le carnet (l'alignement est sur la fiche du héros) */
@@ -4970,7 +4968,6 @@ ${partNote().trim()}
 ${genreRule()}
 ${ageRule()}
 ${audRule()}
-${vxRule()}
 ${alignRule()}
 LIEU : ${G.lieu}
 TEMPS (heure tenue par la page) : ${G.temps ? tempsTxt() : "à fixer (début de l'aventure, en fin d'après-midi, en automne)"}
@@ -5006,180 +5003,14 @@ function visibleNarr(t){
   const o = noSpk(v).trim(); RAWN.set(o, v.trim()); if(RAWN.size > 30) RAWN.delete(RAWN.keys().next().value); return o; }
 /* Balises de locuteur [[Nom]] héritées de la lecture vocale (0.24) : retirées pour une narration classique */
 function noSpk(t){ return String(t||"").replace(/\[\[[^\[\]]{0,40}\]\]\s*/g,"").replace(/\[\[[^\]]*$/,""); }
-/* ===== Voix : narrateur, héros et PNJ, chacun avec une voix tirée de sa description ===== */
-const VS_SRV = "host:voicestudio";
-const VX_NAV_F = /denise|julie|hortense|eloise|vivienne|brigitte|celeste|coralie|jacqueline|josephine|yvette|amelie|audrey|aurelie|marie|chantal|sylvie|caroline|ariane|florence|female|femme/i;
-const VX_NAV_M = /henri|paul|claude|alain|jerome|maurice|remy|yves|antoine|jean|thierry|fabrice|guillaume|nicolas|mathieu|gerard|male|homme/i;
-function vxG(){ if(!G) return {}; if(!G.voix || typeof G.voix!=="object") G.voix = {on:false, auto:true, narr:"f", eng:"auto"}; return G.voix; }
-function vxHash(t){ let h = 7; for(const c of String(t)) h = (h*31 + c.charCodeAt(0)) >>> 0; return h; }
-function vxRace(t){ const x = norm(t);
-  if(/\b(nain|naine|demi-orc|orque?s?|ogre|troll|geante?|goliath|drakeide|minotaure|ours|golem)\b/.test(x)) return -1;
-  if(/\b(gnome|halfelin|lutin|fee|farfadet|kobold|gobelin|pixie|esprit follet)\b/.test(x)) return 1; return 0; }
-function vxRaceId(id){ return /nain|orc|drakeide|goliath/.test(id||"") ? -1 : /gnome|halfelin/.test(id||"") ? 1 : 0; }
-/* Lit une description libre (« femme âgée, voix grave et rauque ») : genre, âge, hauteur, chuchotement, débit */
-const VX_GF = /\b(femme|feminin|fille|dame|soeur|mere|reine|veuve|matrone|vieille|gamine|petite|elle|grand-mere|aieule|sorciere|pretresse|servante|princesse|duchesse|comtesse|baronne|naine|elfe femme|aubergiste femme|patronne|marchande|guerriere|voleuse|chasseresse|meuniere|fermiere|tavern\w*iere)\b/;
-const VX_GSUF = /\w(euse|esse|iere|trice|ienne)$/;
-const VX_GM = /\b(homme|masculin|garcon|gars|pere|frere|roi|vieillard|vieux|il|grand-pere|sorcier|pretre|prince|duc|comte|baron|seigneur|messire|maitre|nain|fils)\b/;
-function vxAge(x){ return /\b(enfant|gamin|gamine|fillette|petit garcon|petite fille|bambin|marmot)\b/.test(x) ? -1 : /\b(ado|adolescent|adolescente|jouvenceau|jouvencelle|apprenti|apprentie)\b/.test(x) ? 0
-    : /\b(vieillard|centenaire|tres (vieux|vieille|age|agee))\b/.test(x) ? 4 : /\b(vieux|vieil|vieille|age|agee|ancien|ancienne|grisonnant|grisonnante|ride|ridee|aieul|aieule|grand-pere|grand-mere|chenu)\b/.test(x) ? 3
-    : /\b(jeune)\b/.test(x) ? 1 : /\b(adulte|mur|mure|quarantaine|cinquantaine|trentaine)\b/.test(x) ? 2 : null; }
-function vxPitch(x){ return /\btres grave|caverneu|abyssal/.test(x) ? -2 : /\b(grave|profonde?|basse|grondante?|sourde?|rocailleu\w*)\b/.test(x) ? -1 : /\btres aigu|suraigu|criard/.test(x) ? 2 : /\b(aigue?|fluette?|haut perchee?|perchee?|claire|chantante?|flutee?)\b/.test(x) ? 1 : null; }
-/* La "voix" donnée par le MJ fait foi ; à défaut, sa description et son nom */
-function vxParse(desc, nom, ctx){ const fx = t=>norm(t||"").replace(/d'\s*age mur\w*|age mur\w*|d'\s*age moyen/g,"mur"), x = fx(desc), c = fx(ctx), n = norm(nom||""), h = vxHash(nom||desc||"?");
-  const gOf = t=> VX_GF.test(t) ? "f" : VX_GM.test(t) ? "m" : null;
-  const g = gOf(x) || gOf(n) || (VX_GSUF.test(n.split(" ").pop()) ? "f" : null) || gOf(c) || (h%2 ? "f" : "m");
-  const a0 = vxAge(x), a = a0!=null ? a0 : (vxAge(c)!=null ? vxAge(c) : 2);
-  const p0 = vxPitch(x), p = Math.max(-2, Math.min(2, (p0!=null ? p0 : (vxPitch(c)||0)) + vxRace(x+" "+c)));
-  const w = /chuchot|murmur|souffl|feutr/.test(x);
-  let sp = /\b(lente?|trainante?|posee?|solennel\w*)\b/.test(x+" "+c) ? .9 : /\b(rapide|vive?|nerveu\w*|volubile|precipit\w*|bavard\w*)\b/.test(x+" "+c) ? 1.1 : 1;
-  sp *= a>=3 ? .94 : a<0 ? 1.04 : 1; sp *= .96 + (h%9)/100;
-  const fxs = /spectr|fantom|mort.?vivant|squelet|goule|revenan|revenue|ame.en.peine|liche|zombi|outre.?tombe|sepulcr|necrophage|ombre d.un|veilleur|cultiste/,
-        fxg = /guttural|caverneu|grondant|rocailleu|mineur|orque|\bogre|troll|\bgeant|\bnaine?\b|worg/;
-  const vfx = /\b(normale|naturelle|humaine)\b/.test(x) ? "" : fxs.test(x) ? "spec" : fxg.test(x) ? "gut" : fxs.test(n) || fxs.test(c) ? "spec" : fxg.test(n) || /^\W*(un |une )?(ancien |vieux |jeune )?mineu/.test(c) || /\b(orque|ogre|troll|geant|nain|naine)\b/.test(c.slice(0,60)) ? "gut" : "";
-  return {g, a, p, w, sp: Math.round(sp*100)/100, fx:vfx}; }
-function vkDesc(k){ return [k.g==="f" ? "female" : "male", ["child","teenager","young adult","middle-aged","elderly","elderly"][k.a+1], ["very low pitch","low pitch","moderate pitch","high pitch","very high pitch"][k.p+2]].concat(k.w ? ["whisper"] : []).join(", "); }
-function vxNarr(){ const f = vxG().narr !== "m"; return f ? {g:"f", a:2, p:0, w:false, sp:.97} : {g:"m", a:2, p:-2, w:false, sp:1, nar:1}; }
-function vxHero(){ const h = G.hero || {}, ge = heroGenre(), I = ageInfo(G.race, heroAge());
-  const g = ge==="Féminin" ? "f" : ge==="Masculin" ? "m" : (vxHash(h.nom)%2 ? "f" : "m");
-  const a = I ? (I.enfant ? 0 : I.st===0 ? 0 : I.st===1 ? 1 : I.st===2 ? 2 : I.st===3 ? 3 : 4) : 1;
-  const sp = Math.round((a>=3 ? .94 : 1) * (.97 + (vxHash(h.nom)%7)/100) * 100)/100;
-  return {g, a, p: vxRaceId(G.race), w:false, sp}; }
-function vxIsHero(who){ const h = nk(G.hero && G.hero.nom), w = nk(who); return !!w && (w===h || /^(heros|heroine|moi|toi)$/.test(w) || (h && w.split(" ")[0]===h.split(" ")[0])); }
-function vxNpc(who){ const N = G.notes || {}, P = N.pnj || {}, rg = pnjReg(who), k = nk(rg ? rg[0] : who); let p = P[k];
-  if(!p && k) p = Object.values(P).find(o=>{ const n = nk(o.nom); return n && (n.split(" ")[0]===k.split(" ")[0] || n.includes(k) || k.includes(n)); });
-  return Object.assign(vxParse(p && p.voix, (p && p.nom) || who, p && p.info), {pn: (p && p.nom) || (rg ? rg[0] : who)}); }
-function vxVoice(who){ return who==null ? vxNarr() : vxIsHero(who) ? vxHero() : vxNpc(who); }
-/* Découpe la narration brute : texte du narrateur, et chaque réplique « … » attribuée au locuteur de la balise [[Nom]] qui la précède */
-function vxSegs(raw){ const s = String(raw||"").replace(/\*{1,2}([^*]+)\*{1,2}/g,"$1").replace(/[_#>]/g,""), out = [];
-  const put = (who, t)=>{ t = t.replace(/\s+/g," ").trim(); if(!/[\p{L}\d]/u.test(t)) return;
-    if(who==null){ const ph = t.match(/[^.!?…]+[.!?…]*["»”]?\s*/g) || [t]; let cur = "";
-      ph.forEach(x=>{ if((cur+x).length > 300 && cur){ out.push({who:null, t:cur.trim()}); cur = ""; } cur += x; }); if(cur.trim()) out.push({who:null, t:cur.trim()}); }
-    else out.push({who, t}); };
-  const Q = /«([^»]{1,1500})»|“([^”]{1,1500})”|"([^"]{1,1500})"/g;
-  const narrPart = (t, who)=>{ let last = 0, m, first = true; Q.lastIndex = 0;
-    while((m = Q.exec(t))){ put(null, t.slice(last, m.index)); put(first && who ? who : "?", m[1]||m[2]||m[3]); first = false; last = Q.lastIndex; }
-    put(null, t.slice(last)); };
-  const T = /\[\[([^\[\]]{1,40})\]\]/g; let last = 0, m, who = null;
-  while((m = T.exec(s))){ narrPart(s.slice(last, m.index), who); who = m[1].trim(); last = T.lastIndex; }
-  narrPart(s.slice(last), who);
-  return out.map(o=>({who: o.who==="?" ? "?" : o.who, t:o.t})); }
-/* Moteurs : VoiceStudio (serveur MCP local, via l'application Claude), sinon voix françaises du navigateur */
-let VXM, VXQ = null, VXST = {eng:"", msg:""};
-async function vxMcp(){ if(VXM!==undefined) return VXM; try{ VXM = window.claude && claude.use ? await claude.use("mcp") : null; }catch(e){ VXM = null; } return VXM; }
-const VS_LIC = /licen[cs]e not accepted/i, VS_FATAL = /^(no_mcp|server_not_connected|not_in_manifest|approval_required|cancelled|blocked_by_policy)$/;
-function vsLicErr(){ return {code:"vs_error", message:"la licence du modèle n'est pas acceptée : ouvre VoiceStudio → Model Catalogue et accepte-la."}; }
-async function vsCall(tool, input){ const m = await vxMcp(); if(!m) throw {code:"no_mcp"};
-  let r; try{ r = await m.callTool(VS_SRV, tool, input); }catch(e){ const t = String((e && e.message) || ""); if(/no transcript|REFERENCE_STT_MISSING/i.test(t)) throw {code:"vs_error", message:"cette voix VoiceStudio n'a pas de transcription : installe un modèle de reconnaissance vocale (Whisper) dans VoiceStudio → Model Catalogue."}; if(VS_LIC.test(t)) throw vsLicErr(); throw e; }
-  let p = r && r.payload; if(typeof p==="string"){ try{ p = JSON.parse(p); }catch(e){} }
-  if(p && typeof p.result==="string"){ try{ p = JSON.parse(p.result); }catch(e){ if(VS_LIC.test(p.result)) throw vsLicErr(); } }
-  if(p && p.error) throw {code:"vs_error", message:String(p.error)}; return p; }
-function vsPids(){ try{ return JSON.parse(LS.get("brumefer-vs-pids")||"{}") || {}; }catch(e){ return {}; } }
-const VSP = {}; let VSLIST = null;
-function vsSave(d, id){ const P = vsPids(); if(id) P[d] = id; else delete P[d]; try{ LS.set("brumefer-vs-pids", JSON.stringify(P)); }catch(e){} }
-async function vsFind(name, fresh){ if(fresh || !VSLIST) VSLIST = vsCall("list_voices", {}).then(a=>Array.isArray(a) ? a : (a && (a.voices||a.profiles)) || []).catch(()=>{ VSLIST = null; return []; });
-  const L = await VSLIST, v = (L||[]).find(x=>x && x.name===name); return v ? v.id : null; }
-/* PNJ : voix clonée à son nom (« Brumefer PNJ · Nom »), sinon une voix de réserve de sa catégorie, sinon une voix générée */
-function vsProfile(k){ return k.pn && !k.nar ? vsPnj(k).then(id=>id || vsDesign(k)) : vsDesign(k); }
-async function vsPnj(k){ const key = "pnj:"+k.pn, P = vsPids(); if(P[key]){ k.cl = 1; return P[key]; }
-  const rg = pnjReg(k.pn), noms = [k.pn].concat(rg ? [rg[0]].concat(rg[1] ? rg[1].split("|") : [], [rg[0].split(" ")[0]], pnjIdent(rg) ? pnjMasks(rg) : [], []) : []);
-  let id = null; for(const n of [...new Set(noms)]){ id = await vsFind("Brumefer PNJ · "+n); if(id) break; }
-  if(id){ vsSave(key, id); k.cl = 1; return id; }
-  const cat = k.a<=0 || k.g==="f" ? "f-" + (k.a<=0 || k.p>=1 ? "aigu" : k.p<=-1 ? "grave" : "medium") : "m-" + (k.p<=-1 ? "grave" : k.p>=1 ? "aigu" : "medium");
-  const R = ((await VSLIST)||[]).filter(x=>x && typeof x.name==="string" && x.name.indexOf("Brumefer réserve · "+cat+" ")===0).sort((a,b)=>a.name<b.name?-1:1);
-  if(!R.length) return null;
-  let h = 0; for(const c of nk(k.pn)) h = (h*31 + c.charCodeAt(0))>>>0;
-  return R[h % R.length].id; }
-function vsDesign(k){ const d = k.nar ? "narrateur homme" : vkDesc(Object.assign({}, k, {w:false})), P = vsPids(); if(P[d]) return Promise.resolve(P[d]);
-  if(VSP[d]) return VSP[d];
-  const name = "Brumefer · "+d;
-  return VSP[d] = (async()=>{ let id = await vsFind(name);
-    if(!id){ try{ const r = await vsCall("design_voice", {name, description:d, language:"fr"}); id = r && (r.profile_id || r.id); }
-      catch(e){ if(e && VS_FATAL.test(e.code)) throw e;
-        /* délai dépassé : la voix a souvent été créée quand même, on la retrouve par son nom */
-        for(let t=0; t<4 && !id; t++){ await new Promise(r=>setTimeout(r, 2500)); id = await vsFind(name, true); }
-        if(!id) throw e; } }
-    if(!id) throw {code:"vs_error", message:"VoiceStudio n'a pas créé la voix « "+d+" »."};
-    vsSave(d, id); return id; })().finally(()=>{ delete VSP[d]; }); }
-/* Effets appliqués au rendu VoiceStudio : "gut" gutturale (plus grave, rugueuse, grondante), "spec" spectrale (creuse, dédoublée, écho) */
-async function vxFx(blob, fx){ const AC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if(!AC) return blob;
-  const src = await new AC(1, 1, 24000).decodeAudioData(await blob.arrayBuffer()), sr = src.sampleRate;
-  const rate = fx==="gut" ? .86 : .82, len = Math.ceil((src.duration/rate + (fx==="spec" ? 1.4 : .15))*sr), ctx = new AC(1, len, sr);
-  const voice = (r, g, dst, t0)=>{ const b = ctx.createBufferSource(); b.buffer = src; b.playbackRate.value = r; const gn = ctx.createGain(); gn.gain.value = g; b.connect(gn); gn.connect(dst); b.start(t0||0); return gn; };
-  const bus = ctx.createGain(); bus.connect(ctx.destination);
-  if(fx==="gut"){ const sh = ctx.createWaveShaper(), cv = new Float32Array(1024); for(let i=0;i<1024;i++) cv[i] = Math.tanh(2.4*(i/512-1)); sh.curve = cv;
-    const lo = ctx.createBiquadFilter(); lo.type = "lowshelf"; lo.frequency.value = 250; lo.gain.value = 7;
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2800;
-    const am = ctx.createGain(); am.gain.value = .72; const os = ctx.createOscillator(); os.frequency.value = 36; const od = ctx.createGain(); od.gain.value = .28; os.connect(od); od.connect(am.gain); os.start();
-    voice(rate, 1, sh); sh.connect(lo); lo.connect(lp); lp.connect(am); am.connect(bus); }
-  else { const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 110; const hs = ctx.createBiquadFilter(); hs.type = "highshelf"; hs.frequency.value = 5000; hs.gain.value = 4; hp.connect(hs); hs.connect(bus);
-    const tr = ctx.createGain(); tr.gain.value = .8; const os = ctx.createOscillator(); os.frequency.value = 5.5; const od = ctx.createGain(); od.gain.value = .1; os.connect(od); od.connect(tr.gain); os.start(); const rs = ctx.createWaveShaper(), rc = new Float32Array(1024); for(let i=0;i<1024;i++) rc[i] = Math.tanh(1.6*(i/512-1))/Math.tanh(1.6); rs.curve = rc; tr.connect(rs); rs.connect(hp);
-    const nb = ctx.createBuffer(1, sr, sr), nd = nb.getChannelData(0); for(let i=0;i<sr;i++) nd[i] = Math.random()*2-1; const ns = ctx.createBufferSource(); ns.buffer = nb; ns.loop = true;
-    const rm = ctx.createGain(); rm.gain.value = 0; ns.connect(rm); tr.connect(rm.gain); const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 2200; bp.Q.value = .8; const rg = ctx.createGain(); rg.gain.value = .3; rm.connect(bp); bp.connect(rg); rg.connect(hp); ns.start();
-    voice(rate, .85, tr); voice(rate, .16, tr, .012);
-    const cv = ctx.createConvolver(), il = Math.floor(sr*1.4), ir = ctx.createBuffer(2, il, sr); for(let c=0;c<2;c++){ const d = ir.getChannelData(c); for(let i=0;i<il;i++) d[i] = (Math.random()*2-1)*Math.pow(1-i/il, 3); } cv.buffer = ir;
-    const wl = ctx.createBiquadFilter(); wl.type = "lowpass"; wl.frequency.value = 3500; const wg = ctx.createGain(); wg.gain.value = .22; tr.connect(cv); cv.connect(wl); wl.connect(wg); wg.connect(hp); }
-  const out = await ctx.startRendering(), ch = out.getChannelData(0); let pk = 0; for(let i=0;i<ch.length;i++){ const v = Math.abs(ch[i]); if(v>pk) pk = v; }
-  const sc = pk ? .9/pk : 1, dv = new DataView(new ArrayBuffer(44 + ch.length*2)), ws = (o, t)=>{ for(let i=0;i<t.length;i++) dv.setUint8(o+i, t.charCodeAt(i)); };
-  ws(0,"RIFF"); dv.setUint32(4, 36+ch.length*2, true); ws(8,"WAVEfmt "); dv.setUint32(16,16,true); dv.setUint16(20,1,true); dv.setUint16(22,1,true); dv.setUint32(24,sr,true); dv.setUint32(28,sr*2,true); dv.setUint16(32,2,true); dv.setUint16(34,16,true); ws(36,"data"); dv.setUint32(40, ch.length*2, true);
-  for(let i=0;i<ch.length;i++) dv.setInt16(44+i*2, Math.max(-1, Math.min(1, ch[i]*sc))*32767, true);
-  return new Blob([dv.buffer], {type:"audio/wav"}); }
-async function vsAudio(text, k){ const pid = await vsProfile(k);
-  const inp = {text: text.slice(0,1500), language:"fr", profile_id:pid, speed:Math.max(.9, Math.round((k.cl ? 1 : k.sp)*100)/100), steps:16, format:"wav"}; if(k.w) inp.instruct = "whisper";
-  let r, b; for(let t=0; t<2; t++){ try{ r = await vsCall("generate_speech", inp); }catch(e){ if(/profil|profile|not found|introuvable|404/i.test((e && e.message)||"")){ vsSave(vkDesc(k), null); if(k.pn) vsSave("pnj:"+k.pn, null); VSLIST = null; } throw e; }
-    if(!r || !r.wav_base64) throw {code:"vs_error", message:"VoiceStudio n'a pas renvoyé d'audio (réglage MCP : sortie « resources » ou « both »)."};
-    b = atob(r.wav_base64); const br = (b.charCodeAt(28)|b.charCodeAt(29)<<8|b.charCodeAt(30)<<16|b.charCodeAt(31)<<24)>>>0;
-    /* phrase tronquée par VoiceStudio (bien plus courte que le texte) : on la régénère une fois */
-    if(!br || (b.length-44)/br >= inp.text.length/40) break; }
-  const u = new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i] = b.charCodeAt(i);
-  const bl = new Blob([u], {type:"audio/wav"}); return URL.createObjectURL(k.fx ? await vxFx(bl, k.fx).catch(()=>bl) : bl); }
-function navVoices(){ try{ return speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang)); }catch(e){ return []; } }
-function navPick(k, who){ const V = navVoices(); if(!V.length) return null; const F = V.filter(v=>VX_NAV_F.test(v.name)), M = V.filter(v=>VX_NAV_M.test(v.name));
-  const L = (k.g==="f" ? F : M).length ? (k.g==="f" ? F : M) : V; return L[vxHash(who==null ? "narrateur" : who) % L.length]; }
-function navSay(text, k, who, st){ return new Promise(res=>{ let u; try{ u = new SpeechSynthesisUtterance(text); }catch(e){ res(); return; }
-  const v = navPick(k, who); if(v) u.voice = v; u.lang = v ? v.lang : "fr-FR";
-  u.pitch = Math.max(.3, Math.min(1.9, 1 + k.p*.16 + [0.45,0.22,0.06,0,-0.12,-0.2][k.a+1] + (v && (k.g==="f") !== VX_NAV_F.test(v.name) ? (k.g==="f" ? .35 : -.35) : 0)));
-  u.rate = Math.max(.6, Math.min(1.5, k.sp)); u.onend = u.onerror = ()=>res(); st.nav = true; speechSynthesis.speak(u); }); }
-function vxStop(){ if(VXQ){ VXQ.stop = true; if(VXQ.au){ try{ VXQ.au.pause(); }catch(e){} } } VXQ = null; try{ speechSynthesis.cancel(); }catch(e){} document.querySelectorAll(".vx-b.on").forEach(b=>b.classList.remove("on")); }
-function vxPlay(e){ if(!e) return; vxStop(); const segs = vxSegs(e.r || e.t.replace(/<[^>]+>/g," ")); if(!segs.length) return;
-  const st = VXQ = {stop:false, au:null, i:e.i}; const btn = document.querySelector(`.vx-b[data-v="${e.i}"]`); btn && btn.classList.add("on");
-  const want = vxG().eng || "auto";
-  (async()=>{ let useVs = want!=="nav"; const urls = [];
-    const once = j=> vsAudio(segs[j].t, vxVoice(segs[j].who));
-    const gen = j=> urls[j] || (urls[j] = once(j).catch(err=> err && VS_FATAL.test(err.code) ? {err} : new Promise(r=>setTimeout(r, 1500)).then(()=>once(j)).catch(err2=>({err:err2}))));
-    /* toutes les voix de la réponse sont préparées d'avance, l'une après l'autre */
-    segs.reduce((p, sg)=>p.then(()=>vsProfile(vxVoice(sg.who)).catch(()=>{})), Promise.resolve());
-    for(let i=0;i<segs.length && !st.stop;i++){ const sg = segs[i], k = vxVoice(sg.who);
-      if(useVs){ const u = await gen(i); if(i+1<segs.length) gen(i+1);
-        if(u && u.err){ const c = u.err.code; useVs = !VS_FATAL.test(c||"");
-          VXST = {eng:"nav", msg: c==="no_mcp" || c==="server_not_connected" ? "VoiceStudio injoignable : ouvre le jeu dans l'application Claude, avec VoiceStudio lancé et son serveur MCP « voicestudio » ajouté. Voix du navigateur en attendant." : c==="not_in_manifest" || c==="approval_required" || c==="cancelled" ? "Accès à VoiceStudio refusé pour cette page : voix du navigateur." : "VoiceStudio : " + String(u.err.message||c||"erreur").slice(0,160) + " Voix du navigateur en attendant."};
-          if(useVs) VXST = {eng:"vs", msg:"VoiceStudio (une réplique a échoué : " + String(u.err.message||c||"erreur").slice(0,120) + ")"};
-          if(want==="vs" || !navVoices().length){ toast(VXST.msg); if(!useVs) break; continue; } }
-        else if(u){ VXST = {eng:"vs", msg:"VoiceStudio"}; await new Promise(res=>{ const au = st.au = new Audio(u); au.onended = au.onerror = ()=>{ URL.revokeObjectURL(u); res(); }; au.play().catch(()=>res()); }); continue; } }
-      if(!st.stop){ if(!navVoices().length){ if(!VXST.msg) VXST = {eng:"nav", msg:"Aucune voix française dans ce navigateur."}; continue; } if(!useVs && VXST.eng!=="nav") VXST = {eng:"nav", msg: VXST.msg || "Voix du navigateur"}; await navSay(sg.t, k, sg.who, st); } }
-    if(VXQ===st){ VXQ = null; btn && btn.classList.remove("on"); } })(); }
-function vxLog(narr, noAuto){ const e = G.journal[G.journal.length-1]; if(!e || e.k!=="mj") return; const r = RAWN.get(narr); if(r && r!==narr) e.r = r.slice(0,8000);
-  const V = vxG(); if(V.on && V.auto && !noAuto) setTimeout(()=>vxPlay(e), 50); }
-function vxRule(){ const V = vxG(); if(!V.on) return "";
-  return `VOIX (la page lit le récit à voix haute, une voix par personnage). Juste avant CHAQUE réplique entre guillemets « », écris la balise [[Nom exact du locuteur]] (le héros : [[${G.hero ? G.hero.nom : "héros"}]] ; un figurant : [[le garde]], [[la tavernière]]…) ; jamais de balise ailleurs, la page les retire de l'affichage. Toute parole prononcée est entre « ». Dans "notes.pnj", à la première réplique d'un personnage, ajoute "voix" : genre, âge, timbre et trait (ex. "femme âgée, voix grave et rauque", "jeune homme, voix claire et rapide", "nain bourru, voix caverneuse"), cohérents avec sa description.`; }
-/* Réglages de la narration dans l'en-tête, à côté du bouton Voix */
-function vxBar(){ const V = vxG(), on = !!V.on, sl = (k, cur, opts, lab)=>`<select class="vx-sel" data-g="vxsel" data-k="${k}" aria-label="${lab}" title="${lab}">${opts.map(([v,l])=>`<option value="${v}" ${cur===v?"selected":""}>${l}</option>`).join("")}</select>`;
-  vxNav(); return ""; }
-/* Bouton de l'en-tête : haut-parleur (voix actives) ou haut-parleur barré (voix coupées) */
-const VX_IC_ON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-const VX_IC_OFF = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-function vxNav(){ const b = document.getElementById("nav-vx"); if(!b) return; const on = !!(G && vxG().on), t = (on ? "Voix actives : couper la lecture à voix haute" + (VXST.msg ? " · " + VXST.msg : "") : "Voix coupées : lire le récit à voix haute") + " (réglages : roue dentée)";
-  b.hidden = !G; b.innerHTML = on ? VX_IC_ON : VX_IC_OFF; b.title = t; b.setAttribute("aria-label", t); b.setAttribute("aria-pressed", on ? "true" : "false"); b.classList.toggle("sel", on); }
-/* Fenêtre Paramètres (roue dentée de l'en-tête) : public, style de narration et narration à voix haute */
-function setFill(){ const d = document.getElementById("set-dlg"); if(!d || !G) return; const V = vxG(), on = !!V.on, mode = on ? (V.auto ? "2" : "1") : "0";
+/* Fenêtre Paramètres (roue dentée de l'en-tête) : public, encombrement et style de narration */
+function setFill(){ const d = document.getElementById("set-dlg"); if(!d || !G) return; 
   const ch = (g, v, l, sel, tip)=>`<button type="button" class="chip ${sel?"sel":""}" data-g="${g}" data-v="${v}"${tip?` title="${esc(tip)}"`:""}>${l}</button>`;
   let t = `<div class="cl-head"><h3 id="set-t">Paramètres</h3><button type="button" class="btn sm" data-g="setclose">Fermer</button></div><div class="cl-body">`;
   t += `<section><h4>Public</h4><div class="chips">${Object.entries(AUD).map(([k,a])=>ch("public", k, a.l, audKey()===k, a.d)).join("")}</div><small class="lede">${esc(AUD[audKey()].d)}. Vaut pour la suite du récit.</small></section>`;
   t += `<section><h4>Poids et encombrement</h4><div class="chips">${ch("enc","off","Désactivé",encMode()==="off")}${ch("enc","std","Standard",encMode()==="std","Recommandé")}${ch("enc","strict","Strict (variante SRD)",encMode()==="strict")}</div><small class="lede">${encMode()==="off" ? "Le poids n'est pas compté." : encMode()==="strict" ? "Variante SRD : encombré au-delà de Force × 2,5 kg (vitesse −3 m), lourdement encombré au-delà de Force × 5 kg (vitesse −6 m, désavantage en Force, Dextérité et Constitution)." : "Encombré au-delà de Force × 5 kg (vitesse −3 m, désavantage en Discrétion), surchargé au-delà de Force × 7,5 kg (vitesse 1,5 m, désavantage en Force, Dextérité et Constitution)."} Impossible de porter plus de Force × 15 kg.</small></section>`;
   t += `<section><h4>Narration</h4><div class="chips">${ch("tier","quick","Rapide",G.tier==="quick")}${ch("tier","default","Soignée (plus lente)",G.tier==="default")}</div><small class="lede">Rapide : réponses courtes et vives. Soignée : récit plus riche, mais plus lent.</small></section>`;
-  t += `<section><h4>Narration à voix haute</h4><div class="sp-grp">Lecture</div><div class="chips">${ch("vxon","0","Coupée",mode==="0")}${ch("vxon","1","Bouton 🔊 par passage",mode==="1")}${ch("vxon","2","Lecture automatique",mode==="2")}</div>`;
-  t += `<div class="sp-grp">Narration</div><div class="chips">${ch("vxnarr","f","Narratrice",V.narr!=="m")}${ch("vxnarr","m","Narrateur",V.narr==="m")}</div>`;
-  t += `<div class="sp-grp">Moteur</div><div class="chips">${[["auto","VoiceStudio, sinon navigateur"],["vs","VoiceStudio seul"],["nav","Navigateur"]].map(([k,l])=>ch("vxeng", k, l, (V.eng||"auto")===k)).join("")}</div>`;
-  t += `<small class="lede">${on && VXST.msg ? esc(VXST.msg) + ". " : ""}Un narrateur, une voix pour le héros et une par personnage (spectrale pour les morts-vivants et les Veilleurs, gutturale pour les mineurs et les brutes).</small></section></div>`;
+  t += `</div>`;
   d.innerHTML = t; }
 /* Fenêtre Sauvegarde (disquette de l'en-tête) : téléchargement et chargement d'un fichier .txt */
 function savOpen(){ const d = document.getElementById("sav-dlg"); if(!d || !G) return;
@@ -5189,16 +5020,6 @@ function savOpen(){ const d = document.getElementById("sav-dlg"); if(!d || !G) r
 function setOpen(){ const d = document.getElementById("set-dlg"); if(!d) return; setFill();
   if(!d._b){ d._b = 1; d.addEventListener("click", ev=>{ if(ev.target===d) d.close(); }); }
   if(!d.open){ if(d.showModal) d.showModal(); else d.setAttribute("open",""); } }
-function vxClick(a, v){ const V = vxG();
-  if(a==="vxon"){ V.on = v!=="0"; V.auto = v==="2"; if(!V.on) vxStop(); else { try{ speechSynthesis.getVoices(); }catch(e){} } const j = document.getElementById("journal"); if(j) j._g = null; saveRender(); return true; }
-  if(a==="vxquick") return vxClick("vxon", V.on ? "0" : "2");
-  if(a==="vxnarr"){ V.narr = v==="m" ? "m" : "f"; saveRender(); return true; }
-  if(a==="vxeng"){ V.eng = v; VXST = {eng:"", msg:""}; saveRender(); return true; }
-  if(a==="vxplay"){ const e = G.journal.find(x=>String(x.i)===String(v)); if(VXQ && VXQ.i===(e&&e.i)) vxStop(); else vxPlay(e); return true; }
-  if(a==="vxtest"){ const who = v || null, nm = who || "narrateur";
-    vxPlay({i:-1, r: who==null ? "La brume monte sur Brumefer, et la nuit s'annonce longue." : `[[${who}]] « Je suis ${nm}. Voilà comment sonne ma voix. »`}); return true; }
-  return false; }
-try{ speechSynthesis.onvoiceschanged = ()=>{}; speechSynthesis.getVoices(); }catch(e){}
 function closeJson(s){ s = s.replace(/[“”]/g,'"'); const st = []; let q = false, safe = 0, safeSt = [];
   for(let i=0;i<s.length;i++){ const c = s[i];
     if(q){ if(c==="\\") i++; else if(c==='"') q = false; continue; }
@@ -5424,7 +5245,7 @@ async function mj(action, shown, o={}){
     { const gh = narr && !ctl.signal.aborted ? compGhost(narr) : null;
       if(gh){ const fx = await fixNarr(sample, action, narr, `${gh.nom} (${String(gh.esp).toLowerCase()}) n'accompagne plus le héros : ${gh.why}${gh.d ? " le " + gh.d : ""}. Retire-le entièrement du récit : aucune présence, aucune action, aucun regard, aucune mention dans une liste ou un registre ; tout au plus un souvenir du héros.`, ctl.signal);
         if(fx && fx.narration && String(fx.narration).trim().length>40){ narr = String(fx.narration).trim(); logJ("sys", `Récit corrigé : ${esc(gh.nom)} n'est plus avec toi.`); } } }
-    if(narr){ logJ("mj", fmtNarr(narr)); vxLog(narr); if(G.qaFix && G.qaFix.length && (G.qaN = (G.qaN||0)+1) >= 3){ G.qaFix = []; G.qaN = 0; } }
+    if(narr){ logJ("mj", fmtNarr(narr)); if(G.qaFix && G.qaFix.length && (G.qaN = (G.qaN||0)+1) >= 3){ G.qaFix = []; G.qaN = 0; } }
     G.hist.push({j: shown || clipTxt(String(action).replace(/\s+/g," "), 400), m: narr}); if(G.hist.length>12) G.hist.splice(0, G.hist.length-12);
     { const mm = meta||{}; mm._narr = narr; if(renc){ delete mm.test; delete mm.combat; mm.choix = []; } const c0 = G.clock, l0 = G.lieu; try{ applyMeta(mm, shown||action); }catch(e){ console.error(e); } try{ memTick(); }catch(e){ console.error(e); } justTested = null; try{ compTick(c0, l0, shown||action); }catch(e){ console.error(e); } if(renc && G.statut==="ok" && !G.fin && !G.combat) rencCommit(renc); }
     if(trackFree && meta && meta.alignement_action) alRecord(alCanon(meta.alignement_action));
@@ -5437,7 +5258,7 @@ async function mj(action, shown, o={}){
     if(needChoices()){ grender(); post.push(fillChoices(sample, narr, ctl.signal)); }
     await Promise.all(post);
   }catch(e){
-    const v = e && e.text ? visibleNarr(e.text) : ""; if(v){ logJ("mj", fmtNarr(v)); vxLog(v, true); }
+    const v = e && e.text ? visibleNarr(e.text) : ""; if(v){ logJ("mj", fmtNarr(v)); }
     const msg = {cancelled:"Narration interrompue.", not_granted:"Claude n'a pas été autorisé pour cette page : le maître du jeu reste muet. Recharge la page pour qu'on te le redemande.", rate_limited:"Trop de demandes pour l'instant : patiente un peu puis renvoie ton action.", sampling_disabled:"Claude n'est pas disponible pour ce compte.", session_expired:"Ta session a expiré : reconnecte-toi à claude.ai.", refused:"Le maître du jeu a refusé cette action : reformule-la."}[e&&e.code] || "Le maître du jeu a perdu le fil (erreur de connexion). Renvoie ton action.";
     logJ("sys", msg);
     if(e && e.code==="not_granted") sampleState = "refuse";
@@ -6658,7 +6479,7 @@ function jWire(j){ if(j._wired) return; j._wired = true;
   if(window.ResizeObserver) new ResizeObserver(glue).observe(j); }
 function setView(v){
   VIEW = v; $("forge").hidden = v!=="forge"; $("game").hidden = v!=="jeu"; $("forge-actions").hidden = v!=="forge";
-  $("nav-forge").classList.toggle("sel", v==="forge"); const ng = $("nav-game"); ng.hidden = !G; const gs = $("nav-set"); if(gs) gs.hidden = !G; const gv = $("nav-sav"); if(gv) gv.hidden = !G; const gm = $("nav-mem"); if(gm) gm.hidden = !G; vxNav(); ng.classList.toggle("sel", v==="jeu");
+  $("nav-forge").classList.toggle("sel", v==="forge"); const ng = $("nav-game"); ng.hidden = !G; const gs = $("nav-set"); if(gs) gs.hidden = !G; const gv = $("nav-sav"); if(gv) gv.hidden = !G; const gm = $("nav-mem"); if(gm) gm.hidden = !G; ng.classList.toggle("sel", v==="jeu");
   slotsView(); if(v==="jeu") grender(); window.scrollTo({top:0});
 }
 function grender(){
@@ -6667,7 +6488,7 @@ function grender(){
   const h = G.hero, pct = Math.round(100*G.pv/G.pvmax);
   const next = G.niveau<MAXLVL ? XP_LVL[G.niveau] : null;
   const canLvl = G.lvlPending && !G.combat && !busy && G.statut==="ok" && !G.lu;
-  let hud = `<div class="hud"><div class="who"><h2>${esc(h.nom)}${gsym(h.genre)}</h2><p>${h.peuple} · ${csym(G.cls, h.classe)} ${hudLv()}</p>${(h.alignement||G.build.align)?`<p class="align">${esc(h.alignement||G.build.align)}</p>`:""}${vxBar()}</div>
+  let hud = `<div class="hud"><div class="who"><h2>${esc(h.nom)}${gsym(h.genre)}</h2><p>${h.peuple} · ${csym(G.cls, h.classe)} ${hudLv()}</p>${(h.alignement||G.build.align)?`<p class="align">${esc(h.alignement||G.build.align)}</p>`:""}</div>
     <div class="hpbar"><div class="lbl"><span>Points de vie${G.forme?` · ${esc(G.forme.nom)} ${G.forme.pv}/${G.forme.pvmax}`:""}</span><b>${G.pv}/${G.pvmax}${G.pvtemp?` +${G.pvtemp}`:""}</b></div><div class="bar"><i class="${pct<=25?"crit":pct<=50?"low":""}" style="width:${pct}%"></i></div></div>
     <div class="stat"><small>CA</small><b>${curAC()}</b></div>
     <div class="stat xp"><small>XP</small><b>${G.xp}<span>${next?" / "+next:""}</span></b>${next?`<i class="xpbar"><i style="width:${Math.min(100,Math.round(100*G.xp/next))}%"></i></i>`:`<span class="lede" style="font-size:.7rem">niveau ${MAXLVL} atteint</span>`}</div>
@@ -6687,7 +6508,7 @@ function grender(){
   jfill(oldJ, jPos);
   keep.forEach(([id,v,f])=>{ const el = document.getElementById(id); if(el && !el.value){ el.value = v; if(f){ el.focus(); try{ el.setSelectionRange(v.length, v.length); }catch(e){} } } });
 }
-const jrow = x=>`<div class="j-${x.k}">${x.k==="mj" && G && G.voix && G.voix.on ? `<button type="button" class="vx-b" data-g="vxplay" data-v="${x.i}" title="Écouter / arrêter">🔊</button>` : ""}${x.t}</div>`;
+const jrow = x=>`<div class="j-${x.k}">${x.t}</div>`;
 function jfill(old, pos){ const el = document.getElementById("journal"); if(!el) return; const J = G.journal;
   if(old){ const lv = old.querySelector("#live"); if(lv) lv.remove(); }
   const R = old && old._g===G ? old._items : null, last = R && R.length ? J.lastIndexOf(R[R.length-1]) : -1;
@@ -7000,7 +6821,6 @@ document.addEventListener("click", e=>{
   if(a==="memdocx"){ memDocx(); return; }
   if(a==="memrun"){ memRun(); return; }
   if(a==="savclose"){ const d = document.getElementById("sav-dlg"); if(d) d.close(); return; }
-  if(/^vx/.test(a) && G && vxClick(a, v)) return;
   if(a==="view"){ if(v==="jeu" && !G) return; setView(v); if(v==="forge") render(); return; }
   if(a==="slot"){ slotSwitch(+v); return; }
   if(a==="slotdel"){ slotClear(); return; }
@@ -7053,7 +6873,7 @@ document.addEventListener("click", e=>{
     case "orev": { const o = objG().find(z=>z.e==="abandonne" && z.t===v) || objG().find(z=>z.e==="abandonne" && nk(z.t)===nk(v)); if(o){ objRevive(o); logJ("sys", `Objectif réactivé : ${esc(o.t)}`); saveRender(); } return; }
     case "odel": { const o = objG().find(z=>z.e==="actif" && z.t===v) || objFind(v); if(o){ objClose(o, "abandonne"); logJ("sys", `Objectif abandonné : ${esc(o.t)}`); saveRender(); } return; }
     case "fdel": { const i = +v; if(G.faits && G.faits[i]!=null){ logJ("sys", `Fait retiré : ${esc(G.faits[i])}`); G.faits.splice(i,1); saveRender(); } return; }
-    case "notesinfo": { const t = document.getElementById("notes-info"); notesDraft = t ? t.value : notesDraft; if(!notesDraft.trim()){ t && t.focus(); return; } const cs = document.getElementById("n-corr-cat"); if(cs) corrCat = cs.value; refreshNotes((corrCat==="Tout le carnet" ? "" : `Catégorie à corriger : ${corrCat}${corrCat==="Voix des personnages" ? " (champ \"voix\" de chaque PNJ concerné : genre, âge, timbre, et « spectrale » ou « gutturale » si besoin)" : ""}. `) + notesDraft); return; }
+    case "notesinfo": { const t = document.getElementById("notes-info"); notesDraft = t ? t.value : notesDraft; if(!notesDraft.trim()){ t && t.focus(); return; } const cs = document.getElementById("n-corr-cat"); if(cs) corrCat = cs.value; refreshNotes((corrCat==="Tout le carnet" ? "" : `Catégorie à corriger : ${corrCat}. `) + notesDraft); return; }
     case "unpack": unpack(v); return;
     case "sacin": sacRanger(); return;
     case "sacout": sacVider(); return;
@@ -7077,7 +6897,6 @@ document.addEventListener("click", e=>{
 document.addEventListener("change", e=>{
   const el = e.target;
   if(el.dataset.g==="clvl"){ castLvl = +el.value; if(G) grender(); }
-  if(el.dataset.g==="vxsel" && G){ const k = el.dataset.k; vxClick(k==="mode" ? "vxon" : k==="narr" ? "vxnarr" : "vxeng", el.value); }
 });
 document.addEventListener("keydown", e=>{
   if(e.key==="Escape" && G && G.shop){ G.shop = null; saveRender(); return; }

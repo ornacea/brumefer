@@ -1,6 +1,6 @@
 # Contribuer à La Malédiction de Brumefer
 
-Merci de vouloir aider ! Les propositions sont les bienvenues : corrections de règles, bugs, interface, accessibilité, cartes, voix, idées d'aventure.
+Merci de vouloir aider ! Les propositions sont les bienvenues : corrections de règles, bugs, interface, accessibilité, cartes, idées d'aventure.
 
 ## Les règles du dépôt
 
