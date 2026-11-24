@@ -1,4 +1,4 @@
-# Ironhaze's curse
+# Ironhaze's Curse
 
 A **solo** tabletop role-playing game set in a dark fantasy world, using the 5th edition rules (SRD 5.1). The player creates a hero, then **Claude acts as the game master**: it tells the story, plays the characters and rules on the player's actions. The page itself keeps the rules: dice rolls, combat, inventory, money, the passage of time and maps.
 
@@ -70,7 +70,7 @@ Each issue details the ideas and how to proceed. Simple feedback on what bothere
 
 ## License
 
-**CC BY-NC-SA 4.0**: you may play, copy, share and modify the game, as long as you credit "Ironhaze's curse, by Orna", make no commercial use of it, and share your changes under the same license. Details in [LICENSE](LICENSE).
+**CC BY-NC-SA 4.0**: you may play, copy, share and modify the game, as long as you credit "Ironhaze's Curse, by Orna", make no commercial use of it, and share your changes under the same license. Details in [LICENSE](LICENSE).
 
 Assets taken from other projects, under their own licenses:
 

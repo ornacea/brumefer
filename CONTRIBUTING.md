@@ -1,4 +1,4 @@
-# Contributing to Ironhaze's curse
+# Contributing to Ironhaze's Curse
 
 Thank you for wanting to help! Proposals are welcome: rule fixes, bugs, interface, accessibility, maps, adventure ideas.
 

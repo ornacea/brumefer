@@ -1,4 +1,4 @@
-# Installing and playing Ironhaze's curse
+# Installing and playing Ironhaze's Curse
 
 This guide covers everything you need to install to use **all** of the game's features. It has two levels: level 1 is enough to play, level 2 lets you modify the game.
 
@@ -52,4 +52,4 @@ For a new version of the game: get the update (new ZIP or `git pull`), then ask 
 1. Install [Git](https://git-scm.com) and clone the repository: `git clone https://github.com/ornacea/brumefer.git`
 2. Edit `brumefer.html`: the interface, rules and game master instructions are directly readable. The story texts are encoded to avoid spoilers; the page decodes them when it loads.
 3. Republish your copy (level 1, step 4) to play with your changes.
-4. The license (see `LICENSE`) requires you to credit "Ironhaze's curse, by Orna", to make no commercial use of it, and to share your changes under the same license.
+4. The license (see `LICENSE`) requires you to credit "Ironhaze's Curse, by Orna", to make no commercial use of it, and to share your changes under the same license.

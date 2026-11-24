@@ -1,12 +1,15 @@
-# Journal des versions — Ironhaze's curse
+# Journal des versions — Ironhaze's Curse
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
+
+## 0.92.1 — 2026-11-24
+- Corrections et améliorations : titre « Ironhaze's Curse ».
 
 ## 0.92.0 — 2026-11-24
 - Améliorations : cohérence de l'intrigue.
 
 ## 0.91.1 — 2026-11-24
-- Améliorations : le jeu s'appelle désormais « Ironhaze's curse ».
+- Améliorations : le jeu s'appelle désormais « Ironhaze's Curse ».
 
 ## 0.91.0 — 2026-11-24
 - Améliorations : cohérence de l'intrigue de la première partie.

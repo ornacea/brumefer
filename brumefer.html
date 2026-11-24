@@ -1,4 +1,4 @@
-<title>Ironhaze's curse</title>
+<title>Ironhaze's Curse</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;1,400&family=Alegreya+SC:wght@500;700;800&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
@@ -488,8 +488,8 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <h1><span>Ironhaze</span>'s curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.92.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <h1><span>Ironhaze</span>'s Curse</h1>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.92.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,8 +905,9 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.92.1","d":"2026-11-24","items":["Corrections et améliorations : titre « Ironhaze's Curse »."]},
 {"v":"0.92.0","d":"2026-11-24","items":["Améliorations : cohérence de l'intrigue."]},
-{"v":"0.91.1","d":"2026-11-24","items":["Améliorations : le jeu s'appelle désormais « Ironhaze's curse »."]},
+{"v":"0.91.1","d":"2026-11-24","items":["Améliorations : le jeu s'appelle désormais « Ironhaze's Curse »."]},
 {"v":"0.91.0","d":"2026-11-24","items":["Améliorations : cohérence de l'intrigue de la première partie."]},
 {"v":"0.90.4","d":"2026-11-24","items":["Améliorations : documentation."]},
 {"v":"0.90.3","d":"2026-11-24","items":["Améliorations : documentation."]},
@@ -1884,7 +1885,7 @@ function zipStore(files){ const enc = new TextEncoder(), parts = [], cen = []; l
 function memDocxXml(){ const M = memG(), h = G.hero, x = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
   const par = (sty, txt) => `<w:p><w:pPr><w:pStyle w:val="${sty}"/></w:pPr><w:r><w:t xml:space="preserve">${x(txt)}</w:t></w:r></w:p>`;
-  let body = par("Title", `Mémoires de ${h.nom}`) + par("Subtitle", `${h.peuple} · ${h.classe}`) + par("Subtitle", "Ironhaze's curse");
+  let body = par("Title", `Mémoires de ${h.nom}`) + par("Subtitle", `${h.peuple} · ${h.classe}`) + par("Subtitle", "Ironhaze's Curse");
   M.p.forEach((c,i)=>{ body += `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t xml:space="preserve">${x("Chapitre " + ROMAN(i+1))}</w:t></w:r><w:r><w:br/><w:t xml:space="preserve">${x(c.t)}</w:t></w:r></w:p>` + par("DateChap", c.date);
     memParas(c.x).forEach((s,k)=>{ body += par(k ? "Normal" : "Premier", s); }); });
   const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${W}><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1701" w:right="1418" w:bottom="1701" w:left="1418" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr></w:body></w:document>`;
@@ -2619,7 +2620,7 @@ async function genPerso(){ if(persoBusy) return;
   if(!sample){ ["trait","ideal","bond","flaw"].forEach(id=>{ const L=suggestions(id); if(L.length) S[id]=pick(L); }); toast("Claude n'est pas disponible ici : champs remplis avec les suggestions locales."); render(); return; }
   persoBusy = true; render();
   const fem = S.genre==="Féminin";
-  const prompt = `Tu aides à créer un personnage de jeu de rôle (règles de la 5e édition, SRD 5.1, univers de dark fantasy « Ironhaze's curse », une cité industrielle noyée de brume).
+  const prompt = `Tu aides à créer un personnage de jeu de rôle (règles de la 5e édition, SRD 5.1, univers de dark fantasy « Ironhaze's Curse », une cité industrielle noyée de brume).
 Voici le personnage :
 ${persoProfile()}
 
@@ -2716,7 +2717,7 @@ document.addEventListener("click",e=>{
     case "reset-ask":
       if(!resetArmed){ resetArmed=true; el.textContent="Confirmer : tout effacer"; setTimeout(()=>{ resetArmed=false; el.textContent="Recommencer"; },3500); return; }
       resetArmed=false; el.textContent="Recommencer"; S=blank(); toast("Fiche effacée."); break;
-    case "herodl": { const ch = character(); saveFile(`brumefer-heros-${fileSlug(ch.nom||S.name||"heros")}.txt`, `BRUMEFER · HÉROS · ${ch.nom||S.name||"?"} · ${ch.classe||""} · ${new Date().toLocaleString("fr-FR")}\nFichier de héros de « Ironhaze's curse ». Charge-le depuis la Forge (Fichier du héros) ou dans un emplacement libre. Ne modifie pas la ligne ci-dessous.\n`+JSON.stringify(ch)); return; }
+    case "herodl": { const ch = character(); saveFile(`brumefer-heros-${fileSlug(ch.nom||S.name||"heros")}.txt`, `BRUMEFER · HÉROS · ${ch.nom||S.name||"?"} · ${ch.classe||""} · ${new Date().toLocaleString("fr-FR")}\nFichier de héros de « Ironhaze's Curse ». Charge-le depuis la Forge (Fichier du héros) ou dans un emplacement libre. Ne modifie pas la ligne ci-dessous.\n`+JSON.stringify(ch)); return; }
     case "enter": window.enterGame && window.enterGame(el); return;
     case "loadsave": { if(busy || notesBusy){ toastBusy(); return; } const o = el._data || null;
       if(o && o.hero && Array.isArray(o.journal)){ jSan(o); G = o; busy = false; try{ migrate(); }catch(err){ console.error(err); } gsave(); slotSum(); setView("jeu"); grender(); toast(`Partie de ${G.hero.nom||"ton héros"} chargée dans l'emplacement ${SLOT}.`); return; }
@@ -6957,7 +6958,7 @@ document.addEventListener("click", e=>{
     case "tier": G.tier = v; saveRender(); return;
     case "enc": G.enc = v==="off" || v==="strict" ? v : "std"; logJ("sys", `Poids et encombrement : ${v==="off" ? "désactivés" : v==="strict" ? "variante stricte du SRD" : "règle standard"}.`); saveRender(); return;
     case "public": if(AUD[v] && G.public!==v){ G.public = v; logJ("sys", `Narration adaptée à un public : ${AUD[v].l.toLowerCase()}.`); saveRender(); } return;
-    case "exp": { const h = G.hero||{}; saveFile(`brumefer-${fileSlug(h.nom||"partie")}-niv${G.niveau||1}-${new Date().toISOString().slice(0,10)}.txt`, `BRUMEFER · SAUVEGARDE · ${h.nom||"?"} · ${h.classe||""} niveau ${G.niveau||1} · ${G.lieu||""} · ${new Date().toLocaleString("fr-FR")}\nSauvegarde de « Ironhaze's curse ». Charge-la depuis Sauvegarde (Charger un fichier .txt) ou dans un emplacement libre. Ne modifie pas la ligne ci-dessous.\n`+JSON.stringify(Object.assign({}, G, {snaps:undefined}))); return; }
+    case "exp": { const h = G.hero||{}; saveFile(`brumefer-${fileSlug(h.nom||"partie")}-niv${G.niveau||1}-${new Date().toISOString().slice(0,10)}.txt`, `BRUMEFER · SAUVEGARDE · ${h.nom||"?"} · ${h.classe||""} niveau ${G.niveau||1} · ${G.lieu||""} · ${new Date().toLocaleString("fr-FR")}\nSauvegarde de « Ironhaze's Curse ». Charge-la depuis Sauvegarde (Charger un fichier .txt) ou dans un emplacement libre. Ne modifie pas la ligne ci-dessous.\n`+JSON.stringify(Object.assign({}, G, {snaps:undefined}))); return; }
     case "imp": { if(busy || notesBusy){ toastBusy(); return; } try{ const o = el._data; if(!o||!o.hero||!Array.isArray(o.journal)) throw 0; jSan(o); G = o; uiReset(); migrate(); saveRender(); toast("Partie chargée."); }catch(err){ toast("Ce fichier n'est pas une sauvegarde de Brumefer."); } return; }
     case "retry": { if(busy){ toastBusy(); return; } S = Object.assign(blank(), JSON.parse(JSON.stringify(G.build0 || G.build)), {lvl:undefined, asi:undefined, hpRolls:undefined, style2:undefined, invoc:undefined, pacte:undefined, meta:undefined, sk3:undefined, ex3:undefined, pgc:undefined, feats:undefined}); resetLvl1Spells(); persist(); G.fin = false; G.statut = "ok"; const btn = document.createElement("button"); newArmed = true; window.enterGame(btn); return; }
   }
