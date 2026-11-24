@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.101.0 — 2026-11-24
+- Améliorations : plan de Brumefer redessiné (nouvelles rues nommées, quartiers réorganisés), nouvelle boutique de tisserand, échelle de renommée recalibrée et titres de campagne plus souples.
+
 ## 0.100.0 — 2026-11-24
 - Améliorations : titres et hauts faits.
 
