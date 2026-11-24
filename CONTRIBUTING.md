@@ -19,13 +19,26 @@ Merci de vouloir aider ! Les propositions sont les bienvenues : corrections de r
 
 Une pull request courte, qui fait une seule chose, a beaucoup plus de chances d'être acceptée.
 
-## Branche `voix` : la lecture à voix haute
+## Appels à contributions
 
-La lecture du récit à voix haute a été retirée de `main` à la version 0.89.0. Son code est conservé dans la branche [`voix`](https://github.com/ornacea/brumefer/tree/voix), dans l'état de la version 0.88.0, et la communauté est invitée à la reprendre : fiabilité, voix plus naturelles, téléphones, réglages plus simples.
+Deux chantiers sont ouverts en priorité. Chaque ticket détaille les pistes ; commente-le pour annoncer ce que tu prends, surtout pour un gros travail.
+
+### 1. Interface, cartes et expérience de jeu (UX/UI) : [ticket n°2](https://github.com/ornacea/brumefer/issues/2)
+
+Lisibilité de l'écran de partie, saisie au doigt sur téléphone, forge du héros plus simple, cartes plus lisibles et plus belles, accessibilité, identité visuelle.
+
+1. Dans ton fork, crée ta branche **à partir de `main`**.
+2. Teste sur ordinateur et sur téléphone, en thème clair et en thème sombre.
+3. Ouvre ta pull request **vers `main`**, avec des captures d'écran avant et après.
+4. Images, polices et icônes : uniquement sous licence compatible (CC0, CC BY, CC BY-SA, polices libres), source et licence indiquées. Aucune nouvelle dépendance chargée depuis Internet.
+
+### 2. Lecture à voix haute, branche `voix` : [ticket n°1](https://github.com/ornacea/brumefer/issues/1)
+
+La lecture du récit à voix haute a été retirée de `main` à la version 0.89.0. Son code est conservé dans la branche [`voix`](https://github.com/ornacea/brumefer/tree/voix), dans l'état de la version 0.88.0 : fiabilité, voix plus naturelles, téléphones, réglages plus simples.
 
 1. Dans ton fork, crée ta branche **à partir de `voix`**.
 2. Ouvre ta pull request **vers `voix`**, pas vers `main`.
-3. Les mêmes règles s'appliquent : seul l'auteur décide de ce qui est intégré. Quand la lecture à voix haute sera assez solide, elle reviendra dans `main`.
+3. Quand la lecture à voix haute sera assez solide, elle reviendra dans `main`.
 
 ## Signaler un problème ou proposer une idée
 
