@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.96.0 — 2026-11-24
+- Améliorations : cartes de Brumefer et du pays de la Grise.
+
 ## 0.95.0 — 2026-11-24
 - Améliorations : cartes de la vallée et de Brumefer (routes de sortie).
 
