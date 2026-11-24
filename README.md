@@ -59,7 +59,12 @@ Le numéro de version suit le versioning sémantique `MAJEUR.MINEUR.CORRECTIF`. 
 
 Les propositions passent par un fork et une pull request ; seul l'auteur décide de ce qui entre dans le jeu. Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
-**Appel à contributions : la lecture à voix haute.** Retirée de `main` à la version 0.89.0, elle est conservée dans la branche [`voix`](https://github.com/ornacea/brumefer/tree/voix) (état de la version 0.88.0 : voix du navigateur et VoiceStudio, une voix par personnage). Toute amélioration y est bienvenue, par une pull request vers `voix`.
+### Appels à contributions
+
+1. **[Interface, cartes et expérience de jeu (UX/UI)](https://github.com/ornacea/brumefer/issues/2)** : lisibilité de l'écran de partie, saisie au doigt sur téléphone, forge du héros plus simple, cartes plus lisibles et plus belles, accessibilité, identité visuelle. Pull requests vers `main`, avec des captures avant et après.
+2. **[Lecture à voix haute](https://github.com/ornacea/brumefer/issues/1)** : retirée de `main` à la version 0.89.0, elle est conservée dans la branche [`voix`](https://github.com/ornacea/brumefer/tree/voix) (état de la version 0.88.0 : voix du navigateur et VoiceStudio, une voix par personnage). Fiabilité, voix plus naturelles, téléphones, réglages plus simples : pull requests vers `voix`.
+
+Chaque ticket détaille les pistes et la marche à suivre. Un simple retour sur ce qui t'a gêné en jouant est aussi le bienvenu.
 
 ## Licence
 
