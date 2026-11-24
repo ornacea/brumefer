@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1>La Malédiction de <span>Brumefer</span></h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.89.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.90.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.90.0","d":"2026-11-24","items":["Corrections et améliorations : maître du jeu, erreurs de connexion."]},
 {"v":"0.89.1","d":"2026-11-24","items":["Améliorations : documentation (contributions)."]},
 {"v":"0.89.0","d":"2026-11-24","items":["Améliorations : réglages ; la lecture à voix haute est retirée."]},
 {"v":"0.88.0","d":"2026-11-24","items":["Améliorations : sauvegarde en ligne, pour reprendre sa partie sur un autre appareil."]},
@@ -5082,19 +5083,20 @@ Réponds UNIQUEMENT avec un objet JSON décrivant l'état à la fin du dernier �
       logJ("sys","Continuité rétablie : quête, mémoire, faits et statuts recalés sur les échanges conservés."); } }
   catch(e){ logJ("sys","Le recalage de la continuité a échoué ; la reprise s'appuie sur les échanges conservés."); }
   busy = false; saveRender(); }
-const HARD_ERR = ["cancelled","not_granted","rate_limited","sampling_disabled","session_expired","refused"];
 async function gmSample(sample, prompt, opts){
   if(G.noTools || gmSample.off) return sample(prompt, opts);
   try{ return await sample(prompt, Object.assign({}, opts, {tools:[lakeTool()]})); }
-  catch(e){ if(e && HARD_ERR.includes(e.code)) throw e; gmSample.off = true; return sample(prompt, opts); } }
+  catch(e){ if(!(e && TOOLS_OFF.includes(e.code))) throw e; gmSample.off = true; return sample(prompt, opts); } }
+/* Seules ces erreurs disent que l'outil de mémoire est inutilisable ici ; une coupure passagère ne le coupe plus pour la session */
+const TOOLS_OFF = ["tools_unavailable","invalid_request","transform_error"];
 function hasCanon(){ return (G.faits||[]).length || (G.notes && Object.keys(G.notes.pnj||{}).length) || (G.memoire && G.memoire.length>40); }
 const CRIT_ST = /\b(?:(?:disparu|mort|decede|tue|captif|enleve|prisonnier|absent|enferme|emmene|introuvable)(?:e|s|es)?|captive|prisonniere|partis?|en fuite)\b/;
 function coherenceNeed(narr, meta){ const N = notesG(), t = " "+nk(narr)+" ", out = []; const m = meta || {};
   Object.values(N.pnj).forEach(p=>{ const k = nk(p.nom), first = k.split(" ")[0];
     if(p.statut && CRIT_ST.test(norm(p.statut)) && (t.includes(" "+k+" ") || (first.length>3 && t.includes(" "+first+" ")))) out.push(`${p.nom} (statut : ${p.statut}) apparaît dans la réponse`); });
-  (m.notes && asArr(m.notes.pnj)).forEach(x=>{ const o = N.pnj[nk(x && x.nom)];
+  asArr(m.notes && m.notes.pnj).forEach(x=>{ const o = N.pnj[nk(x && x.nom)];
     if(o && o.statut && x.statut && CRIT_ST.test(norm(o.statut)) && !CRIT_ST.test(norm(x.statut))) out.push(`le statut de ${o.nom} passe de « ${o.statut} » à « ${x.statut} »`); });
-  { const T = new Set(lkToks(narr)); const off = (m.objectifs && asArr(m.objectifs.accomplir)).map(x=>typeof x==="object"&&x?x.titre:x).filter(x=>{ const k = lkToks(x).slice(1); return k.length && k.filter(w=>T.has(w)).length/k.length < 0.5; });
+  { const T = new Set(lkToks(narr)); const off = asArr(m.objectifs && m.objectifs.accomplir).map(x=>typeof x==="object"&&x?x.titre:x).filter(x=>{ const k = lkToks(x).slice(1); return k.length && k.filter(w=>T.has(w)).length/k.length < 0.5; });
     if(off.length) out.push(`objectif(s) déclaré(s) accompli(s) hors champ : ${off.join(" ; ")}`); }
   if(m.faits && (m.faits.retirer||[]).length) out.push(`fait(s) retiré(s) : ${m.faits.retirer.join(" ; ")}`);
   return out; }
@@ -5209,6 +5211,9 @@ function askFix(c){ if(!c || typeof c!=="object") return []; const out = [], N =
   return out; }
 async function mj(action, shown, o={}){
   const sample = getSample();
+  /* Tour atomique : si le maître du jeu ne répond pas, la partie revient exactement à l'état d'avant l'action */
+  const g0 = G, o0 = o, pre = JSON.stringify(Object.assign({}, G, {journal:undefined, lake:undefined, snaps:undefined, retry:undefined})), j0 = (G.journal||[]).slice(), sn0 = JSON.stringify(G.snaps||[]), lk0 = G.lake ? (G.lake.ev||[]).length : -1;
+  let done = false; G.retry = null;
   if(shown){ snapPush(); logJ("joueur", esc(shown)); G.nAct = (G.nAct||0) + 1; }
   const trackFree = !!(o.track && !o.al && !G.combat);
   if(o.track && o.al) alRecord(alCanon(o.al));
@@ -5217,6 +5222,7 @@ async function mj(action, shown, o={}){
   let renc = null;
   if(shown && G.rencontre && !o.noRenc){ const R = G.rencontre; G.rencontre = null; G.rencAt = G.nAct||0;
     o = Object.assign({}, o, {noRenc:true, extra:[o.extra, `RENCONTRE EN COURS : ${rencName(R,"indef")} (${ATT_TXT[R.att][R.n>1?1:0].toLowerCase()}), à ${R.dist} m. Le héros tente autre chose que fuir, combattre, passer son chemin, effrayer ou apprivoiser : décide d'une issue crédible pour un animal ; demande un "test" si c'est incertain ; si la bête attaque, mets "combat" avec son nom exact « ${R.nom} »${R.n>1?` (${R.n} fois)`:""}.`].filter(Boolean).join("\n")}); }
+  else if(o.renc) renc = o.renc;   /* nouvel essai : la même rencontre, pas un nouveau tirage */
   else if(shown && !o.noRenc && !o.lean && !G.combat && !G.test && !G.fin) renc = rencRoll(action);
   if(renc){ rencLog(renc); o = Object.assign({}, o, {extra:[o.extra, rencPrompt(renc)].filter(Boolean).join("\n")}); }
   busy = true; liveText = ""; G.choix = []; G.choixAl = ""; G.reposOk = []; G.test = null; saveRender();
@@ -5225,8 +5231,13 @@ async function mj(action, shown, o={}){
   try{
     const onText = ({text})=>{ liveText = text; if(onText._r) return; onText._r = requestAnimationFrame(()=>{ onText._r = 0; const text = liveText; const el = document.getElementById("live"); if(el){ const v = visibleNarr(text); el.className = v?"j-mj":"j-live"; el.innerHTML = v?fmtNarr(v):`<span class="spin"></span>Le maître du jeu réfléchit…`; scrollJ(); } }); };
     const lean = o.lean || !!G.combat;
-    let {text} = lean ? await sample(buildLean(action, o.extra), {cache:false, modelTier:"quick", signal:ctl.signal, onText})
-                      : await gmSample(sample, buildPrompt(action, o.extra), {cache:false, modelTier:tier, signal:ctl.signal, onText});
+    let text;
+    try{ ({text} = lean ? await sample(buildLean(action, o.extra), {cache:false, modelTier:"quick", signal:ctl.signal, onText})
+                        : await gmSample(sample, buildPrompt(action, o.extra), {cache:false, modelTier:tier, signal:ctl.signal, onText})); }
+    catch(e){ if(lean || !(e && e.code==="prompt_too_large")) throw e;
+      /* demande trop longue : le maître du jeu répond cette fois avec le contexte allégé des combats */
+      logJ("sys", "La partie est devenue trop volumineuse pour une demande complète : le maître du jeu répond cette fois avec un contexte allégé."); liveText = "";
+      ({text} = await sample(buildLean(action, o.extra), {cache:false, modelTier:"quick", signal:ctl.signal, onText})); }
     let narr = visibleNarr(text), meta = parseMeta(text);
     /* Garde-fou de continuité : la page repère localement les passages à risque ; seuls ceux-là sont relus, puis corrigés sur place */
     const why = (!narr || lean || G.combat || !hasCanon()) ? [] : coherenceNeed(narr, meta);
@@ -5241,11 +5252,15 @@ async function mj(action, shown, o={}){
           if(Array.isArray(fx.choix) && fx.choix.length) meta.choix = fx.choix; stripFlips(meta); }
         else if(!ctl.signal.aborted){ liveText = ""; grender();
           const fix = `CORRECTION OBLIGATOIRE. Une première version de ta réponse contredisait le scénario : ${v.probleme} Réécris ta réponse COMPLÈTE (narration puis ⟦META⟧) en respectant strictement les FAITS ÉTABLIS, les OBJECTIFS et le DATALAKE. Ne mentionne pas cette correction.`;
-          ({text} = await gmSample(sample, buildPrompt(action, [o.extra, fix].filter(Boolean).join("\n")), {cache:false, modelTier:tier, signal:ctl.signal, onText}));
-          narr = visibleNarr(text); meta = parseMeta(text); } } }
+          const n1 = narr, m1 = meta;
+          try{ ({text} = await gmSample(sample, buildPrompt(action, [o.extra, fix].filter(Boolean).join("\n")), {cache:false, modelTier:tier, signal:ctl.signal, onText}));
+            narr = visibleNarr(text); meta = parseMeta(text); }
+          catch(e){ if(e && e.code==="cancelled") throw e;   /* réécriture impossible : on garde la première version, sans ce qui contredisait */
+            narr = n1; meta = m1 || {}; stripFlips(meta); logJ("sys", "La réécriture n'a pas abouti : la première version est conservée."); } } } }
     { const gh = narr && !ctl.signal.aborted ? compGhost(narr) : null;
       if(gh){ const fx = await fixNarr(sample, action, narr, `${gh.nom} (${String(gh.esp).toLowerCase()}) n'accompagne plus le héros : ${gh.why}${gh.d ? " le " + gh.d : ""}. Retire-le entièrement du récit : aucune présence, aucune action, aucun regard, aucune mention dans une liste ou un registre ; tout au plus un souvenir du héros.`, ctl.signal);
         if(fx && fx.narration && String(fx.narration).trim().length>40){ narr = String(fx.narration).trim(); logJ("sys", `Récit corrigé : ${esc(gh.nom)} n'est plus avec toi.`); } } }
+    done = true;
     if(narr){ logJ("mj", fmtNarr(narr)); if(G.qaFix && G.qaFix.length && (G.qaN = (G.qaN||0)+1) >= 3){ G.qaFix = []; G.qaN = 0; } }
     G.hist.push({j: shown || clipTxt(String(action).replace(/\s+/g," "), 400), m: narr}); if(G.hist.length>12) G.hist.splice(0, G.hist.length-12);
     { const mm = meta||{}; mm._narr = narr; if(renc){ delete mm.test; delete mm.combat; mm.choix = []; } const c0 = G.clock, l0 = G.lieu; try{ applyMeta(mm, shown||action); }catch(e){ console.error(e); } try{ memTick(); }catch(e){ console.error(e); } justTested = null; try{ compTick(c0, l0, shown||action); }catch(e){ console.error(e); } if(renc && G.statut==="ok" && !G.fin && !G.combat) rencCommit(renc); }
@@ -5259,12 +5274,35 @@ async function mj(action, shown, o={}){
     if(needChoices()){ grender(); post.push(fillChoices(sample, narr, ctl.signal)); }
     await Promise.all(post);
   }catch(e){
-    const v = e && e.text ? visibleNarr(e.text) : ""; if(v){ logJ("mj", fmtNarr(v)); }
-    const msg = {cancelled:"Narration interrompue.", not_granted:"Claude n'a pas été autorisé pour cette page : le maître du jeu reste muet. Recharge la page pour qu'on te le redemande.", rate_limited:"Trop de demandes pour l'instant : patiente un peu puis renvoie ton action.", sampling_disabled:"Claude n'est pas disponible pour ce compte.", session_expired:"Ta session a expiré : reconnecte-toi à claude.ai.", refused:"Le maître du jeu a refusé cette action : reformule-la."}[e&&e.code] || "Le maître du jeu a perdu le fil (erreur de connexion). Renvoie ton action.";
-    logJ("sys", msg);
-    if(e && e.code==="not_granted") sampleState = "refuse";
+    const c = e && e.code; if(!c) console.error("maître du jeu", e);
+    if(done || G!==g0){ console.error(e); if(G===g0) logJ("sys", "Une vérification après la réponse du maître du jeu a échoué ; le récit, lui, est bien enregistré."); }
+    else { mjRollback(g0, pre, j0, sn0, lk0);
+      const again = !["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed","session_expired","refused","empty_completion","invalid_request","transform_error"].includes(c);
+      if(again) G.retry = {action:String(action), shown: shown || null, o: Object.assign({}, o0, renc ? {renc} : {})};
+      const back = shown ? " Ta partie est revenue juste avant ton action." : "";
+      const msg = {cancelled:"Narration interrompue." + back,
+        not_granted:"Claude n'a pas été autorisé pour cette page : le maître du jeu reste muet. Recharge la page pour qu'on te le redemande.",
+        sampling_disabled:"Claude n'est pas disponible pour ce compte.",
+        not_declared:"Cette page n'a plus accès à Claude : republie-la avec la capacité sample.",
+        capability_disabled:"Claude n'est pas utilisable dans cette fenêtre : ouvre le jeu sur claude.ai ou dans l'application Claude.",
+        capability_removed:"Claude n'est pas utilisable dans cette fenêtre : mets à jour l'application Claude.",
+        session_expired:"Ta session a expiré : reconnecte-toi à claude.ai, puis renvoie ton action.",
+        rate_limited:"Trop de demandes pour l'instant, ou limite d'utilisation atteinte." + back + " Patiente un peu avant de réessayer.",
+        refused:"Le maître du jeu a refusé cette action." + back + " Reformule-la.",
+        empty_completion:"Le maître du jeu n'a rien répondu." + back + " Reformule ou simplifie ton action.",
+        prompt_too_large:"La partie est trop volumineuse pour le maître du jeu, même allégée." + back + " Actualise le Carnet puis réessaie.",
+        invalid_request:"La demande au maître du jeu était mal formée (erreur de la page)." + back + " Signale-le si cela se reproduit.",
+        transform_error:"La demande au maître du jeu n'a pas pu être préparée (erreur de la page)." + back}[c]
+        || "La connexion avec le maître du jeu a été interrompue." + back + " Rien n'est perdu : clique sur « Réessayer ».";
+      logJ("sys", esc(msg) + (again ? ` <button type="button" class="btn sm" data-g="mjretry">Réessayer</button>` : ""));
+      if(c==="not_granted") sampleState = "refuse"; }
   }finally{ busy = false; liveText = ""; saveRender(); }
 }
+function mjRollback(g0, pre, j0, sn0, lk0){ if(G!==g0) return;
+  try{ const r = JSON.parse(pre); r.retry = null; r.journal = j0; r.snaps = JSON.parse(sn0); r.lake = g0.lake; if(r.lake && lk0>=0 && Array.isArray(r.lake.ev) && r.lake.ev.length>lk0) r.lake.ev.length = lk0; G = r; }
+  catch(err){ console.error(err); } }
+function mjRetry(){ if(busy || !G) return; if(!G.retry){ toast("Rien à réessayer : renvoie ton action."); return; }
+  const r = G.retry; G.retry = null; mj(r.action, r.shown, r.o || {}); }
 function choixMissing(){ const have = new Set(choixList().map(c=>c.al)); return alNear().filter(x=>!have.has(x)); }
 function needChoices(){ return G.statut==="ok" && !G.test && !G.combat && !G.fin && !G.rencontre && (choixList().length<3 || choixMissing().length>0); }
 async function fillChoices(sample, narr, signal){
@@ -6831,6 +6869,7 @@ document.addEventListener("click", e=>{
   if(a==="pgrp"){ e.preventDefault(); const N = notesG(); N.pg = N.pg||{}; N.pg[v] = !N.pg[v]; saveRender(); return; }
   switch(a){
     case "stop": ctl && ctl.abort(); return;
+    case "mjretry": mjRetry(); return;
     case "askon": case "askoff": { const ta = $("g-act"), keep = ta ? ta.value : ""; askMode = a==="askon"; grender(); const t2 = $("g-act"); if(t2){ t2.value = keep; t2.focus(); } return; }
     case "askc": { const q = $("g-q"); const txt = q ? q.value.trim() : ""; if(!txt||busy) return; askMJ(txt.slice(0,1000)); return; }
     case "ask": { const ta = $("g-act"); const txt = ta.value.trim(); if(!txt||busy) return; askMJ(txt.slice(0,1000)); return; }

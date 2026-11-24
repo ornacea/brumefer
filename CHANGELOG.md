@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.90.0 — 2026-11-24
+- Corrections et améliorations : maître du jeu, erreurs de connexion.
+
 ## 0.89.1 — 2026-11-24
 - Améliorations : documentation (contributions).
 
