@@ -63,8 +63,8 @@ Contributions go through a fork and a pull request; for now, only the author dec
 
 ### Calls for contributions
 
-1. **[Interface, maps and game experience (UX/UI)](https://github.com/ornacea/brumefer/issues/2)**: readability of the game screen, touch input on phones, a simpler hero creation, clearer and better-looking maps, accessibility, visual identity. Pull requests to `main`, with before and after screenshots.
-2. **[Read-aloud narration](https://github.com/ornacea/brumefer/issues/1)**: removed from `main` in version 0.89.0, it is kept in the [`voix`](https://github.com/ornacea/brumefer/tree/voix) branch (as of version 0.88.0: browser voices and VoiceStudio, one voice per character). Reliability, more natural voices, phones, simpler settings: pull requests to `voix`.
+1. **[Interface, maps and game experience (UX/UI)](https://github.com/ornacea/ironhaze/issues/2)**: readability of the game screen, touch input on phones, a simpler hero creation, clearer and better-looking maps, accessibility, visual identity. Pull requests to `main`, with before and after screenshots.
+2. **[Read-aloud narration](https://github.com/ornacea/ironhaze/issues/1)**: removed from `main` in version 0.89.0, it is kept in the [`voix`](https://github.com/ornacea/ironhaze/tree/voix) branch (as of version 0.88.0: browser voices and VoiceStudio, one voice per character). Reliability, more natural voices, phones, simpler settings: pull requests to `voix`.
 
 Each issue details the ideas and how to proceed. Simple feedback on what bothered you while playing is welcome too.
 

@@ -26,7 +26,7 @@ A short pull request that does one thing is much more likely to be accepted.
 
 Two areas are open as a priority. Each issue details the ideas; comment on it to say what you are taking on, especially for a large piece of work.
 
-### 1. Interface, maps and game experience (UX/UI): [issue #2](https://github.com/ornacea/brumefer/issues/2)
+### 1. Interface, maps and game experience (UX/UI): [issue #2](https://github.com/ornacea/ironhaze/issues/2)
 
 Readability of the game screen, touch input on phones, a simpler hero creation, clearer and better-looking maps, accessibility, visual identity.
 
@@ -35,9 +35,9 @@ Readability of the game screen, touch input on phones, a simpler hero creation, 
 3. Open your pull request **to `main`**, with before and after screenshots.
 4. Images, fonts and icons: only under a compatible license (CC0, CC BY, CC BY-SA, open fonts), with their source and license stated. No new dependency loaded from the Internet.
 
-### 2. Read-aloud narration, `voix` branch: [issue #1](https://github.com/ornacea/brumefer/issues/1)
+### 2. Read-aloud narration, `voix` branch: [issue #1](https://github.com/ornacea/ironhaze/issues/1)
 
-Reading the story aloud was removed from `main` in version 0.89.0. Its code is kept in the [`voix`](https://github.com/ornacea/brumefer/tree/voix) branch, as of version 0.88.0: reliability, more natural voices, phones, simpler settings.
+Reading the story aloud was removed from `main` in version 0.89.0. Its code is kept in the [`voix`](https://github.com/ornacea/ironhaze/tree/voix) branch, as of version 0.88.0: reliability, more natural voices, phones, simpler settings.
 
 1. In your fork, create your branch **from `voix`**.
 2. Open your pull request **to `voix`**, not to `main`.

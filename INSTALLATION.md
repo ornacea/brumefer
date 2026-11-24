@@ -24,8 +24,8 @@ You need a Claude subscription that includes **Claude Code** (Pro plan or higher
 1. Install the Claude desktop app from [claude.ai/download](https://claude.ai/download) and sign in.
 2. Get the game:
    - without Git: on the repository's GitHub page, **Code → Download ZIP**, then unzip the folder;
-   - with Git: `git clone https://github.com/ornacea/brumefer.git`
-3. In the Claude app, open the **Code** tab and choose the `brumefer` folder as the working folder.
+   - with Git: `git clone https://github.com/ornacea/ironhaze.git`
+3. In the Claude app, open the **Code** tab and choose the `ironhaze` folder (`ironhaze-main` if you downloaded the ZIP) as the working folder.
 4. Ask Claude, word for word:
 
    > Publish `brumefer.html` as an artifact, with the whole `carto/` folder as attached files at the same paths, and the `sample`, `downloads`, `db` and `user` capabilities.
@@ -49,7 +49,7 @@ For a new version of the game: get the update (new ZIP or `git pull`), then ask 
 
 ## Level 2: modify the game
 
-1. Install [Git](https://git-scm.com) and clone the repository: `git clone https://github.com/ornacea/brumefer.git`
+1. Install [Git](https://git-scm.com) and clone the repository: `git clone https://github.com/ornacea/ironhaze.git`
 2. Edit `brumefer.html`: the interface, rules and game master instructions are directly readable. The story texts are encoded to avoid spoilers; the page decodes them when it loads.
 3. Republish your copy (level 1, step 4) to play with your changes.
 4. The license (see `LICENSE`) requires you to credit "Ironhaze's Curse, by Orna", to make no commercial use of it, and to share your changes under the same license.

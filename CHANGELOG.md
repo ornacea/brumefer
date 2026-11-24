@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.92.2 — 2026-11-24
+- Corrections et améliorations : le dépôt s'appelle désormais ornacea/ironhaze.
+
 ## 0.92.1 — 2026-11-24
 - Corrections et améliorations : titre « Ironhaze's Curse ».
 

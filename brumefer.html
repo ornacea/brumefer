@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.92.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.92.2</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.92.2","d":"2026-11-24","items":["Corrections et améliorations : le dépôt s'appelle désormais ornacea/ironhaze."]},
 {"v":"0.92.1","d":"2026-11-24","items":["Corrections et améliorations : titre « Ironhaze's Curse »."]},
 {"v":"0.92.0","d":"2026-11-24","items":["Améliorations : cohérence de l'intrigue."]},
 {"v":"0.91.1","d":"2026-11-24","items":["Améliorations : le jeu s'appelle désormais « Ironhaze's Curse »."]},
@@ -3534,7 +3535,8 @@ function prisFind(nom){ const P = prisG(), r = pnjReg(nom) || pnjMask(nom); if(r
 function prisDn(x){ return x.e==="sauve" || x.n || pnjIdent(pnjReg(x.nom)) ? x.nom : (x.b || x.nom); }
 function prisCount(){ const V = Object.values(prisG()), c = e => V.filter(x=>x.e===e).length;
   const n = {viv:V.filter(x=>!x.m).length, pris:c("pris"), sauve:c("sauve"), perdu:c("perdu"), morts:V.filter(x=>x.m).length, lie:c("lie"), libere:c("libere")}; n.zz = n.pris + n.lie; return n; }
-function prisCheck(){ const n = prisCount(); if(!G.brumeRepos && !n.zz){ G.brumeRepos = true;
+/* en 5e partie, la Mère-Brume ne renonce jamais : la règle des nuits s'applique jusqu'à la fin de la partie, même à 0 captif */
+function prisCheck(){ const n = prisCount(); if(partCur()===5) return; if(!G.brumeRepos && !n.zz){ G.brumeRepos = true;
   logJ("sys", `🕯️ Plus personne de Brumefer n'est sous l'emprise de la Brume (${n.sauve} sauvé${n.sauve>1?"s":""}${n.perdu?`, ${n.perdu} mort${n.perdu>1?"s":""} sous son emprise`:""}${n.libere?`, ${n.libere} mort${n.libere>1?"s":""} revenu${n.libere>1?"s":""} libéré${n.libere>1?"s":""}`:""}) : elle renonce et ne prendra plus personne.`); } }
 /* Coursier : le héros apprend chaque enlèvement */
 function prisCourrier(x, why){ const from = (G.lieu && /temple/.test(norm(G.lieu))) ? "un gamin du quai" : "un coursier de Mirelle";
