@@ -1,5 +1,9 @@
 # La Malédiction de Brumefer
 
+> **Branche `voix` : ouverte aux contributions.** La lecture à voix haute (voix du navigateur et [VoiceStudio](https://github.com/debpalash/VoiceStudio), une voix par personnage) a été retirée de la branche `main` à la version 0.89.0. Elle est conservée ici, dans l'état de la version 0.88.0, pour que la communauté puisse la reprendre et l'améliorer : fiabilité, voix plus naturelles, prise en charge des téléphones, réglages plus simples…
+>
+> Pour proposer une amélioration : fais une copie (**Fork**), crée une branche à partir de `voix`, puis ouvre une **pull request vers `voix`** (pas vers `main`). Les règles de [CONTRIBUTING.md](CONTRIBUTING.md) s'appliquent : seul l'auteur décide de ce qui est intégré, et si la lecture à voix haute redevient assez solide, elle reviendra dans `main`.
+
 Jeu de rôle **en solo**, en français, dans un univers de dark fantasy, aux règles de la 5ᵉ édition (SRD 5.1). Le joueur crée son héros, puis un **meneur de jeu joué par Claude** raconte l'aventure, joue les personnages et arbitre les actions. La page, elle, tient les règles : jets de dés, combats, inventaire, argent, temps qui passe et cartes.
 
 Tout le jeu tient dans un seul fichier, `brumefer.html`, publié comme artefact Claude.
