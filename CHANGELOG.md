@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.103.1 — 2026-11-25
+- Améliorations : fenêtre des titres réorganisée.
+
 ## 0.103.0 — 2026-11-25
 - Améliorations : fenêtres de titres et de domaines séparées, carte agrandie plus lisible, fermeture des fenêtres par Échap ou un clic en dehors.
 
