@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.108.0 — 2026-11-25
+- Améliorations : un nouveau lieu dans la vallée.
+
 ## 0.107.0 — 2026-11-25
 - Améliorations : nouveaux plans de lieux pour la suite de la campagne.
 
