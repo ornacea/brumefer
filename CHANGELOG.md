@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.109.0 — 2026-11-25
+- Corrections et améliorations : descriptions de certains lieux.
+
 ## 0.108.0 — 2026-11-25
 - Améliorations : un nouveau lieu dans la vallée.
 
