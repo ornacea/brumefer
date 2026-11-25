@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.107.0 — 2026-11-25
+- Améliorations : nouveaux plans de lieux pour la suite de la campagne.
+
 ## 0.106.1 — 2026-11-25
 - Corrections et améliorations : le journal d'une partie rechargée garde l'accessibilité des montants.
 
