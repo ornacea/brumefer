@@ -2,8 +2,11 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.115.0 — 2026-11-25
+- Améliorations : nouveaux titres accordés par le jeu selon tes actes, dont un titre infamant.
+
 ## 0.114.0 — 2026-11-25
-- Titres de campagne : certains titres sont désormais accordés par le jeu lui-même dès que leur condition est remplie, sans dépendre du MJ.
+- Améliorations : certains titres de campagne sont accordés par le jeu lui-même dès que leur condition est remplie.
 
 ## 0.113.0 — 2026-11-25
 - Améliorations : la carte du Carnet suit le héros et signale les changements de carte.
