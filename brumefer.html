@@ -336,6 +336,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .maplg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.72rem;color:var(--muted);margin-top:4px}.maplg .lg{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.4px solid var(--ink);margin-right:3px;vertical-align:-1px}
 .lg-foret{background:var(--zfor);border-color:var(--zforl)!important;border-radius:2px!important}.lg-mont{background:var(--zmon);border-color:var(--zmonl)!important;border-radius:2px!important}
 .lg-eau{background:var(--wfill);border-color:var(--wline)!important;border-radius:2px!important}
+.msanct{fill:#f2b84b;stroke:#f2b84b}.msanct-o{fill:none;stroke:#d9982a;stroke-width:1.5;stroke-dasharray:5 4;opacity:.8}.lg-sanct{background:#f2b84b66;border-color:#d9982a!important;border-radius:50%!important}
 .lg-visite{background:var(--brass)}.lg-connu{background:var(--surface)}.lg-rumeur{background:var(--surface);border-style:dashed!important}.lg-here{border-color:var(--accent)!important;border-width:2px!important}
 .play{min-width:0;display:grid;gap:12px}
 .journal{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;height:min(58vh,620px);min-height:280px;overflow-y:auto;overflow-anchor:none;display:flex;flex-direction:column;gap:10px}
@@ -489,7 +490,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.105.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.106.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +906,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.106.0","d":"2026-11-25","items":["Améliorations : les lieux protégés apparaissent sur la carte de la ville avec leur zone."]},
 {"v":"0.105.1","d":"2026-11-25","items":["Améliorations : infobulle rappelant les effets de la sous-classe."]},
 {"v":"0.105.0","d":"2026-11-25","items":["Améliorations : la sous-classe du héros est affichée en tête de ses compétences."]},
 {"v":"0.104.0","d":"2026-11-25","items":["Améliorations : les personnages morts sont signalés dans le carnet, et un même personnage n'y apparaît plus jamais deux fois une fois identifié."]},
@@ -3650,6 +3652,17 @@ function sanctFeu(lieu, on, why){ if(!lieu) return false; const o = typeof lieu=
   if(!cur || !cur.feu) return false; cur.feu = 0; logJ("sys", `🌑 Le feu béni s'est éteint : <b>${esc(cur.nom)}</b> n'est plus un sanctuaire.`); return true; }
 const sanctOn = () => Object.values(sanctG()).filter(x=>x.feu);
 function sanctAbri(t){ const w = " " + norm(t||"").replace(/[^a-z0-9]+/g, " ") + " "; return w.trim() ? sanctOn().some(x=>x.al.split("|").map(a=>a.replace(/[^a-z0-9]+/g, " ").trim()).filter(Boolean).some(a=>w.includes(" " + a + " "))) : false; }
+/* Lieux de l'atlas couverts par un sanctuaire actif : le lieu lui-même et ses dépendances (alias du sanctuaire = nom ou alias du lieu) */
+function sanctLieux(x){ const T = new Set(String(x.al||"").split("|").map(a=>norm(a).replace(/[^a-z0-9]+/g, " ").trim()).filter(Boolean)), out = [];
+  const hit = (nom, al)=>nk(nom)===nk(x.nom) || T.has(nk(nom)) || T.has(norm(nom).replace(/[^a-z0-9]+/g, " ").trim()) || String(al||"").split("|").some(a=>T.has(norm(a).replace(/[^a-z0-9]+/g, " ").trim()));
+  ATLAS.forEach(m=>{ if(m.type!=="ville") return; m.L.forEach(l=>{ if(hit(l[0], l[4]) && !out.includes(l[0])) out.push(l[0]); }); }); return out; }
+function sanctZones(mp){ if(!mp || mp.type!=="ville" || !G) return []; let S = []; try{ S = sanctOn(); }catch(e){ return []; }
+  const V = Object.entries(mp.lieux||{}).filter(([k,l])=>l && l.x!=null);
+  return S.map(x=>{ const ns = sanctLieux(x).map(nk), pl = V.filter(([k,l])=>ns.includes(nk(l.nom))).map(([k,l])=>l); return {x, pl}; }).filter(z=>z.pl.length); }
+function hull(P){ const p = P.slice().sort((a,b)=>a[0]-b[0] || a[1]-b[1]); if(p.length<3) return p; const cr = (o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]), lo = [], up = [];
+  p.forEach(q=>{ while(lo.length>=2 && cr(lo[lo.length-2], lo[lo.length-1], q)<=0) lo.pop(); lo.push(q); });
+  p.slice().reverse().forEach(q=>{ while(up.length>=2 && cr(up[up.length-2], up[up.length-1], q)<=0) up.pop(); up.push(q); });
+  return lo.slice(0,-1).concat(up.slice(0,-1)); }
 /* Seul ? Abrité dans un sanctuaire (temple ou feu béni), auprès de Mirelle ou du héros, accompagné, ou gardé (signalé par le MJ) : non */
 function prisSeul(nom){ const k = nk(nom), gd = (G.prisGarde||{})[k]; if(gd!=null) return !gd;
   const N = (G.notes||{}).pnj||{}, x = (G.pris||{})[k], o = N[k] || (x && x.b && N[nk(x.b)]); if(!o) return true;
@@ -3748,7 +3761,7 @@ function prisBrief(){ const P = Object.values(prisG()), n = prisCount(), L = e =
     + (G.brumeRepos ? " LA BRUME A RENONCÉ : plus personne n'est sous son emprise ; ne fais plus disparaître aucun habitant de Brumefer." : prisActif() ? " Chaque nuit, la page tire en coulisse si la Brume reprend un sauvé resté seul ou prend un habitant (une personne au plus par nuit ; Mirelle jamais ; les notables en dernier : marchands, syndic, greffier, capitaine de la milice, bourgmestre) et l'annonce par un coursier : ne fais disparaître personne toi-même. Un habitant abrité dans un sanctuaire, auprès de Mirelle ou du héros, ou accompagné n'est pas seul." : " La Mère-Brume étant scellée, la Brume ne prend plus personne la nuit pour l'instant ; ceux qu'elle tient restent à sauver.")
     + (G.brumeAbandon ? " BRUMEFER EST ABANDONNÉE À LA BRUME : les notables et Mirelle se replient par le Relais du Halage vers Ostelande ; la mission est d'abattre ceux que la Brume tient (un pris vivant abattu meurt) et de protéger les notables. La ville sera à reprendre quand la Mère-Brume sera scellée." : "")
     + (G.prisCour && G.prisCour.length ? ` COURSIER : la page vient d'annoncer au héros, par un coursier, que ${G.prisCour.splice(0).join(", ")} a été pris par la Brume ; fais arriver ce coursier dans le récit s'il n'y est pas déjà.` : "")
-    + ` SANCTUAIRES DE LA DAME DES CENDRES : ${sanctOn().map(x=>x.nom + (x.perm ? " (toujours, que Mirelle y soit ou non)" : " (feu béni de Mirelle, tant qu'il est entretenu)")).join(" ; ")}. Le pouvoir couvre tout le bâtiment et ses dépendances (pour les Fours de brique noire, le bail et le contrat signé y rattachent la forge de Dunra, l'armurerie d'Aldrec, la cour des Braises et les entrepôts) : la Brume n'y prend personne, même quelqu'un resté seul, et n'attaque JAMAIS un sanctuaire : aucun pris, aucune émanation ni aucun Veilleur lié n'y entre pour frapper ; un combat contre la Brume ne s'y déclenche jamais (seul un pris qui vient s'y faire libérer y entre). Un pris (vivant) qui s'y présente peut y être libéré par la prière et la litanie : signale-le dans "pris.sauve". Seule Mirelle allume un feu béni ; s'il n'est plus entretenu, il s'éteint.`
+    + ` SANCTUAIRES DE LA DAME DES CENDRES (zones sûres, tracées sur la carte du héros) : ${sanctOn().map(x=>x.nom + (x.perm ? " (toujours, que Mirelle y soit ou non)" : " (feu béni de Mirelle, tant qu'il est entretenu)") + (()=>{ const Z = sanctLieux(x).filter(n=>nk(n)!==nk(x.nom)); return Z.length ? ", zone : " + Z.join(", ") : ""; })()).join(" ; ")}. Le pouvoir couvre tout le bâtiment et ses dépendances (pour les Fours de brique noire, le bail et le contrat signé y rattachent la forge de Dunra, l'armurerie d'Aldrec, la cour des Braises et les entrepôts) : la Brume n'y prend personne, même quelqu'un resté seul, et n'attaque JAMAIS un sanctuaire : aucun pris, aucune émanation ni aucun Veilleur lié n'y entre pour frapper ; un combat contre la Brume ne s'y déclenche jamais (seul un pris qui vient s'y faire libérer y entre). Un pris (vivant) qui s'y présente peut y être libéré par la prière et la litanie : signale-le dans "pris.sauve". Seule Mirelle allume un feu béni ; s'il n'est plus entretenu, il s'éteint.`
     + ` Signale dans "pris" : {"feu":{"allume":[{"lieu":"lieu où Mirelle allume un feu béni","dependances":["dépendances du bâtiment"]}],"eteint":[lieu dont le feu béni n'est plus entretenu]},"sauve":[vrai nom du pris que le héros délivre et rend à son nom],"mort":[pris vivant qui meurt, ou que le héros achève : un pris vivant abattu dans un combat de la page est déjà compté mort par la page ; signale ici celui qui meurt ou que le héros achève hors d'un combat de la page],"libere":[mort revenu abattu hors du combat de la page],"garde":[habitant mis à l'abri ou sous bonne garde],"seul":[habitant laissé seul],"annonce":true (la première fois que le récit révèle au héros que la Brume a pris des habitants)}. L'objectif « ${PRIS_OBJ} » est tenu par la page : ne l'ajoute pas, ne l'accomplis pas, ne l'abandonne pas.`; }
 /* Corrections demandées par le joueur pour une partie précise (appliquées une seule fois, si le carnet contient le nom de Brume) */
 const FIX_JOUEUR = [{id:"vorn-ruben", hero:"Vornadar", fuse:[[/colporteu/, "Ruben Tilde"]]},
@@ -4646,6 +4659,9 @@ function mapSVG(mp){ const L = Object.entries(mp.lieux).filter(([k,l])=>l.x!=nul
     g += t==="ville" ? `<path d="${d}" class="mst-b${rm}" pointer-events="none"/><path d="${d}" class="mst${rm}" pointer-events="none"/>` : "";
     g += `<path d="${d}" class="ml ml-${t}${rm}"><title>${esc(z.nom||"")}</title></path>`;
     if(z.nom) labs.push({text:z.nom, cls:"mtl", size:7.5, prio:3, cands:[0.6,0.45,0.75,0.3].flatMap(f=>{ const [x,y] = alongPath(P, f); return [[x+8,y],[x-8,y],[x,y-4],[x,y+9]]; })}); });
+  if(t==="ville") sanctZones(mp).forEach(z=>{ const P = hull(z.pl.map(l=>[X(l), Y(l)])), r = cell*0.45, tip = `<title>Sanctuaire de la Dame des Cendres : ${esc(z.x.nom)}${z.x.perm ? "" : " (feu béni entretenu)"} — la Brume n'y entre pas et n'y prend personne (${esc(z.pl.map(l=>l.nom).join(", "))})</title>`;
+    g += `<g class="msanct" opacity=".26">${P.length===1 ? `<circle cx="${P[0][0]}" cy="${P[0][1]}" r="${r}"/>` : `<path d="M${P.map(q=>q.join(" ")).join(" L")} Z" stroke-width="${2*r}" stroke-linejoin="round" stroke-linecap="round"/>`}${tip}</g>`;
+    g += P.length===1 ? `<circle cx="${P[0][0]}" cy="${P[0][1]}" r="${r}" class="msanct-o" pointer-events="none"/>` : ""; });
   L.forEach(([k,l])=>{ const x = X(l), y = Y(l), cls = `mn mn-${l.etat}`, here = mp.pos===k;
     const vk = t==="ville" ? villeKind(l) : (t==="donjon"||t==="souterrain") ? donjonKind(l, t) : null, isPath = vk==="rue" || vk==="couloir";
     const ri = t==="region" ? regIcon(l) : null, ih = ri ? Math.round(ri[1]*1.25) : 0;
@@ -4728,7 +4744,7 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   h += SEC.div + SEC.map + SEC.intr + SEC.pris + SEC.pnj + SEC.lieux + SEC.corr;
   return h; }
 /* Boutons de zoom, carte et légende (carnet et carte agrandie) */
-function mapBody(mp){ return `<div class="mapzoom"><button type="button" class="btn sm" data-mz="1" title="Zoomer" aria-label="Zoomer">+</button><button type="button" class="btn sm" data-mz="-1" title="Dézoomer" aria-label="Dézoomer">−</button>${mp.type==="region"&&mp.atlas?`<button type="button" class="btn sm" data-mz="0" title="Recentrer sur ce que tu connais" aria-label="Recentrer">⌖</button>`:""}</div>${mapSVG(mp)}</div><div class="maplg"><span><i class="lg lg-visite"></i>visité</span><span><i class="lg lg-connu"></i>connu</span><span><i class="lg lg-rumeur"></i>rumeur</span><span><i class="lg lg-here"></i>toi</span>${(mp.eaux||[]).length?`<span><i class="lg lg-eau"></i>eau</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="foret"||z.type==="clairiere")?`<span><i class="lg lg-foret"></i>forêt</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="montagne"||z.type==="colline")?`<span><i class="lg lg-mont"></i>relief</span>`:""}</div>`; }
+function mapBody(mp){ return `<div class="mapzoom"><button type="button" class="btn sm" data-mz="1" title="Zoomer" aria-label="Zoomer">+</button><button type="button" class="btn sm" data-mz="-1" title="Dézoomer" aria-label="Dézoomer">−</button>${mp.type==="region"&&mp.atlas?`<button type="button" class="btn sm" data-mz="0" title="Recentrer sur ce que tu connais" aria-label="Recentrer">⌖</button>`:""}</div>${mapSVG(mp)}</div><div class="maplg"><span><i class="lg lg-visite"></i>visité</span><span><i class="lg lg-connu"></i>connu</span><span><i class="lg lg-rumeur"></i>rumeur</span><span><i class="lg lg-here"></i>toi</span>${(mp.eaux||[]).length?`<span><i class="lg lg-eau"></i>eau</span>`:""}${sanctZones(mp).length?`<span><i class="lg lg-sanct"></i>sanctuaire</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="foret"||z.type==="clairiere")?`<span><i class="lg lg-foret"></i>forêt</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="montagne"||z.type==="colline")?`<span><i class="lg lg-mont"></i>relief</span>`:""}</div>`; }
 function bigMapModal(){ const N = G.notes; if(!N || !N.big) return ""; const MU = Object.entries(N.cartes).filter(([k,m])=>mapUsable(m)), ok = new Set(MU.map(e=>e[0]));
   const cur = N.view && ok.has(N.view) ? N.view : N.cur && ok.has(N.cur) ? N.cur : (MU[0]||[])[0]; const mp = N.cartes[cur];
   if(!mp){ N.big = false; return ""; }

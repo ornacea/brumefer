@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.106.0 — 2026-11-25
+- Améliorations : les lieux protégés apparaissent sur la carte de la ville avec leur zone.
+
 ## 0.105.1 — 2026-11-25
 - Améliorations : infobulle rappelant les effets de la sous-classe.
 
