@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.113.0 — 2026-11-25
+- Améliorations : la carte du Carnet suit le héros et signale les changements de carte.
+
 ## 0.112.1 — 2026-11-25
 - Corrections et améliorations : journal des domaines.
 
