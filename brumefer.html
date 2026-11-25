@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.102.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.103.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.103.0","d":"2026-11-25","items":["Améliorations : fenêtres de titres et de domaines séparées, carte agrandie plus lisible, fermeture des fenêtres par Échap ou un clic en dehors."]},
 {"v":"0.102.0","d":"2026-11-24","items":["Améliorations : titres et domaines présentés dans deux onglets distincts, titres classés par acte."]},
 {"v":"0.101.2","d":"2026-11-24","items":["Corrections et améliorations : titres de campagne accordés au bon moment."]},
 {"v":"0.101.1","d":"2026-11-24","items":["Améliorations : nouveau rang de renommée au sommet de l'échelle, avec ses avantages."]},
@@ -3724,7 +3725,7 @@ function regEtat(x){ if(!x) return "";
 /* morts (morts revenus, morts sous l'emprise, libérés) : obèles et italique ; pleurés vivants : gras italique ; rendus à leur nom : écriture normale */
 function regCls(x){ if(!x || x.e==="sauve") return ""; return x.m || x.e==="perdu" || x.e==="libere" ? ' class="regmort"' : ' class="regpl"'; }
 function regModal(){ if(!regOpen) return ""; if(!regHas()){ regOpen = false; return ""; } const n = prisCount(), R = regRows();
-  return `<div class="mapmodal" role="dialog" aria-label="Registre des pleurés"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">Registre des pleurés <small class="lede">${regComplet() ? "toute la ville, recensée par le greffier" : `noms connus de toi et de ${esc(((regSrcInit()||{}).de)||"Mirelle Aubrac")}`}</small></h3><button type="button" class="btn sm" data-g="registre">Fermer</button></div>
+  return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="Registre des pleurés" data-close="reg"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">Registre des pleurés <small class="lede">${regComplet() ? "toute la ville, recensée par le greffier" : `noms connus de toi et de ${esc(((regSrcInit()||{}).de)||"Mirelle Aubrac")}`}</small></h3><button type="button" class="btn sm" data-g="registre">Fermer</button></div>
     <small class="lede">Encore sous l'emprise de la Brume : <b>${n.zz}</b> · rendus à leur nom : <b>${n.sauve}</b>${n.perdu ? ` · morts sous son emprise : <b>${n.perdu}</b>` : ""}${n.libere ? ` · morts libérés : <b>${n.libere}</b>` : ""}${G.regMaj ? ` · dernière inscription : ${esc(G.regMaj)}` : ""}</small>
     <table class="regtab"><thead><tr><th>Nom</th><th>Famille</th><th>Demeure</th><th>Mention</th></tr></thead><tbody>${R.map(o=>`<tr${regCls(o.x)}><td>${o.x && (o.x.m || o.x.e==="perdu" || o.x.e==="libere") ? `† ${esc(o.nom)} †` : esc(o.nom)}</td><td>${esc([o.fam, o.rel].filter(Boolean).join(" — "))}</td><td>${esc(o.lieu)}</td><td>${regEtat(o.x)}</td></tr>`).join("")}</tbody></table></div></div>`; }
 function regBrief(){ if(regHas()) return ` Le héros détient le REGISTRE DES PLEURÉS (la page lui en montre le contenu : nom, famille et demeure ; noms de Brume des seuls sauvés). ${regComplet() ? "Il recense toute la ville (registre du greffier)." : `Il ne porte que les habitants que connaissent le héros et ${(regSrcInit()||{}).de||"Mirelle Aubrac"}, qui le lui a remis ; si le héros le fait compléter par le greffier Odilon Marc, mets "registre":{"complete_par":"Odilon Marc"} : il recensera alors toute la ville.`}`;
@@ -4445,7 +4446,7 @@ function villeIcon(k, x, y, cls, t){ const d = GI[k] || GI[({ville:"maison", sou
   const ic = VICON[k] || VICON.maison;
   return `<g transform="translate(${x-14} ${y-14}) scale(1.4)" class="mi"><path d="${ic.b}" class="mi-b ${cls}"/><path d="${ic.d}" class="mi-d"/></g>`; }
 const MAPZ = {};
-function mapZ(svg, x, y, w){ const W = +svg.dataset.w, H = +svg.dataset.h; w = Math.max(W/4, Math.min(W, w)); const h = w*H/W;
+function mapZ(svg, x, y, w){ const W = +svg.dataset.w, H = +svg.dataset.h; w = Math.max(W/3, Math.min(W, w)); const h = w*H/W;
   x = Math.max(0, Math.min(W-w, x)); y = Math.max(0, Math.min(H-h, y));
   const k = svg.dataset.k; if(w>=W-0.5){ x = 0; y = 0; w = W; if(svg.dataset.f) MAPZ[k] = [0, 0, W]; else delete MAPZ[k]; } else MAPZ[k] = [x, y, w];
   svg.setAttribute("viewBox", `${x} ${y} ${w} ${h}`); svg.classList.toggle("zoomed", w<W-0.5); }
@@ -4687,7 +4688,7 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   else { const mp = N.cartes[cur];
     h += `<div class="maptabs">${M.map(([k,m])=>`<button type="button" class="chip ${k===cur?"sel":""}" data-g="mapview" data-v="${esc(k)}">${esc(m.nom)} <small>${m.lbl||MAPT[m.type]||""}</small></button>`).join("")}${mp.atlas?"":`<button type="button" class="ndel" data-g="ndel" data-v="c:${esc(cur)}" title="Supprimer la carte ${esc(mp.nom)}" aria-label="Supprimer la carte ${esc(mp.nom)}">×</button>`}</div>`;
     h += `<div class="mapbox"><button type="button" class="btn sm mapbig" data-g="mapbig">Agrandir</button>${mapBody(mp)}`; }
-  { let dv = ""; try{ dv = domView(); }catch(e){} if(dv) h += `<button type="button" class="btn sm ghost" data-g="mapbig" title="Titres et domaines : sous la carte agrandie, un onglet pour chacun">👑 Titres · 🏰 Domaines</button>`; }
+  { let dv = ""; try{ dv = domView(); }catch(e){} if(dv) h += `<div class="row" style="gap:6px;flex-wrap:wrap"><button type="button" class="btn sm ghost" data-g="domwin" data-v="titres" title="Tes titres et ton prestige">👑 Titres <small>${titres().length}</small></button><button type="button" class="btn sm ghost" data-g="domwin" data-v="domaines" title="Tes domaines, les biens à vendre et le travail sur place">🏰 Domaines <small>${doms().length}</small></button></div>`; }
   h += `</details>`;
   SEC.map = h; h = h0; }
   SEC.lieux = `<details class="nsec" open><summary>Lieux <small>${Lx.length}</small></summary>${Lx.length?Lx.map(([k,l])=>`<div class="nent"><button type="button" class="ndel" data-g="ndel" data-v="l:${esc(k)}" title="Retirer ${esc(l.nom)} du carnet et des cartes" aria-label="Retirer ${esc(l.nom)}">×</button><b>${esc(l.nom)}</b>${l.etat?` <small class="ltag">${ATL_LBL[l.etat]}</small>`:""}${isNew("l:"+k)||(l.nw&&isNew(l.nw))?` <span class="badge-new">nouveau</span>`:""}${l.info||l.carte?`<small>${esc(l.info||"")}${l.carte?`${l.info?" · ":""}carte : ${esc(l.carte)}`:""}</small>`:""}</div>`).join(""):`<p class="lede">Aucun lieu noté.</p>`}</details>`;
@@ -4700,12 +4701,11 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
 /* Boutons de zoom, carte et légende (carnet et carte agrandie) */
 function mapBody(mp){ return `<div class="mapzoom"><button type="button" class="btn sm" data-mz="1" title="Zoomer" aria-label="Zoomer">+</button><button type="button" class="btn sm" data-mz="-1" title="Dézoomer" aria-label="Dézoomer">−</button>${mp.type==="region"&&mp.atlas?`<button type="button" class="btn sm" data-mz="0" title="Recentrer sur ce que tu connais" aria-label="Recentrer">⌖</button>`:""}</div>${mapSVG(mp)}</div><div class="maplg"><span><i class="lg lg-visite"></i>visité</span><span><i class="lg lg-connu"></i>connu</span><span><i class="lg lg-rumeur"></i>rumeur</span><span><i class="lg lg-here"></i>toi</span>${(mp.eaux||[]).length?`<span><i class="lg lg-eau"></i>eau</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="foret"||z.type==="clairiere")?`<span><i class="lg lg-foret"></i>forêt</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="montagne"||z.type==="colline")?`<span><i class="lg lg-mont"></i>relief</span>`:""}</div>`; }
 function bigMapModal(){ const N = G.notes; if(!N || !N.big) return ""; const MU = Object.entries(N.cartes).filter(([k,m])=>mapUsable(m)), ok = new Set(MU.map(e=>e[0]));
-  const cur = N.view && ok.has(N.view) ? N.view : N.cur && ok.has(N.cur) ? N.cur : (MU[0]||[])[0]; const mp = N.cartes[cur]; let dv = ""; try{ dv = domView(); }catch(e){}
-  if(!mp){ if(!dv){ N.big = false; return ""; }
-    return `<div class="mapmodal" role="dialog" aria-label="Titres et domaines"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">Titres et domaines</h3><button type="button" class="btn sm" data-g="mapbig">Fermer</button></div><div class="mapdom">${dv}</div></div></div>`; }
-  return `<div class="mapmodal" role="dialog" aria-label="Carte agrandie"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">${esc(mp.nom)} <small class="lede">${mp.lbl||MAPT[mp.type]||""}</small></h3><button type="button" class="btn sm" data-g="mapbig">Fermer</button></div>
+  const cur = N.view && ok.has(N.view) ? N.view : N.cur && ok.has(N.cur) ? N.cur : (MU[0]||[])[0]; const mp = N.cartes[cur];
+  if(!mp){ N.big = false; return ""; }
+  return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="Carte agrandie" data-close="big"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">${esc(mp.nom)} <small class="lede">${mp.lbl||MAPT[mp.type]||""}</small></h3><button type="button" class="btn sm" data-g="mapbig">Fermer</button></div>
     <div class="maptabs">${MU.map(([k,m])=>`<button type="button" class="chip ${k===cur?"sel":""}" data-g="mapview" data-v="${esc(k)}">${esc(m.nom)} <small>${m.lbl||MAPT[m.type]||""}</small></button>`).join("")}</div>
-    <div class="mapbox">${mapBody(mp)}${dv ? `<div class="mapdom">${dv}</div>` : ""}</div></div>`; }
+    <div class="mapbox">${mapBody(mp)}</div></div>`; }
 function invView(){
   const h = G.hero, groups = {arme:[],armure:[],conso:[],objet:[]}, seen = {};
   const bag = sacCounts(), inBag = {}, bagIt = [], bagSeen = {}, sacOn = !!G.sac; let sacSkip = sacOn;
@@ -5664,10 +5664,9 @@ function titActs(T){ const G2 = {}; T.forEach(x=>{ const [n] = titAct(x); (G2[n]
   const one = x=>`<div>👑 <b>${esc(x.n)}</b>${x.src?` <small>(${esc(x.src)})</small>`:""}${x.bonus?`<small class="lede" style="display:block;margin:1px 0 4px 18px">${esc(x.bonus)}</small>`:""}</div>`;
   return `<div class="titacts" style="font-size:.88rem">${ks.map(n=>{ const L = G2[n].slice().sort((a,b)=>titAct(a)[1].localeCompare(titAct(b)[1])), lb = n===999 ? "Autres titres" : `Acte ${n}`;
     return `<details class="titact" ${n===last || (n===999 && !last) ? "open" : ""}><summary><b>${lb}</b> <small class="ltag">${L.length}</small></summary>${L.map(one).join("")}</details>`; }).join("")}</div>`; }
-function domView(){ const D = doms(), T = titres(), ok = shopCanGo(); let t = "";
+function domView(tab){ const D = doms(), T = titres(), ok = shopCanGo(); let t = "";
   if(!D.length && !T.length && !G.offre && !G.localite) return "";
-  const tab = domTab === "domaines" ? "domaines" : "titres";
-  t += `<div class="chips slots domtabs" role="tablist" aria-label="Titres ou domaines"><button type="button" class="chip ${tab==="titres"?"sel":""}" role="tab" aria-selected="${tab==="titres"}" data-g="domtab" data-v="titres">👑 Titres <small>${T.length}</small></button><button type="button" class="chip ${tab==="domaines"?"sel":""}" role="tab" aria-selected="${tab==="domaines"}" data-g="domtab" data-v="domaines">🏰 Domaines <small>${D.length}</small></button></div>`;
+  tab = tab || domTab; tab = tab === "domaines" ? "domaines" : "titres";
   if(tab==="titres"){
   t += T.length ? titActs(T) : `<small class="lede" style="display:block;margin:-2px 0 6px">Aucun titre : seule une autorité peut t'en conférer un, au fil de l'histoire.</small>`;
   t += prestView();
@@ -5690,8 +5689,16 @@ function domView(){ const D = doms(), T = titres(), ok = shopCanGo(); let t = ""
     t += `<details><summary><small>💼 Travailler à ${esc(L.nom)}</small></summary>${ACTS.map(a=>{ const be = actBest(a), can = actCan();
       return `<div class="kv"><span>${esc(a.n)} <small>${esc(be.label)} ${sg(be.b)}</small></span><span style="display:flex;gap:4px"><button type="button" class="btn sm" data-g="act" data-v="${a.id}" data-l="1" ${can?"":"disabled"}>1 jour</button><button type="button" class="btn sm" data-g="act" data-v="${a.id}" data-l="7" ${can?"":"disabled"}>1 semaine</button></span></div>`; }).join("")}<small class="lede" style="display:block">La page tire le test et verse le gain ; le temps passe d'autant.</small></details>`; }
   return t; }
-var domTab = "titres";
+var domTab = "titres", domWin = null;
+/* Fenêtre Titres ou Domaines : chacune ne montre que ce qui la concerne */
+function domModal(){ if(!domWin) return ""; const tt = domWin==="domaines" ? "🏰 Domaines" : "👑 Titres"; let dv = ""; try{ dv = domView(domWin); }catch(e){}
+  if(!dv){ domWin = null; return ""; }
+  return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="${domWin==="domaines" ? "Domaines" : "Titres"}" data-close="dom"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">${tt}</h3><button type="button" class="btn sm" data-g="domwin" data-v="">Fermer</button></div><div class="mapdom">${dv}</div></div></div>`; }
+/* Fermer une fenêtre : bouton Fermer, touche Échap ou clic en dehors */
+function modalClose(k){ if(k==="dom") domWin = null; else if(k==="reg") regOpen = false; else if(k==="big" && G && G.notes) G.notes.big = false; else return false; grender(); return true; }
+function modalTop(){ return domWin ? "dom" : regOpen ? "reg" : G && G.notes && G.notes.big ? "big" : ""; }
 function domClick(a, v, el){ if(a==="domtab"){ domTab = v==="domaines" ? "domaines" : "titres"; grender(); return true; }
+  if(a==="domwin"){ domWin = v==="titres" || v==="domaines" ? v : null; if(domWin) domTab = domWin; grender(); return true; }
   const d = doms().find(x=>x.id===v);
   if(a==="act"){ actRun(v, +el.dataset.l); return true; }
   if(!shopCanGo()) return true;
@@ -6700,7 +6707,7 @@ function grender(){
   else play = `<div class="journal" id="journal" aria-live="polite"></div><div class="dock" id="dock">${dock()}</div>`;
   const oldJ = document.getElementById("journal"), jPos = oldJ ? [oldJ.scrollTop] : null;
   const keep = ["g-act","g-free","g-q"].map(id=>{ const el = document.getElementById(id); return el && el.value ? [id, el.value, document.activeElement===el] : null; }).filter(Boolean);
-  $("game").innerHTML = hud + `<div class="game"><aside class="ledger gnotes" aria-label="Carnet de notes">${notesView()}</aside><div class="play">${banner}${play}</div><aside class="ledger gside">${side()}</aside></div>` + (G.shop && !G.combat ? shopModal() : "") + bigMapModal() + regModal();
+  $("game").innerHTML = hud + `<div class="game"><aside class="ledger gnotes" aria-label="Carnet de notes">${notesView()}</aside><div class="play">${banner}${play}</div><aside class="ledger gside">${side()}</aside></div>` + (G.shop && !G.combat ? shopModal() : "") + bigMapModal() + regModal() + domModal();
   jfill(oldJ, jPos);
   keep.forEach(([id,v,f])=>{ const el = document.getElementById(id); if(el && !el.value){ el.value = v; if(f){ el.focus(); try{ el.setSelectionRange(v.length, v.length); }catch(e){} } } });
 }
@@ -7007,6 +7014,8 @@ function side(){
 
 /* ---------- Événements ---------- */
 document.addEventListener("click", e=>{
+  { const t = e.target; if(t && t.classList && t.classList.contains("mapmodal") && t.dataset.close){ modalClose(t.dataset.close); return; }
+    if(t && t.tagName==="DIALOG" && t.open && t.id!=="cl-dlg"){ t.close(); return; } }
   const el = e.target.closest("[data-g]"); if(!el || el.disabled || el.tagName==="SELECT" || el.tagName==="INPUT") return;
   const a = el.dataset.g, v = el.dataset.v;
   if(/^(dom|act$)/.test(a) && G && domClick(a, v, el)) return;
@@ -7098,6 +7107,7 @@ document.addEventListener("change", e=>{
 });
 document.addEventListener("keydown", e=>{
   if(e.key==="Escape" && G && G.shop){ G.shop = null; saveRender(); return; }
+  if(e.key==="Escape" && !document.querySelector("dialog[open]") && modalClose(modalTop())){ e.preventDefault(); return; }
   if(e.key==="Enter" && !e.shiftKey && e.target && e.target.id==="g-act"){ e.preventDefault(); const b = document.querySelector('[data-g="ask"],[data-g="send"]'); b && b.click(); }
   if(e.key==="Enter" && e.target && e.target.id==="g-q"){ e.preventDefault(); const b = document.querySelector('[data-g="askc"]'); b && b.click(); }
   if(e.key==="Enter" && e.target && e.target.id==="comp-nom"){ e.preventDefault(); const b = document.querySelector('[data-g="compnom"]'); b && b.click(); }
