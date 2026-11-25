@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.111.0 — 2026-11-25
+- Corrections et améliorations : suite de la campagne.
+
 ## 0.110.0 — 2026-11-25
 - Améliorations : à la mort du héros, reprise au dernier repos long ou nouveau personnage.
 
