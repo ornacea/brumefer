@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.105.1 — 2026-11-25
+- Améliorations : infobulle rappelant les effets de la sous-classe.
+
 ## 0.105.0 — 2026-11-25
 - Améliorations : la sous-classe du héros est affichée en tête de ses compétences.
 
