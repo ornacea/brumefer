@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.105.0 — 2026-11-25
+- Améliorations : la sous-classe du héros est affichée en tête de ses compétences.
+
 ## 0.104.0 — 2026-11-25
 - Améliorations : les personnages morts sont signalés dans le carnet, et un même personnage n'y apparaît plus jamais deux fois une fois identifié.
 

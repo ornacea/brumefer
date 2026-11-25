@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.104.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.105.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.105.0","d":"2026-11-25","items":["Améliorations : la sous-classe du héros est affichée en tête de ses compétences."]},
 {"v":"0.104.0","d":"2026-11-25","items":["Améliorations : les personnages morts sont signalés dans le carnet, et un même personnage n'y apparaît plus jamais deux fois une fois identifié."]},
 {"v":"0.103.2","d":"2026-11-25","items":["Améliorations : bouton de montée de niveau placé à côté de l'expérience."]},
 {"v":"0.103.1","d":"2026-11-25","items":["Améliorations : fenêtre des titres réorganisée."]},
@@ -4860,6 +4861,7 @@ function heroBrief(short, invQ){
     `${h.nom}, ${h.peuple}, ${h.classe} niveau ${G.niveau}, historique ${h.historique}, ${h.alignement}.`,
     `PV ${G.pv}/${G.pvmax}${G.pvtemp?` (+${G.pvtemp} temporaires)`:""}, CA ${curAC()}, état : ${G.statut==="ok"?"valide":G.statut}${G.forme?`, sous forme de ${G.forme.nom.toLowerCase()} (${G.forme.pv}/${G.forme.pvmax} PV)`:""}. XP ${G.xp}.${(()=>{ try{ return encBrief(); }catch(e){ return ""; } })()}`,
     `Caractéristiques : ${AB.map(a=>ABS[a]+" "+h.carac[a]+" ("+sg(h.mods[a])+")").join(", ")}. Maîtrise +${h.maitrise}.`,
+    (()=>{ const S = subcls().filter(x=>x.ok); return S.length ? `Sous-classe : ${S.map(x=>x.cls+", "+x.nom).join(" ; ")}.` : ""; })(),
     `Compétences maîtrisées : ${h.competences.filter(c=>c.maitrise).map(c=>c.nom+" "+sg(c.bonus)).join(", ")}.`,
     `Attaques : ${h.attaques.map(a=>a.n+" "+sg(a.hit)+", "+a.dmg).join(" ; ")}${h.attaque_extra>1?` (${h.attaque_extra} attaques par action)`:""}.`,
     h.sorts ? `Sorts : mineurs ${h.sorts.mineurs.join(", ")} ; disponibles ${h.sorts.prepares.join(", ")} ; emplacements ${slotLevels().map(k=>`niv. ${k} ${G.slots[k].val}/${G.slots[k].max}`).join(", ")}.` : "",
@@ -6546,6 +6548,9 @@ function mcChoices(){ const b = G.build, sc = G.hero.carac; if(b.mc && b.mc.cls)
 /* Une classe ne dépasse jamais le niveau 20 ; une troisième classe est impossible */
 function clsFull(id){ return gclv(id) >= CLSMAX; }
 function luDefCls(){ const mc = mcCls(); return !clsFull(G.cls) ? G.cls : mc && !clsFull(mc.id) ? mc.id : G.cls; }
+/* Sous-classe de chaque classe (SRD 5.1 : une par classe), acquise au niveau de classe indiqué */
+const SUBCL = {barbare:[3,"Voie du Berserker"], barde:[3,"Collège du Savoir"], clerc:[1,"Domaine de la Vie"], druide:[2,"Cercle de la Terre"], guerrier:[3,"Champion"], moine:[3,"Tradition de la Main ouverte"], paladin:[3,"Serment de Dévotion"], rodeur:[3,"Chasseur"], roublard:[3,"Voleur"], ensorceleur:[1,"Lignée draconique"], occultiste:[1,"Protecteur : le Fiélon"], magicien:[2,"École d'Évocation"]};
+function subcls(){ const out = []; [cls(), mcCls()].forEach(c=>{ if(!c || !SUBCL[c.id]) return; const [lv, n] = SUBCL[c.id], cl = gclv(c.id); out.push({cls:c.nom, nom:n, lv, ok:cl>=lv}); }); return out; }
 function hudLv(){ const mc = mcCls(), c = cls(); return `niv. ${G.niveau}/${MAXLVL} <small class="hudcl">${esc(c?c.nom:"")} ${gclv(G.cls)}/${CLSMAX}${mc ? ` · ${esc(mc.nom)} ${gclv(mc.id)}/${CLSMAX}` : ""}</small>`; }
 function luBuild(d){ const b = G.build, asi = {...(b.asi||{})}; for(const k in d.asi) asi[k] = (asi[k]||0) + d.asi[k];
   const o = Object.assign({}, b, {lvl:d.to, asi}, d.feat ? {feats:[...new Set((b.feats||[]).concat([d.feat]))]} : {});
@@ -7002,7 +7007,7 @@ function side(){
   let t = alignView() + `<h4>Caractéristiques</h4><div class="mini-ab">${AB.map(a=>`<div><small>${ABS[a]}</small><b>${sg(h.mods[a])}</b></div>`).join("")}</div>`;
   { const I = ageInfo(G.race, heroAge());
   }
-  t += `<h4>Compétences maîtrisées</h4><div style="font-size:.88rem">${h.competences.filter(c=>c.maitrise).map(c=>`${c.nom} ${sg(c.bonus)}${c.expertise?" ★":""}`).join(" · ")}</div>`;
+  t += `<h4>Compétences maîtrisées</h4>${subcls().map(x=>`<div class="subcl" style="font-size:.88rem;margin:0 0 4px">${x.ok ? `🛡️ <b>${esc(x.nom)}</b> <small class="lede">${esc(x.cls)}</small>` : `<span class="lede">${esc(x.cls)} : ${esc(x.nom)} au niveau ${x.lv}</span>`}</div>`).join("")}<div style="font-size:.88rem">${h.competences.filter(c=>c.maitrise).map(c=>`${c.nom} ${sg(c.bonus)}${c.expertise?" ★":""}`).join(" · ")}</div>`;
   const rs = Object.entries(G.res); t += `<h4>Ressources</h4>${rs.map(([k,r])=>`<div class="kv"><span>${esc(k)}</span><b>${r.val}/${r.max}</b></div>`).join("")}<div class="kv"><span>Dés de vie (d${cls().hd}${mcCls()&&mcCls().hd!==cls().hd?"/d"+mcCls().hd:""})</span><b>${G.dv}/${L}</b></div>`;
   const R = G.res, util = [];
   if(R["Second souffle"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="souffle2" ${!ok||R["Second souffle"].val<1||G.pv>=G.pvmax?"disabled":""}>Second souffle</button>`);
