@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.103.2 — 2026-11-25
+- Améliorations : bouton de montée de niveau placé à côté de l'expérience.
+
 ## 0.103.1 — 2026-11-25
 - Améliorations : fenêtre des titres réorganisée.
 

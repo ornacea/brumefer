@@ -489,7 +489,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.103.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.103.2</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -905,6 +905,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.103.2","d":"2026-11-25","items":["Améliorations : bouton de montée de niveau placé à côté de l'expérience."]},
 {"v":"0.103.1","d":"2026-11-25","items":["Améliorations : fenêtre des titres réorganisée."]},
 {"v":"0.103.0","d":"2026-11-25","items":["Améliorations : fenêtres de titres et de domaines séparées, carte agrandie plus lisible, fermeture des fenêtres par Échap ou un clic en dehors."]},
 {"v":"0.102.0","d":"2026-11-24","items":["Améliorations : titres et domaines présentés dans deux onglets distincts, titres classés par acte."]},
@@ -6696,9 +6697,9 @@ function grender(){
     <div class="hpbar"><div class="lbl"><span>Points de vie${G.forme?` · ${esc(G.forme.nom)} ${G.forme.pv}/${G.forme.pvmax}`:""}</span><b>${G.pv}/${G.pvmax}${G.pvtemp?` +${G.pvtemp}`:""}</b></div><div class="bar"><i class="${pct<=25?"crit":pct<=50?"low":""}" style="width:${pct}%"></i></div></div>
     <div class="stat"><small>CA</small><b>${curAC()}</b></div>
     <div class="stat xp"><small>XP</small><b>${G.xp}<span>${next?" / "+next:""}</span></b>${next?`<i class="xpbar"><i style="width:${Math.min(100,Math.round(100*G.xp/next))}%"></i></i>`:`<span class="lede" style="font-size:.7rem">niveau ${MAXLVL} atteint</span>`}</div>
+    ${canLvl?`<button type="button" class="btn primary" data-g="lvl">Monter au niveau ${G.niveau+1}</button>`:""}
     <div class="stat"><small>Bourse</small><b>${money(G.cu)}</b></div>
     ${timeView()}
-    ${canLvl?`<button type="button" class="btn primary" data-g="lvl">Monter au niveau ${G.niveau+1}</button>`:""}
     <div class="quest"><b>${esc(G.lieu)}</b>${G.compagnon && G.compagnon.monte ? `<small class="terr">🐎 en selle sur ${esc(G.compagnon.nom)}</small>` : ""}${terrWild()?`<small class="terr" title="Hors des sentiers battus : des bêtes sauvages peuvent surgir">🌲 ${G.terrain==="profond"?"terres sauvages":"hors des sentiers"}</small>`:""}</div></div>`;
   let banner = "";
   if(sampleState==="absent" && !window.__mockSample) banner = `<div class="banner">Le maître du jeu (Claude) ne répond que sur claude.ai, connecté à ton compte. Ici, seuls les dés et la fiche fonctionnent.</div>`;
