@@ -490,7 +490,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.109.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.110.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -906,6 +906,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.110.0","d":"2026-11-25","items":["Améliorations : à la mort du héros, reprise au dernier repos long ou nouveau personnage."]},
 {"v":"0.109.0","d":"2026-11-25","items":["Corrections et améliorations : descriptions de certains lieux."]},
 {"v":"0.108.0","d":"2026-11-25","items":["Améliorations : un nouveau lieu dans la vallée."]},
 {"v":"0.107.0","d":"2026-11-25","items":["Améliorations : nouveaux plans de lieux pour la suite de la campagne."]},
@@ -3980,7 +3981,7 @@ function atlInit(){ if(!G || (G.atlas && G.atlas.v)) return false; const N = G.n
 const DIR8 = (dx, dy)=>{ const a = Math.abs(dx) > 2*Math.abs(dy) ? "" : dy<0 ? "nord" : dy>0 ? "sud" : "", b = Math.abs(dy) > 2*Math.abs(dx) ? "" : dx>0 ? "est" : dx<0 ? "ouest" : ""; return a && b ? a+"-"+b : a || b || "ici"; };
 /* Lieux dont la description trahirait une partie future : tant que cette partie n'a pas commencé, l'infobulle du joueur et l'atlas du MJ
    n'en ont que la description « avant son heure » [partie, description, consigne au MJ seulement] */
-const VERT_DORT = "VERTEFANGE DORT : avant la cinquième partie, le dragon ne s'éveille pas, ne parle pas, ne combat pas et ne quitte pas son antre ; le héros peut l'apercevoir, sentir sa menace et repartir ; s'il l'attaque ou touche au trésor, le dragon remue dans son sommeil, le souffle empoisonne l'air et le héros doit fuir ; ne révèle rien de son rôle à venir";
+const VERT_DORT = "VERTEFANGE DORT : avant la cinquième partie, le dragon dort et ne quitte pas son antre ; le héros peut l'apercevoir, sentir sa menace et repartir ; s'il l'attaque, le réveille ou touche au trésor, Vertefange s'éveille et combat pour de bon (dragon vert adulte, FP 15), sans ménager un héros trop faible : l'imprudent peut y mourir ; ne révèle rien de son rôle à venir";
 const ATL_TOT = {
  "Repaire de Vertefange":[5, "marais empoisonné au plus profond des Sapins-Noirs, à l'ouest de la Barrière : les bêtes l'évitent, l'air pique la gorge, quelque chose d'énorme y dort ; plan", VERT_DORT],
  "Antre de Vertefange":[5, "grotte sous les racines d'un sapin millénaire où dort, d'un sommeil profond, un dragon vert adulte", VERT_DORT],
@@ -4821,7 +4822,7 @@ function rest(kind){ compRest(kind);
     G.pv = G.pvmax; G.pvtemp = 0; G.dv = Math.min(L, (G.dv||0) + Math.max(1, Math.floor(L/2))); G.conc = null;
     for(const k in G.res) G.res[k].val = G.res[k].max; for(const k in G.slots){ G.slots[k].val = G.slots[k].max; if(G.slots[k].pmax!=null) G.slots[k].p = G.slots[k].pmax; }
     G.buffs = {}; G.used = {}; G.forme = null; G.mort = {s:0,f:0}; G.statut = "ok"; G.rimpl = 0; G.canPrepare = PREPC.includes(G.cls) || !!(mcCls() && PREPC.includes(mcCls().id)); G.prepDone = {};
-    logJ("sys",`Repos long : PV, sorts et capacités récupérés ; dés de vie ${G.dv}/${L}.`+(G.canPrepare?" Tu peux changer tes sorts préparés (panneau de droite).":"")); return;
+    logJ("sys",`Repos long : PV, sorts et capacités récupérés ; dés de vie ${G.dv}/${L}.`+(G.canPrepare?" Tu peux changer tes sorts préparés (panneau de droite).":"")); lrSnap(); return;
   }
   let t = "Repos court.", spent = 0, gained = 0;
   while(G.dv>0 && G.pv<G.pvmax){ const r = roll("1d"+Math.max(c.hd,(mcCls()||c).hd)); gained += heal(Math.max(1, r.total+G.hero.mods.con)); G.dv--; spent++; }
@@ -5199,7 +5200,17 @@ function parseMeta(t){
   try{ return JSON.parse(fix(closeJson(j.slice(a)))); }catch(e){ return null; } }
 function fmtNarr(t){ return esc(noSpk(t)).replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\*([^*]+)\*/g,"<i>$1</i>").split(/\n{2,}|\n/).filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(""); }
 
-function snapPush(){ try{ const c = JSON.parse(JSON.stringify(Object.assign({}, G, {snaps:undefined, journal:undefined, lake:undefined})));
+/* Point de reprise : chaque repos long fige la partie (sans journal ni datalake, retrouvés par leur compteur) ; à la mort, le joueur peut y revenir */
+function lrSnap(){ try{ const c = JSON.parse(JSON.stringify(Object.assign({}, G, {snaps:undefined, journal:undefined, lake:undefined, lrSave:undefined})));
+  c._j = G.jSeq||0; c._l = G.lake ? (G.lake.tot||0) : null; let d = ""; try{ d = actDate(); }catch(e){} c._lbl = [d, G.lieu||""].filter(Boolean).join(", "); G.lrSave = c; }catch(e){ console.error(e); } }
+function lrRestore(){ const p = G && G.lrSave; if(!p || busy) return false; const c = JSON.parse(JSON.stringify(p)), lbl = c._lbl || "";
+  const jr = (G.journal||[]).filter(x=>x.i==null || x.i<=(c._j||0));
+  const lk = G.lake && c._l!=null ? Object.assign({}, G.lake, {ev:(G.lake.ev||[]).filter(e=>e.s==null || e.s<c._l), tot:c._l}) : G.lake;
+  G = Object.assign(c, {journal:jr, lake:lk, snaps:[], lrSave:p}); delete G._j; delete G._l; delete G._lbl; G.fin = false; G.combat = null; G.test = null;
+  uiReset(); logJ("sys", `↺ ${esc(G.hero.nom)} reprend au dernier repos long${lbl ? " (" + esc(lbl) + ")" : ""} : ce qui a suivi n'a pas eu lieu.`); saveRender();
+  mj("[REPRISE] La partie reprend à la fin du dernier repos long du héros ; tout ce qui a suivi n'a jamais eu lieu (n'y fais aucune allusion). Raconte brièvement son réveil, reposé, là où il a dormi, et propose des choix.", null);
+  return true; }
+function snapPush(){ try{ const c = JSON.parse(JSON.stringify(Object.assign({}, G, {snaps:undefined, journal:undefined, lake:undefined, lrSave:undefined})));
   c._j = G.jSeq||0; c._l = G.lake ? (G.lake.tot||0) : null; if(c.notes) delete c.notes.neufAt;
   const S = (G.snaps||[]).map(x=>{ if(x.journal){ x._j = (x.journal[x.journal.length-1]||{}).i||0; delete x.journal; } if(x.lake){ x._l = x.lake.tot; delete x.lake; } return x; }), p = S[S.length-1];
   /* l'instantané précédent ne garde que les échanges absents du nouveau ; undoLast le rebâtit */
@@ -5212,7 +5223,7 @@ async function undoLast(){ if(busy || G.combat) return;
     if(r && !Array.isArray(r.hist) && Array.isArray(r._hd)){ r.hist = r._hd.concat((prev.hist||[]).slice(0, Math.max(0, r._hn - r._hd.length))); delete r._hd; delete r._hn; }
     if(prev.notes && !prev.notes.neufAt){ const a = (G.notes||{}).neufAt||{}, n = prev.nAct||0; prev.notes.neufAt = {}; Object.keys(a).forEach(k=>{ if(a[k] <= n) prev.notes.neufAt[k] = a[k]; }); } const jr = prev.journal || G.journal.filter(x=>x.i==null || x.i<=(prev._j||0));
     const lk = prev.lake || (G.lake && prev._l!=null ? Object.assign({}, G.lake, {ev:G.lake.ev.filter(e=>e.s==null || e.s<prev._l), tot:prev._l}) : G.lake);
-    G = Object.assign(prev, {snaps:rest, journal:jr, lake:lk}); delete G._j; delete G._l; logJ("sys","Dernière action annulée : la partie revient exactement à l'état d'avant."); saveRender(); return; }
+    G = Object.assign(prev, {snaps:rest, journal:jr, lake:lk, lrSave:G.lrSave}); delete G._j; delete G._l; logJ("sys","Dernière action annulée : la partie revient exactement à l'état d'avant."); saveRender(); return; }
   /* Ancienne sauvegarde sans instantané : on retire le dernier échange puis on rétablit la continuité */
   const j = G.journal.map(x=>x.k).lastIndexOf("joueur"); if(j<0){ logJ("sys","Aucune action à annuler."); grender(); return; }
   const gone = G.journal.slice(j); G.journal.splice(j); if(G.hist.length) G.hist.pop(); { const L = lakeG(); while(L.ev.length && L.ev[L.ev.length-1].n >= (G.nAct||0)) L.ev.pop(); } G.nAct = Math.max(0,(G.nAct||1)-1);
@@ -6795,7 +6806,7 @@ function jfill(old, pos){ const el = document.getElementById("journal"); if(!el)
   put(); setTimeout(put, 0); requestAnimationFrame(put); }
 function dock(){
   const c = G.combat;
-  if(G.statut==="mort") return `<div class="endcard"><h3>Fin de l'aventure</h3><p>${esc(G.hero.nom)} repose désormais dans la brume.</p><div class="row"><button type="button" class="btn primary" data-g="view" data-v="forge">Forger un nouveau héros</button><button type="button" class="btn" data-g="retry">Rejouer ce héros depuis le début</button></div></div>`;
+  if(G.statut==="mort") return `<div class="endcard"><h3>Fin de l'aventure</h3><p>${esc(G.hero.nom)} repose désormais dans la brume.</p><div class="row">${G.lrSave ? `<button type="button" class="btn primary" data-g="lrload" title="La partie revient à la fin de ce repos long ; ce qui a suivi n'a pas eu lieu">Reprendre au dernier repos long${G.lrSave._lbl ? ` <small>(${esc(G.lrSave._lbl)})</small>` : ""}</button>` : `<button type="button" class="btn primary" data-g="retry" title="Aucun repos long encore : le héros reprend au début de l'aventure">Reprendre au début de l'aventure</button>`}<button type="button" class="btn" data-g="view" data-v="forge">Créer un nouveau personnage</button></div></div>`;
   if(busy) return `<div class="row" style="justify-content:space-between"><span><span class="spin"></span>Le maître du jeu écrit…</span><button type="button" class="btn sm" data-g="stop">Arrêter</button></div>`;
   if(G.statut==="a_terre") return `<div class="testbox"><p><b>Tu es à terre, inconscient.</b> Succès ${G.mort.s}/3 · Échecs ${G.mort.f}/3</p><button type="button" class="btn primary" data-g="death">Jet contre la mort</button></div>`;
   if(G.test){ const t = G.test, {b,label} = checkBonus(t.type,t.nom);
@@ -7166,6 +7177,7 @@ document.addEventListener("click", e=>{
     case "public": if(AUD[v] && G.public!==v){ G.public = v; logJ("sys", `Narration adaptée à un public : ${AUD[v].l.toLowerCase()}.`); saveRender(); } return;
     case "exp": { const h = G.hero||{}; saveFile(`brumefer-${fileSlug(h.nom||"partie")}-niv${G.niveau||1}-${new Date().toISOString().slice(0,10)}.txt`, `BRUMEFER · SAUVEGARDE · ${h.nom||"?"} · ${h.classe||""} niveau ${G.niveau||1} · ${G.lieu||""} · ${new Date().toLocaleString("fr-FR")}\nSauvegarde de « Ironhaze's Curse ». Charge-la depuis Sauvegarde (Charger un fichier .txt) ou dans un emplacement libre. Ne modifie pas la ligne ci-dessous.\n`+JSON.stringify(Object.assign({}, G, {snaps:undefined}))); return; }
     case "imp": { if(busy || notesBusy){ toastBusy(); return; } try{ const o = el._data; if(!o||!o.hero||!Array.isArray(o.journal)) throw 0; jSan(o); G = o; uiReset(); migrate(); saveRender(); toast("Partie chargée."); }catch(err){ toast("Ce fichier n'est pas une sauvegarde de Brumefer."); } return; }
+    case "lrload": { if(busy){ toastBusy(); return; } if(!lrRestore()) toast("Aucun repos long enregistré."); return; }
     case "retry": { if(busy){ toastBusy(); return; } S = Object.assign(blank(), JSON.parse(JSON.stringify(G.build0 || G.build)), {lvl:undefined, asi:undefined, hpRolls:undefined, style2:undefined, invoc:undefined, pacte:undefined, meta:undefined, sk3:undefined, ex3:undefined, pgc:undefined, feats:undefined}); resetLvl1Spells(); persist(); G.fin = false; G.statut = "ok"; const btn = document.createElement("button"); newArmed = true; window.enterGame(btn); return; }
   }
 });
