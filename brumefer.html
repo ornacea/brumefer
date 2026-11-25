@@ -490,7 +490,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.106.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.106.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -906,6 +906,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.106.1","d":"2026-11-25","items":["Corrections et améliorations : le journal d'une partie rechargée garde l'accessibilité des montants."]},
 {"v":"0.106.0","d":"2026-11-25","items":["Améliorations : les lieux protégés apparaissent sur la carte de la ville avec leur zone."]},
 {"v":"0.105.1","d":"2026-11-25","items":["Améliorations : infobulle rappelant les effets de la sous-classe."]},
 {"v":"0.105.0","d":"2026-11-25","items":["Améliorations : la sous-classe du héros est affichée en tête de ses compétences."]},
@@ -2973,7 +2974,7 @@ function d20(mode){
 
 /* ---------- Journal ---------- */
 function jSan(o){ const T = document.createElement("template"); o.snaps = [];
-  o.journal = o.journal.filter(e=>e && typeof e==="object").map(e=>{ T.innerHTML = String(e.t||""); T.content.querySelectorAll("*").forEach(n=>{ if(!/^(P|B|I|EM|STRONG|BR|SPAN|SMALL|DIV|UL|LI)$/.test(n.tagName)) n.replaceWith(document.createTextNode(n.textContent)); else [...n.attributes].forEach(a=>{ if(a.name!=="class" && a.name!=="title") n.removeAttribute(a.name); }); });
+  o.journal = o.journal.filter(e=>e && typeof e==="object").map(e=>{ T.innerHTML = String(e.t||""); T.content.querySelectorAll("*").forEach(n=>{ if(!/^(P|B|I|EM|STRONG|BR|SPAN|SMALL|DIV|UL|LI)$/.test(n.tagName)) n.replaceWith(document.createTextNode(n.textContent)); else [...n.attributes].forEach(a=>{ if(a.name!=="class" && a.name!=="title" && !(a.name==="aria-label" || (a.name==="aria-hidden" && a.value==="true"))) n.removeAttribute(a.name); }); });
     return Object.assign({k:String(e.k||"sys").replace(/[^a-z]/g,""), t:T.innerHTML, i:e.i}, typeof e.r==="string" ? {r:e.r.slice(0,8000)} : {}); }); }
 function logJ(k,t){ G.journal.push({k,t,i:(G.jSeq=(G.jSeq||0)+1)}); if(G.journal.length>400) G.journal.splice(0, G.journal.length-400); }
 function clog(t){ logJ("de",t); if(G.combat) G.combat.log.push(t.replace(/<br>/g," ; ").replace(/<[^>]+>/g,"")); }

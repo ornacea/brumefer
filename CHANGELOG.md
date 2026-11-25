@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.106.1 — 2026-11-25
+- Corrections et améliorations : le journal d'une partie rechargée garde l'accessibilité des montants.
+
 ## 0.106.0 — 2026-11-25
 - Améliorations : les lieux protégés apparaissent sur la carte de la ville avec leur zone.
 
