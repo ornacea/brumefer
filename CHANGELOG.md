@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.114.0 — 2026-11-25
+- Titres de campagne : certains titres sont désormais accordés par le jeu lui-même dès que leur condition est remplie, sans dépendre du MJ.
+
 ## 0.113.0 — 2026-11-25
 - Améliorations : la carte du Carnet suit le héros et signale les changements de carte.
 

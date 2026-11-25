@@ -490,7 +490,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.113.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.114.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -906,6 +906,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.114.0","d":"2026-11-25","items":["Titres de campagne : certains titres sont désormais accordés par le jeu lui-même dès que leur condition est remplie, sans dépendre du MJ."]},
 {"v":"0.113.0","d":"2026-11-25","items":["Améliorations : la carte du Carnet suit le héros et signale les changements de carte."]},
 {"v":"0.112.1","d":"2026-11-25","items":["Corrections et améliorations : journal des domaines."]},
 {"v":"0.112.0","d":"2026-11-25","items":["Améliorations : les sanctuaires suivent les dépendances des domaines sur la carte."]},
@@ -5634,10 +5635,27 @@ function tcPush(T){ const c = T.c; delete tcPendG()[c]; if(tcOwn(c)) return fals
 const tcNoms = () => Object.values(prisG()).filter(x=>x.e==="sauve").length + ((G.tcnt||{}).noms||0);
 function tcVal(T){ const [ty,,key] = T.cnt, C = G.tcnt||{}; return ty==="n" ? tcNoms() : ty==="k" ? (C["k_"+T.c]||0) : (C[key]||0); }
 function tcRelease(){ const Q = tcPendG(); Object.keys(Q).forEach(c=>{ const T = TITRES_CAMP.find(t=>t.c===c); if(!T) delete Q[c]; else if(tcLaunched(T.a)) tcPush(T); }); }
-function tcCheck(){ if(!G) return; tcRelease(); TITRES_CAMP.forEach(T=>{ if(T.cnt && !tcHas(T.c) && !tcLost(T.c) && tcPart(T.a)<=partCur() && tcVal(T)>=T.cnt[1]) tcGive(T.c); }); }
+function tcCheck(){ if(!G) return; tcRelease(); tcAuto(); TITRES_CAMP.forEach(T=>{ if(T.cnt && !tcHas(T.c) && !tcLost(T.c) && tcPart(T.a)<=partCur() && tcVal(T)>=T.cnt[1]) tcGive(T.c); }); }
 function tcKills(L){ if(!G) return; const P = partCur(), C = G.tcnt = G.tcnt||{};
-  (L||[]).filter(e=>e && e.etat==="mort").forEach(e=>{ const n = norm(e.nom||""); TITRES_CAMP.forEach(T=>{ if(T.cnt && T.cnt[0]==="k" && tcPart(T.a)<=P && !tcHas(T.c) && !tcLost(T.c) && new RegExp(T.cnt[2]).test(n)) C["k_"+T.c] = (C["k_"+T.c]||0) + 1; }); });
+  (L||[]).filter(e=>e && e.etat==="mort").forEach(e=>{ const n = norm(e.nom||""); if(TC_KOB.test(n)) C.kobolds = (C.kobolds||0) + 1; TITRES_CAMP.forEach(T=>{ if(T.cnt && T.cnt[0]==="k" && tcPart(T.a)<=P && !tcHas(T.c) && !tcLost(T.c) && new RegExp(T.cnt[2]).test(n)) C["k_"+T.c] = (C["k_"+T.c]||0) + 1; }); });
   tcCheck(); }
+/* Titres que la page confère seule, sans attendre le "titre_campagne" du MJ (qui peut l'oublier) : elle lit ses propres traces,
+   le datalake (texte du joueur et résumé de chaque tour, tenus même quand le MJ omet ses champs), le carnet et les morts au combat */
+const TC_KOB = /\b(snik|krek|vrik|kobolds?)\b/;
+const TC_PAIX = /\b(negoci|parl|propos|offr|donn|partag|remerci|accord|pacte|paix|amiti|epargn|convain|promet|promis|accept|traite|allian|gage|mains ouvertes|ambassad|veill)/;
+const TC_VIOL = /\b(attaqu|frapp|tue[rsz]?\b|tuent|tuee?s?\b|abat|massacr|egorg|achev|transperc|empal|decapit|pourchass|extermin)/;
+const TC_AUTO = {
+  /* 2A « Ami de Snik » : au moins trois tours paisibles avec la bande (le joueur y parle, Snik y est nommé), deux fois plus que de tours violents,
+     aucun kobold tué au combat, Snik ni mort ni hostile au carnet */
+  "2A": () => { if(((G.tcnt||{}).kobolds||0) > 0) return false;
+    const p = ((G.notes||{}).pnj||{}).snik; if(p && (pnjMort(p) || /hostile|ennemi/i.test(norm(p.rel||"")))) return false;
+    const E = ((G.lake||{}).ev||[]).map(e=>({j:norm(e.j), x:norm((e.j||"")+" "+(e.t||""))})).filter(e=>TC_KOB.test(e.x));
+    if(!E.some(e=>/\bsnik\b/.test(e.x))) return false;
+    const viol = E.filter(e=>TC_VIOL.test(e.x)).length, paix = E.filter(e=>!TC_VIOL.test(e.x) && TC_PAIX.test(e.x));
+    return paix.length >= 3 && paix.filter(e=>e.j).length >= 2 && paix.length >= 2*viol; }
+};
+function tcAuto(){ const P = partCur(); Object.entries(TC_AUTO).forEach(([c, f])=>{ const T = TITRES_CAMP.find(t=>t.c===c);
+  if(!T || tcHas(c) || tcLost(c) || tcBlocked(c) || tcPart(T.a) > P) return; let ok = false; try{ ok = f(); }catch(e){ console.error(e); } if(ok) tcGive(c); }); }
 const TC_MJK = ["rumeurs","services_temple","clochettes","ames_apaisees","noms"];
 function tcMeta(m){ if(!G || !m) return; const C = G.tcnt = G.tcnt||{};
   if(m.compteur && typeof m.compteur==="object") Object.entries(m.compteur).forEach(([k,v])=>{ k = norm(k).replace(/[^a-z]+/g,"_"); if(TC_MJK.includes(k)) C[k] = (C[k]||0) + Math.max(0, Math.min(5, parseInt(v,10)||0)); });
