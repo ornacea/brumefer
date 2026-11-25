@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.112.1 — 2026-11-25
+- Corrections et améliorations : journal des domaines.
+
 ## 0.112.0 — 2026-11-25
 - Améliorations : les sanctuaires suivent les dépendances des domaines sur la carte.
 

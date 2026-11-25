@@ -490,7 +490,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.112.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.112.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -906,6 +906,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.112.1","d":"2026-11-25","items":["Corrections et améliorations : journal des domaines."]},
 {"v":"0.112.0","d":"2026-11-25","items":["Améliorations : les sanctuaires suivent les dépendances des domaines sur la carte."]},
 {"v":"0.111.0","d":"2026-11-25","items":["Corrections et améliorations : suite de la campagne."]},
 {"v":"0.110.0","d":"2026-11-25","items":["Améliorations : à la mort du héros, reprise au dernier repos long ou nouveau personnage."]},
@@ -5673,7 +5674,7 @@ function domExt(d, lieu, why, quiet){ const n = String(lieu||"").trim(); if(!d |
   const r = atlRes(n, H.size ? H : undefined).find(z=>z.t==="l" && X.L[z.k] && (!H.size || X.L[z.k].pl.some(p=>H.has(p.m)))); if(!r) return false;
   const nom = X.L[r.k].nom; if(nk(nom)===nk(d.nom) || domDeps(d).includes(nom)) return false;
   d.ext = asArr(d.ext).concat([{lieu:nom, j:calDay(), why:why||""}]).slice(-12);
-  if(!quiet) logJ("sys", `🏗️ <b>${esc(nom)}</b> est rattaché à ton domaine <b>${esc(d.nom)}</b>${why ? ` (${esc(why)})` : ""}.${(()=>{ try{ return sanctOn().some(x=>nk(x.nom)===nk(d.nom)) ? " Le feu béni du domaine le couvre : la Brume n'y entre plus." : ""; }catch(e){ return ""; } })()}`);
+  if(!quiet) logJ("sys", `🏗️ <b>${esc(nom)}</b> rejoint ton domaine <b>${esc(d.nom)}</b>${why ? ` (${esc(why)})` : ""}.${(()=>{ try{ return sanctOn().some(x=>nk(x.nom)===nk(d.nom)) ? " Le feu béni du domaine s'y étend : la Brume n'y entre plus." : ""; }catch(e){ return ""; } })()}`);
   return true; }
 function domAdd(type, nom, lieu, how){ if(doms().length>=12){ logJ("sys","Tu ne peux pas gérer plus de douze domaines."); return null; }
   const L = G.localite, t = L && lieu && nk(L.nom)===nk(lieu) ? L.t : 2;
