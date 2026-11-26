@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.130.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.131.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.131.0","d":"2026-11-26","items":["Améliorations : création du personnage (dons d'origine), combat."]},
 {"v":"0.130.0","d":"2026-11-26","items":["Améliorations : création du personnage (noms d'archétype)."]},
 {"v":"0.129.0","d":"2026-11-26","items":["Améliorations : création du personnage (caractéristiques, historiques)."]},
 {"v":"0.128.0","d":"2026-11-26","items":["Améliorations : création du personnage (historiques)."]},
@@ -1700,6 +1701,32 @@ function bgBonus(){ const s = bgSplit(), o = {}; if(!s) return o; if(s.m==="111"
 function bgBonusTxt(){ const s = bgSplit(); if(!s) return ""; return s.m==="111" ? s.a.map(x=>ABS[x]+" +1").join(", ") : `${ABS[s.p2]} +2, ${ABS[s.p1]} +1`; }
 const RACE_BONUS_TRAIT = /^(Polyvalence|Héritage mêlé)$/;
 function raceTraits(r){ return (r ? r.traits : []).filter(t=>!(S.bg52 && RACE_BONUS_TRAIT.test(t[0]))); }
+/* Dons d'origine (SRD 5.2.1) : chaque historique en donne un au niveau 1, selon ses compétences (les 4 historiques de la SRD gardent le leur) */
+const ORIG_FEATS = {
+ "Vigilant":"Tu ajoutes ton bonus de maîtrise à ton initiative, et tu peux échanger ton rang d'initiative avec un allié consentant au début du combat.",
+ "Attaquant sauvage":"Une fois par tour, quand tu touches avec une arme, tu lances deux fois ses dés de dégâts et tu gardes le meilleur résultat.",
+ "Doué":"Tu gagnes la maîtrise de trois compétences de ton choix (à l'étape Compétences).",
+ "Initié à la magie":"Tu apprends deux sorts mineurs et un sort de niveau 1 de la liste du clerc, du druide ou du magicien ; tu lances ce sort une fois par repos long sans emplacement. Caractéristique d'incantation au choix : Intelligence, Sagesse ou Charisme."};
+const MI_LISTS = {clerc:["Clerc","sag"], druide:["Druide","sag"], magicien:["Magicien","int"]};
+function bgFeat(sk){ sk = (sk||[]).slice(0,2); if(sk.length<2) return null; const has = s=>sk.includes(s);
+  if(has("Religion")) return "Initié à la magie (clerc)"; if(has("Arcanes")) return "Initié à la magie (magicien)"; if(has("Nature")) return "Initié à la magie (druide)";
+  if(has("Athlétisme") || has("Intimidation")) return "Attaquant sauvage";
+  if(["Perception","Discrétion","Survie","Investigation","Acrobaties"].some(has)) return "Vigilant"; return "Doué"; }
+const featBase = f => String(f||"").replace(/ \(.*\)$/, "");
+const featList = f => (String(f||"").match(/^Initié à la magie \((\w+)\)$/)||[])[1] || null;
+function origFeats(){ if(!S.bg52) return []; const o = []; const f = bgFeat(bgSkills()); if(f) o.push(f);
+  if(S.race==="humain" && S.hfeat && (S.hfeat!==f || S.hfeat==="Doué")) o.push(S.hfeat); return o; }
+function miOf(l){ S.mi = S.mi || {}; const m = S.mi[l] = S.mi[l] || {c:[], s:null, ab:MI_LISTS[l][1]}; return m; }
+function miOpts(l){ const ca = CAST[l]; return {c:ca.l0.filter(s=>SP[s] && spLvl(s)===0), s:ca.l1.filter(s=>SP[s] && spLvl(s)===1)}; }
+function miAuto(l){ const m = miOf(l), o = miOpts(l); m.c = m.c.filter(x=>o.c.includes(x)); while(m.c.length<2){ const x = pick(o.c.filter(y=>!m.c.includes(y) && !(S.cantrips||[]).includes(y))); if(!x) break; m.c.push(x); } if(!o.s.includes(m.s)) m.s = pick(o.s); }
+function miIssue(){ for(const f of origFeats()){ const l = featList(f); if(!l) continue; const m = miOf(l); if(m.c.length<2) return `Initié à la magie (${MI_LISTS[l][0].toLowerCase()}) : choisis 2 sorts mineurs.`; if(!m.s) return `Initié à la magie (${MI_LISTS[l][0].toLowerCase()}) : choisis un sort de niveau 1.`; } return ""; }
+function featView(f, src){ const l = featList(f), base = featBase(f);
+  let t = `<div class="sub" style="margin-top:8px"><span class="lbl">Don d'origine${src?" ("+src+")":""} : ${esc(f)}</span><p class="lede" style="margin:0 0 6px">${ORIG_FEATS[base]||""}</p>`;
+  if(l){ const m = miOf(l), o = miOpts(l);
+    t += `<small class="lede" style="display:block;margin:4px 0">Caractéristique d'incantation</small><div class="chips">${["int","sag","cha"].map(a=>`<button type="button" class="chip ${m.ab===a?"sel":""}" data-act="mia" data-v="${l}|${a}">${ABN[a]}</button>`).join("")}</div>`;
+    t += `<small class="lede" style="display:block;margin:6px 0 4px">Sorts mineurs <span class="counter ${m.c.length===2?"ok":""}">${m.c.length}/2</span></small><div class="spells">${o.c.map(s=>spellBtn(s,"mic",m.c.includes(s),!m.c.includes(s)&&m.c.length>=2).replace(`data-v="${esc(s)}"`, `data-v="${l}|${esc(s)}"`)).join("")}</div>`;
+    t += `<small class="lede" style="display:block;margin:6px 0 4px">Sort de niveau 1, une fois par repos long <span class="counter ${m.s?"ok":""}">${m.s?1:0}/1</span></small><div class="spells">${o.s.map(s=>spellBtn(s,"mis",m.s===s,false).replace(`data-v="${esc(s)}"`, `data-v="${l}|${esc(s)}"`)).join("")}</div>`; }
+  return t + `</div>`; }
 function bgAbilTxt(sk){ const a = bgAbil(sk); return a ? `${a.map(x=>ABS[x]).join(", ")} : +2 à l'une et +1 à une autre, ou +1 à chacune (la première est la plus naturelle)` : ""; }
 const BG_TL = {charlatan:["Kit de déguisement","Kit de contrefaçon"],etranger:["Flûte","Géant"],acolyte:["Céleste","Elfique"],soldat:["Dés","Véhicules terrestres"],criminel:["Outils de voleur","Cartes"],sage:["Draconique","Elfique"],artisan:["Outils de forgeron","Nain"],ermite:["Matériel d'herboriste","Sylvestre"],heros:["Outils de charpentier","Véhicules terrestres"],noble:["Échecs des dragons","Elfique"],saltimbanque:["Kit de déguisement","Luth"],gamin:["Kit de déguisement","Outils de voleur"],marin:["Instruments de navigateur","Véhicules marins"]};
 const TL_GROUPS = [
@@ -1739,7 +1766,7 @@ function M(a){ const s=scores()[a]; return s==null?0:mod(s); }
 
 function fixedSkills(){ const r=R(), b=BG(); const list=[]; if(r) r.skills.forEach(s=>list.push([s,r.nom])); if(b) bgSkills().forEach(s=>{ if(!list.find(x=>x[0]===s)) list.push([s,b.nom]); }); return list; }
 function overlap(){ const r=R(), b=BG(); if(!r||!b) return 0; return r.skills.filter(s=>bgSkills().includes(s)).length; }
-function freeCount(){ const r=R(); return (r&&r.free?r.free:0) + overlap(); }
+function freeCount(){ const r=R(); return (r&&r.free?r.free:0) + overlap() + 3*origFeats().filter(f=>f==="Doué").length; }
 function profSet(){ return new Set([...fixedSkills().map(x=>x[0]), ...S.cs, ...S.fs, ...(S.sk3||[]), ...((S.mc&&S.mc.sk)||[])]); }
 
 function resetLvl1Spells(){
@@ -1879,7 +1906,7 @@ function why(i){
     case 0: if(!r) return "Choisis un peuple."; if(r.dragonChoice&&!S.dragon) return "Choisis ton ascendance draconique."; if(raceFreeLang(r)&&!S.rlang) return "Choisis ta langue supplémentaire."; if(r.heChoice&&!S.bg52&&S.he.length<2) return "Choisis deux caractéristiques à +1."; return "";
     case 1: if(!c) return "Choisis une classe."; if(c.id==="guerrier"&&!S.style) return "Choisis un style de combat."; if(c.id==="rodeur"&&(!S.enemy||!S.terrain)) return "Choisis un ennemi juré et un terrain."; return "";
     case 2: if(S.method==="pointbuy") return pbSpent()>27?"Tu dépasses 27 points.":""; if(S.method==="roll"&&S.rolls.length<6) return "Lance les dés."; return scoresReady()?"":"Attribue une valeur à chaque caractéristique.";
-    case 3: if(!S.genre) return "Choisis le genre de ton personnage."; if(bgSkills().length<2) return `Choisis encore ${2-bgSkills().length} compétence(s) d'historique.`; if(bgTools().length<2) return `Choisis encore ${2-bgTools().length} maîtrise(s) d'outil ou langue.`; return "";
+    case 3: if(!S.genre) return "Choisis le genre de ton personnage."; if(bgSkills().length<2) return `Choisis encore ${2-bgSkills().length} compétence(s) d'historique.`; if(bgTools().length<2) return `Choisis encore ${2-bgTools().length} maîtrise(s) d'outil ou langue.`; { const mi = miIssue(); if(mi) return mi; } return "";
     case 4: { if(S.cs.length<c.pick) return `Choisis encore ${c.pick-S.cs.length} compétence(s) de classe.`; if(S.fs.length<freeCount()) return `Choisis encore ${freeCount()-S.fs.length} compétence(s) libre(s).`; if(c.expertise&&S.ex.length<c.expertise) return "Choisis tes deux expertises."; return ""; }
     case 5: { if(S.equipMode==="achat"){ if(S.wealth==null) return "Lance les dés de ta richesse de départ."; if(buySpent()>S.wealth*CU_PO) return "Tes achats dépassent ta bourse."; return ""; } return S.pack==null ? "Choisis ton équipement." : ""; }
     case 6: { const n=spellNeeds(); if(n){ if(S.cantrips.length<n.c) return "Choisis tes sorts mineurs."; if(S.spells.length<n.n) return "Choisis tes sorts de niveau 1."; if(n.p&&S.prep.length<n.p) return "Prépare tes sorts du jour."; } if(r&&r.cantrip&&!S.rc) return "Choisis ton sort mineur elfique."; return ""; }
@@ -2131,6 +2158,7 @@ function vBg(){
       ${sp.m==="21" ? `<small class="lede" style="display:block;margin:6px 0 4px">+2</small><div class="chips">${sp.a.map(x=>`<button type="button" class="chip ${sp.p2===x?"sel":""}" data-act="bg2" data-v="${x}">${ABN[x]}</button>`).join("")}</div>
       <small class="lede" style="display:block;margin:6px 0 4px">+1</small><div class="chips">${sp.a.map(x=>`<button type="button" class="chip ${sp.p1===x?"sel":""}" data-act="bg1" data-v="${x}" ${x===sp.p2?"disabled":""}>${ABN[x]}</button>`).join("")}</div>` : ""}
       <p class="lede" style="margin:6px 0 0">Bonus : <b>${bgBonusTxt()}</b>${AB.some(a=>sc[a]!=null) ? ` · ${sp.a.map(x=>`${ABS[x]} ${sc[x]??"—"}`).join(", ")}` : ""}</p>`}</div></div>`; }
+  if(S.bg52){ const f = bgFeat(bgSkills()); h+=`<div class="detail">${f ? featView(f) : `<div class="sub"><span class="lbl">Don d'origine</span><p class="lede" style="margin:0">Il dépend de tes 2 compétences d'historique.</p></div>`}</div>`; }
   h+=`<div class="detail"><div class="sub"><span class="lbl">Compétences d'historique <span class="counter ${bs.length===2?"ok":""}">${bs.length}/2</span></span><div class="chips">${SKN.map(s=>{ const fx=rs.includes(s), on=bs.includes(s);
     return `<button type="button" class="chip ${on?"sel":""} ${fx?"fix":""}" data-act="bgs" data-v="${s}" ${fx||(!on&&bs.length>=2)?"disabled":""} ${fx?`title="Déjà donnée par ton peuple"`:""}>${s} <small>${ABS[SKILLS.find(k=>k[0]===s)[1]]}</small></button>`; }).join("")}</div></div>`;
   h+=`<div class="sub"><span class="lbl">Outils ou langues <span class="counter ${bt.length===2?"ok":""}">${bt.length}/2</span></span>`;
@@ -2589,10 +2617,12 @@ function character(){
   (S.feats||[]).forEach(n=>{ if(FEATS[n]) feats.push({nom:"Don : "+n, texte:FEATS[n], source:"Don"}); });
   if(S.asi && Object.keys(S.asi).length) feats.push({nom:"Amélioration de caractéristique",texte:Object.entries(S.asi).filter(x=>x[1]).map(([k,v])=>ABN[k]+" +"+v).join(", "),source:c.nom});
   feats.push({nom:"Historique : "+b.nom,texte:b.desc+" Maîtrises : "+bgSkills().concat(bgTools()).join(", ")+"."+(S.bg52 && bgSplit() ? " Bonus de caractéristiques : "+bgBonusTxt()+"." : bgAbil(bgSkills()) ? " Caractéristiques d'historique (règle 5.2) : "+bgAbilTxt(bgSkills())+"." : ""),source:b.nom});
+  origFeats().forEach(f=>{ const l = featList(f), m = l && miOf(l); feats.push({nom:"Don d'origine : "+f, texte:ORIG_FEATS[featBase(f)] + (m ? ` Sorts mineurs : ${m.c.join(", ")} ; sort de niveau 1 : ${m.s} (${ABN[m.ab].toLowerCase()}).` : ""), source:b.nom}); });
   const pk=kit();
   const spells = spellBlock(c, sc, L);
   if(spells && spells.mythiques && spells.mythiques.length) feats.push({nom:"Magie mythique", texte:"Niveau 40 : un emplacement de sort de niveau 10, récupéré après un repos long. Il sert à lancer un sort mythique (" + spells.mythiques.join(", ") + ") ou un sort ordinaire au niveau 10.", source:"Niveaux épiques"});
   const extraCantrips=[]; if(S.rc) extraCantrips.push({nom:S.rc,carac:"int"}); if(r.id==="tieffelin"){ extraCantrips.push({nom:"Thaumaturgie",carac:"cha"}); if((S.lvl||1)>=3) extraCantrips.push({nom:"Représailles infernales",carac:"cha",res:"Représailles infernales (tieffelin)"}); if((S.lvl||1)>=5) extraCantrips.push({nom:"Ténèbres",carac:"cha",res:"Ténèbres (tieffelin)"}); } if(r.id==="aasimar") extraCantrips.push({nom:"Lumière",carac:"cha"});
+  origFeats().forEach(f=>{ const l = featList(f); if(!l) return; const m = miOf(l), src = "Initié à la magie ("+l+")"; m.c.forEach(n=>{ if(!extraCantrips.some(x=>x.nom===n)) extraCantrips.push({nom:n, carac:m.ab, src}); }); if(m.s) extraCantrips.push({nom:m.s, carac:m.ab, res:src, src}); });
   if(r.id==="drow"){ extraCantrips.push({nom:"Lumières dansantes",carac:"cha"}); if((S.lvl||1)>=3) extraCantrips.push({nom:"Lueurs féeriques",carac:"cha",res:"Lueurs féeriques (drow)"}); if((S.lvl||1)>=5) extraCantrips.push({nom:"Ténèbres",carac:"cha",res:"Ténèbres (drow)"}); }
   const mkL = clv("moine"), mkV = mkL>=18 ? 9 : mkL>=14 ? 7.5 : mkL>=10 ? 6 : mkL>=6 ? 4.5 : mkL>=2 ? 3 : 0;
   let vit = r.vit + (clv("barbare")>=5 && !/^(Harnois|Clibanion|Broigne|Cotte de mailles)/.test(ai.how) ? 3 : 0) + (/^(Sans armure|Défense sans armure|Résilience draconique)$/.test(ai.how) ? mkV : 0);
@@ -2604,7 +2634,7 @@ function character(){
     nom:S.name.trim(), peuple:r.nom, classe:c2 ? `${c.nom} ${L1} / ${c2.nom} ${S.mc.lvl}` : c.nom, niveau:L, historique:b.nom, genre:S.genre||"", alignement:S.align, xp:0,
     carac:sc, mods:Object.fromEntries(AB.map(a=>[a,mod(sc[a])])), maitrise:PROF,
     pv:{max:hpmax,actuels:hpmax,temporaires:0}, de_vie:{type:"d"+c.hd+(c2&&c2.hd!==c.hd?"/d"+c2.hd:""),restants:L}, ca:ai.ac, ca_detail:ai.how,
-    initiative:mod(sc.dex)+(jack?Math.floor(PROF/2):0), vitesse_m:vit, taille:r.taille, vision_noir_m:r.vision,
+    initiative:mod(sc.dex)+(jack?Math.floor(PROF/2):0)+(origFeats().includes("Vigilant")?PROF:0), vitesse_m:vit, dons_origine:origFeats(), taille:r.taille, vision_noir_m:r.vision,
     sauvegardes:Object.fromEntries(AB.map(a=>[a,mod(sc[a])+(svM.includes(a)?PROF:0)+aura])), sauvegardes_maitrisees:svM,
     competences:skills, perception_passive:10+skills.find(s=>s.nom==="Perception").bonus,
     attaques:attacks(), attaque_extra:clv("guerrier")>=20 ? 4 : clv("guerrier")>=11 ? 3 : (["barbare","guerrier","moine","paladin","rodeur"].some(id=>clv(id)>=5) || (S.pacte==="Lame" && (S.invoc||[]).includes("Lame assoiffée") && clv("occultiste")>=5)) ? 2 : 1,
@@ -2619,6 +2649,7 @@ function character(){
 function resources(c,sc){
   const o=[], cha=mod(sc.cha); const cl = [c.id]; if(MC()) cl.push(S.mc.cls);
   cl.forEach(id=>resOf(id, clv(id), o, cha));
+  origFeats().forEach(f=>{ const l = featList(f); if(l) o.push({nom:"Initié à la magie ("+l+")",max:1,recup:"long"}); });
   if(S.dragon) o.push({nom:"Souffle",max:1,recup:"court"});
   if(S.race==="demi-orc") o.push({nom:"Endurance implacable",max:1,recup:"long"});
   if(S.race==="aasimar"){ o.push({nom:"Mains guérisseuses",max:1,recup:"long"}); if((S.lvl||1)>=3) o.push({nom:"Âme radieuse",max:1,recup:"long"}); }
@@ -2657,7 +2688,7 @@ function vSheet(){
     h+=`<div class="blk"><h4>Sorts</h4><div class="prose">`;
     if(ch.sorts) h+=`<p><b>${ABN[ch.sorts.carac]}</b> · DD ${ch.sorts.dd} · attaque ${sg(ch.sorts.attaque)} · emplacements : ${(()=>{ const ep = ch.sorts.emplPacte||{}, reg = Object.entries(ch.sorts.emplacements).map(([k,v])=>[k, v-(ep[k]||0)]).filter(x=>x[1]>0).map(([k,v])=>v+" de niveau "+k), pa = Object.entries(ep).filter(x=>x[1]>0).map(([k,v])=>v+" de niveau "+k); return [reg.length?reg.join(", ")+" (repos long)":"", pa.length?"pacte : "+pa.join(", ")+" (repos court)":""].filter(Boolean).join(" ; ") || "aucun"; })()}</p>
       <p><b>Mineurs :</b> ${ch.sorts.mineurs.join(", ")}</p><p><b>Sorts${c.id==="magicien"?" (grimoire)":""} :</b> ${ch.sorts.niveau1.join(", ")}</p>${c.id==="magicien"?`<p><b>Préparés :</b> ${ch.sorts.prepares.join(", ")}</p>`:""}`;
-    ch.sorts_raciaux.forEach(s=>h+=`<p><b>${s.nom}</b> (sort mineur racial, ${ABN[s.carac].toLowerCase()})</p>`);
+    ch.sorts_raciaux.forEach(s=>h+=`<p><b>${s.nom}</b> (${s.src ? esc(s.src)+(s.res?", une fois par repos long":"") : "sort mineur racial"}, ${ABN[s.carac].toLowerCase()})</p>`);
     h+=`</div></div>`;
   }
   h+=`<div class="blk"><h4>Capacités</h4><ul class="traits">${ch.capacites.map(f=>`<li><b>${esc(f.nom)}.</b> ${esc(f.texte)}</li>`).join("")}</ul></div>`;
@@ -2767,6 +2798,7 @@ function randomAll(){
   S.equipMode="pack"; S.wealth=null; S.wroll=null; S.buy={}; S.pack=Math.floor(Math.random()*c.packs.length);
   const ca=CA(); if(ca){ const n=spellNeeds(); S.cantrips=shuffle(ca.l0).slice(0,n.c); S.spells=shuffle(ca.l1).slice(0,n.n); if(n.p) S.prep=shuffle(S.spells).slice(0,n.p); }
   if(r.cantrip) S.rc=pick(WIZ0.filter(s=>!S.cantrips.includes(s)));
+  origFeats().forEach(f=>{ const l = featList(f); if(l) miAuto(l); });
   S.name=randName(); S.genre=pick(GENRES); S.align=pick(ALIGN); S.age=ageRandom(S.race);
   S.trait=pick(TRAITS); S.ideal=pick(IDEALS); S.bond=pick(BONDS); S.flaw=pick(FLAWS);
   S.step=8;
@@ -2798,6 +2830,9 @@ document.addEventListener("click",e=>{
     case "bgs": bgInit(); toggle(S.bgs,v,2); bgClean(); break;
     case "bgx": bgInit(); toggle(S.bgx,v,2); break;
     case "bgm": S.bgm = v==="111" ? "111" : "21"; break;
+    case "mia": { const [l, a] = v.split("|"); if(MI_LISTS[l] && ["int","sag","cha"].includes(a)) miOf(l).ab = a; break; }
+    case "mic": { const [l, s] = [v.slice(0, v.indexOf("|")), v.slice(v.indexOf("|")+1)]; if(MI_LISTS[l]) toggle(miOf(l).c, s, 2); break; }
+    case "mis": { const [l, s] = [v.slice(0, v.indexOf("|")), v.slice(v.indexOf("|")+1)]; if(MI_LISTS[l]){ const m = miOf(l); m.s = m.s===s ? null : s; } break; }
     case "bg2": { const sp = bgSplit(); if(sp && sp.a.includes(v)){ if(S.bg1===v || (sp.p1===v)) S.bg1 = sp.p2; S.bg2 = v; } break; }
     case "bg1": { const sp = bgSplit(); if(sp && sp.a.includes(v) && v!==sp.p2) S.bg1 = v; break; }
     case "cs": toggle(S.cs,v,C().pick); break;
@@ -6795,7 +6830,9 @@ function weaponAttack(i, kind){
     else if(hasC("roublard") && opt.sneak && !c.snk && /finesse|munitions/i.test(a.p||"")){ extras.push([Math.ceil(gclv("roublard")/2)+"d6","attaque sournoise"]); c.snk = true; opt.sneak = false; }
     if(hasC("paladin",2) && opt.smite && melee && !beast){ const k = pickSlot(1); if(k){ useSlot(k); const n = Math.min(5, 1+k) + (UNDEAD.test(e.nom) || /diable|demon|démon|diablotin|succube|incube|fielon|fiélon|imp\b/i.test(e.nom) ? 1 : 0); extras.push([n+"d8","châtiment divin, emplacement niv. "+k]); } opt.smite = false; }
     const gwf = !beast && melee && /deux mains/i.test(a.n+" "+(a.p||"")) && heroStyles().includes("Arme à deux mains");
-    const dm = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0); let tot = dm.total, dt = dm.detail + (gwf ? " (1 et 2 relancés)" : ""); { const xd=(String(base).match(/d\d+/)||[])[0]; if(xd && r.crit && melee && !beast && G.race==="demi-orc"){ const sv=roll("1"+xd); tot+=sv.total; dt+=" + "+sv.detail.replace(/^\+ /,"")+" (attaques sauvages)"; } }
+    let dm = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0), savT = "";
+    if(!beast && c.savR!==c.round && (h.dons_origine||[]).includes("Attaquant sauvage")){ const d2 = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0); c.savR = c.round; savT = ` (attaquant sauvage : ${dm.total} et ${d2.total}, tu gardes ${Math.max(dm.total, d2.total)})`; if(d2.total > dm.total) dm = d2; }
+    let tot = dm.total, dt = dm.detail + (gwf ? " (1 et 2 relancés)" : "") + savT; { const xd=(String(base).match(/d\d+/)||[])[0]; if(xd && r.crit && melee && !beast && G.race==="demi-orc"){ const sv=roll("1"+xd); tot+=sv.total; dt+=" + "+sv.detail.replace(/^\+ /,"")+" (attaques sauvages)"; } }
     if(r.crit && melee && !beast && hasC("barbare",9)){ const xd = (String(base).match(/d\d+/)||[])[0]; if(xd){ const nb = hasC("barbare",17) ? 3 : hasC("barbare",13) ? 2 : 1; const bc = roll(nb+xd); tot += bc.total; dt += " + "+bc.detail.replace(/^\+ /,"")+" (critique brutal)"; } }
     extras.forEach(([x,l])=>{ const rr = roll(r.crit && /d/.test(x) ? critExpr(x) : x); tot += rr.total; dt += ` + ${rr.detail.replace(/^\+ /,"")} (${l})`; });
     t += `, dégâts ${dt} = <b>${tot}</b> ${a.t}.` + dmgToFoe(e, tot);
