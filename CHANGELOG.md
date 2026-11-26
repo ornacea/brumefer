@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.116.2 — 2026-11-26
+- Combat : une arme que le héros a donnée ou laissée à quelqu'un n'est plus utilisable ; l'inventaire la retire même si le récit l'a oubliée.
+
 ## 0.116.1 — 2026-11-26
 - Corrections et améliorations : personnages non joueurs.
 
