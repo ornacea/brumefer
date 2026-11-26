@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.134.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.134.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.134.1","d":"2026-11-26","items":["Corrections et améliorations : fiche du personnage."]},
 {"v":"0.134.0","d":"2026-11-26","items":["Améliorations : création du personnage (noms d'archétype)."]},
 {"v":"0.133.0","d":"2026-11-26","items":["Améliorations : création du personnage (espèces)."]},
 {"v":"0.132.0","d":"2026-11-26","items":["Améliorations : création du personnage (espèces, lignages), combat, magie."]},
@@ -2690,7 +2691,7 @@ function character(){
   if(c2){ feats.push({nom:"Multiclassage : "+c2.nom,texte:"Maîtrises gagnées : "+mcProfTxt(c2.id)+".",source:c2.nom});
     c2.feats.forEach(t=>feats.push({nom:t[0],texte:t[1],source:c2.nom}));
     (LVLF[c2.id]||[]).filter(f=>f[0]<=S.mc.lvl).forEach(f=>feats.push({nom:f[1],texte:f[2],source:c2.nom+" niv. "+f[0]})); }
-  if(dr) feats.push({nom:"Souffle "+dr[0].toLowerCase(),texte:`${dr[2]}, 2d6 ${dr[1]}, sauvegarde ${dr[3]} DD ${8+mod(sc.con)+PROF}. Résistance au ${dr[1]}.`,source:r.nom});
+  if(dr) feats.push({nom:"Souffle "+dr[0].toLowerCase(),texte:`${dr[2]}, ${S.bg52 ? (L>=17?4:L>=11?3:L>=5?2:1)+"d10" : "2d6"} ${dr[1]}, sauvegarde ${dr[3]} DD ${8+mod(sc.con)+PROF}${S.bg52 ? `, ${PROF} fois par repos long` : ""}. Résistance au ${dr[1]}.`,source:r.nom});
   [...new Set([S.style, S.style2, S.mc && S.mc.style].filter(Boolean))].forEach(st=>{ const y = STYLES.find(s=>s[0]===st); if(y) feats.push({nom:"Style : "+st,texte:y[1],source:c.nom}); });
   if(S.enemy) feats.push({nom:"Ennemi juré",texte:S.enemy,source:c.nom});
   if(S.terrain) feats.push({nom:"Terrain de prédilection",texte:S.terrain,source:c.nom});
