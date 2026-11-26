@@ -60,7 +60,7 @@ The story texts are encoded in `brumefer.html` so they are not read by accident:
 
 By submitting a contribution, you agree that it is distributed under the project's license, **CC BY-NC-SA 4.0** (see [LICENSE](LICENSE)), and that the author may adapt it when integrating it. Accepted contributions are credited in the version history.
 
-Only add content you hold the rights to: no text, image or sound taken from another game or a protected work, and, for the rules, only SRD 5.1 material.
+Only add content you hold the rights to: no text, image or sound taken from another game or a protected work, and, for the rules, only SRD 5.1 or SRD 5.2.1 material (firearms and crafting come from the SRD 5.2.1).
 
 ## Respect
 

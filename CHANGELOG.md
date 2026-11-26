@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.117.0 — 2026-11-26
+- Améliorations : carte de Haut-Givre et de ses boutiques ; les bâtiments et rues cités en ville apparaissent sur le plan.
+
 ## 0.116.3 — 2026-11-26
 - Corrections et améliorations : inventaire.
 

@@ -1,6 +1,6 @@
 # Ironhaze's Curse
 
-A **solo** tabletop role-playing game set in a dark fantasy world, using the 5th edition rules (SRD 5.1). The player creates a hero, then **Claude acts as the game master**: it tells the story, plays the characters and rules on the player's actions. The page itself keeps the rules: dice rolls, combat, inventory, money, the passage of time and maps.
+A **solo** tabletop role-playing game set in a dark fantasy world, using the 5th edition rules (SRD 5.1, with firearms and crafting from the SRD 5.2.1). The player creates a hero, then **Claude acts as the game master**: it tells the story, plays the characters and rules on the player's actions. The page itself keeps the rules: dice rolls, combat, inventory, money, the passage of time and maps.
 
 The whole game is a single file, `brumefer.html`, published as a Claude artifact.
 
