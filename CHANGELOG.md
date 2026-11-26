@@ -2,6 +2,12 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.116.1 — 2026-11-26
+- Corrections et améliorations : personnages non joueurs.
+
+## 0.116.0 — 2026-11-26
+- Améliorations : personnages non joueurs (fiches, progression, alliés au combat), réputation en ville, combat.
+
 ## 0.115.0 — 2026-11-25
 - Améliorations : nouveaux titres accordés par le jeu selon tes actes, dont un titre infamant.
 
