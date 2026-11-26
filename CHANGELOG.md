@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.135.0 — 2026-11-26
+- Améliorations : maîtrise des armes de la règle 5.2 pour tous les héros, avec huit propriétés d'arme en combat, choisies à la forge et modifiables après un repos long.
+
 ## 0.134.1 — 2026-11-26
 - Corrections et améliorations : fiche du personnage.
 

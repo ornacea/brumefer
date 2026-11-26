@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.134.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.135.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.135.0","d":"2026-11-26","items":["Améliorations : maîtrise des armes de la règle 5.2 pour tous les héros, avec huit propriétés d'arme en combat, choisies à la forge et modifiables après un repos long."]},
 {"v":"0.134.1","d":"2026-11-26","items":["Corrections et améliorations : fiche du personnage."]},
 {"v":"0.134.0","d":"2026-11-26","items":["Améliorations : création du personnage (noms d'archétype)."]},
 {"v":"0.133.0","d":"2026-11-26","items":["Améliorations : création du personnage (espèces)."]},
@@ -1346,6 +1347,17 @@ const W = {
  "mousquet":{n:"Mousquet",d:"1d12",t:"perforant",rng:1,two:1,af:1,p:"arme à feu, munitions (12/36 m ; balles), chargement, à deux mains"},
  "pistolet":{n:"Pistolet",d:"1d10",t:"perforant",rng:1,af:1,p:"arme à feu, munitions (9/27 m ; balles), chargement"}
 };
+/* Maîtrise des armes (SRD 5.2) : propriété de chaque arme, active seulement pour les armes que le héros maîtrise */
+const WMAST = {dague:"coup",hachette:"ouverture",javeline:"ralentissement",masse:"sape",baton:"renversement",cimeterre:"coup","epee-courte":"ouverture",rapiere:"ouverture","epee-longue":"sape","hache-2m":"enchainement","epee-2m":"ecorchure",arbalete:"ralentissement","arc-court":"ouverture","arc-long":"ralentissement",flechette:"ouverture",gourdin:"ralentissement",serpe:"coup","marteau-leger":"coup",lance:"sape",fronde:"ralentissement","hache-armes":"renversement","marteau-guerre":"repousser",morgenstern:"sape",fleau:"sape","arbalete-poing":"ouverture",mousquet:"ralentissement",pistolet:"ouverture"};
+const WM_TXT = {
+ enchainement:["Enchaînement","Quand tu touches au corps à corps, tu peux attaquer une seconde créature à ton contact ; si tu la touches, elle subit les dégâts de l'arme sans ton modificateur. Une fois par tour."],
+ ecorchure:["Écorchure","Quand tu rates ta cible, elle subit quand même des dégâts égaux à ton modificateur de caractéristique."],
+ coup:["Coup double","L'attaque de ta seconde arme légère fait partie de l'action Attaquer : ton action bonus reste libre. Une fois par tour."],
+ repousser:["Repousser","Quand tu touches, tu repousses la cible de 3 m (taille G au plus) : elle n'est plus à ton contact."],
+ sape:["Sape","Quand tu touches, la cible a le désavantage à sa prochaine attaque avant ton prochain tour."],
+ ralentissement:["Ralentissement","Quand tu infliges des dégâts, la vitesse de la cible baisse de 3 m jusqu'à ton prochain tour : à plus de 6 m de toi, elle ne peut pas te rejoindre."],
+ renversement:["Renversement","Quand tu touches, la cible fait une sauvegarde de Constitution (DD 8 + ton modificateur + ta maîtrise) ou tombe à terre."],
+ ouverture:["Ouverture","Quand tu infliges des dégâts, tu as l'avantage à ta prochaine attaque contre cette cible avant la fin de ton prochain tour."]};
 /* Prix officiels (po) et catégorie : s = arme courante, g = arme de guerre */
 const WPRIX = {dague:[2,"s"],hachette:[5,"s"],javeline:[0.5,"s"],masse:[5,"s"],baton:[0.2,"s"],gourdin:[0.1,"s"],serpe:[1,"s"],"marteau-leger":[2,"s"],lance:[1,"s"],arbalete:[25,"s"],"arc-court":[25,"s"],flechette:[0.05,"s"],fronde:[0.1,"s"],
   cimeterre:[25,"g"],"epee-courte":[10,"g"],rapiere:[25,"g"],"epee-longue":[15,"g"],"hache-2m":[30,"g"],"epee-2m":[50,"g"],"arc-long":[50,"g"],"hache-armes":[10,"g"],"marteau-guerre":[15,"g"],morgenstern:[15,"g"],fleau:[10,"g"],"arbalete-poing":[75,"g"],mousquet:[500,"g"],pistolet:[250,"g"]};
@@ -1880,6 +1892,18 @@ function toolProf(gid){ const cl = [S.cls, MC() ? S.mc.cls : null], bt = bgOutil
   if(gid==="luth" || gid==="flute") return cl.includes("barde") || /instrument|luth|flute/.test(bt);
   return true; }
 function buySpent(){ return Object.entries(S.buy||{}).reduce((t,[id,q])=>{ const x=shopItem(id); return t + (x?x.cu*q:0); },0); }
+/* Maîtrise des armes : guerrier 3 (4, 5, 6 aux niv. 4, 10, 16), barbare 2 (3, 4 aux niv. 4, 10), paladin, rôdeur, roublard 2 ; en multiclasse, le meilleur total */
+function wmCount(){ const f = clv("guerrier"), b = clv("barbare");
+  return Math.max(f ? (f>=16?6:f>=10?5:f>=4?4:3) : 0, b ? (b>=10?4:b>=4?3:2) : 0, ["paladin","rodeur","roublard"].some(id=>clv(id)>0) ? 2 : 0); }
+function wmOpts(){ return Object.keys(WMAST).filter(id=>W[id] && weaponProf(id)); }
+function wmCarried(){ let k = null; try{ k = kit(); }catch(e){} if(!k) return []; return [...new Set((k.wx || (k.w||[]).map(id=>({id}))).map(o=>o.id))]; }
+function wmList(){ const n = wmCount(); if(!n) return []; const O = wmOpts();
+  return (Array.isArray(S.wm) ? S.wm : wmCarried()).filter((id,i,a)=>O.includes(id) && a.indexOf(id)===i).slice(0, n); }
+function wmView(){ const n = wmCount(); if(!n) return ""; const L = wmList(), O = wmOpts();
+  let t = `<div class="detail"><h3>Maîtrise des armes · ${L.length}/${n}</h3><p class="lede" style="margin:0 0 6px">Chaque arme a une propriété de maîtrise, active seulement pour les armes que tu maîtrises. ${Array.isArray(S.wm) ? "" : "Par défaut, ce sont les armes que tu portes. "}Tu pourras en changer après chaque repos long.</p><div class="chips">`;
+  t += O.map(id=>`<button type="button" class="chip ${L.includes(id)?"sel":""}" data-act="wm" data-v="${id}" ${!L.includes(id) && L.length>=n ? "disabled" : ""}>${esc(W[id].n)} · ${WM_TXT[WMAST[id]][0]}</button>`).join("");
+  t += `</div>` + L.map(id=>`<p class="why" style="margin:4px 0 0"><b>${esc(W[id].n)} — ${WM_TXT[WMAST[id]][0]}</b> : ${WM_TXT[WMAST[id]][1]}</p>`).join("");
+  return t + `</div>`; }
 let KIT_OVR = null;
 function kit(){ if(KIT_OVR) return KIT_OVR; const c=C(), b=BG(); if(!c) return null;
   if(S.equipMode!=="achat"){ if(S.pack==null) return null; const p=c.packs[S.pack];
@@ -1948,7 +1972,7 @@ function attacks(){
   const c=C(), k=kit(); if(!c||!k) return [];
   const sts=[S.style, S.style2, S.mc&&S.mc.style].filter(Boolean), ai=acInfo(), nu = ai && /^(Sans armure|Défense sans armure|Résilience draconique)$/.test(ai.how), mk=clv("moine")>0 && nu;
   const monkW = w => !w.two && !w.rng && !!w.id && (w.id==="epee-courte" || (WPRIX[w.id] && WPRIX[w.id][1]==="s" && !/lourde/i.test(w.p||"")));
-  const pk=k; const seen=new Set(); const out=[];
+  const pk=k; const seen=new Set(); const out=[]; const wmL = wmList(), wmOf = id => id && wmL.includes(id) ? WMAST[id] : null;
   const md = mk ? (clv("moine")>=17?"1d10":clv("moine")>=11?"1d8":clv("moine")>=5?"1d6":"1d4") : null;
   const ws = (pk.wx || pk.w.map(id=>({id}))).map(o=>Object.assign({id:o.id}, W[o.id], o.n?{n:o.n}:{}, {mb:o.b||0}));
   const qty = {}; (pk.wx || pk.w.map(id=>({id, q:1}))).forEach(o=>{ const n = o.n || W[o.id].n; qty[n] = (qty[n]||0) + (o.q||1); });
@@ -1963,13 +1987,15 @@ function attacks(){
     if(sts.includes("Duel") && !w.rng && !w.two){ dmgB+=2; notes.push("Duel"); }
     if(sts.includes("Arme à deux mains") && !w.rng && w.two) notes.push("Arme à deux mains");
     let die=w.d; if(md && monkW(w) && /^1d\d+$/.test(die||"") && +md.slice(2) > +String(die).slice(2)) die=md;
-    out.push({n:w.n,hit,dmg:die+(dmgB?" "+sg(dmgB):""),t:w.t,p:w.p,notes,ab});
+    const ms = wmOf(w.id); if(ms) notes.push("maîtrise : "+WM_TXT[ms][0]);
+    out.push({n:w.n,hit,dmg:die+(dmgB?" "+sg(dmgB):""),t:w.t,p:w.p,notes,ab,id:w.id,mast:ms});
     const vm = /polyvalente \((\d+d\d+)\)/.exec(w.p||""); if(vm && !w.rng){ const d2 = M(ab)+(w.mb||0), nt = (pr?[]:["non maîtrisée"]).concat(sts.includes("Arme à deux mains")?["Arme à deux mains"]:[]);
-      out.push({n:w.n+" tenue à deux mains",hit,dmg:vm[1]+(d2?" "+sg(d2):""),t:w.t,p:w.p+", tenue à deux mains",notes:nt,ab}); }
+      if(ms) nt.push("maîtrise : "+WM_TXT[ms][0]);
+      out.push({n:w.n+" tenue à deux mains",hit,dmg:vm[1]+(d2?" "+sg(d2):""),t:w.t,p:w.p+", tenue à deux mains",notes:nt,ab,id:w.id,mast:ms}); }
   });
   if(twfOn()){ const P = twfPair(k); if(P && P.off){ const o = P.off, w = Object.assign({id:o.id}, o.w, {n:o.n, mb:o.b||0}), ab = w.fin ? (M("dex")>=M("for")?"dex":"for") : "for", pr = k.mode==="pack" || weaponProf(w.id), m = M(ab)+(w.mb||0), dB = twfStyle() ? m : Math.min(0, m);
       const mi = out.findIndex(a=>a.n===P.main.n); if(mi>0) out.unshift(out.splice(mi,1)[0]); if(out[0] && out[0].n===P.main.n) out[0].notes = out[0].notes.concat(["arme principale"]);
-      out.push({n:"Main secondaire : "+w.n, hit:M(ab)+(pr?PROF:0)+(w.mb||0), dmg:w.d+(dB?" "+sg(dB):""), t:w.t, p:(/légère/.test(o.w.p||"")?"légère":"à une main")+", attaque bonus après l'action Attaquer avec "+P.main.n, notes:(pr?[]:["non maîtrisée"]).concat(twfStyle()?["Combat à deux armes"]:["sans modificateur aux dégâts"], hasFeat("Ambidextre")?["Ambidextre"]:[]), ab, offhand:true});
+      out.push({n:"Main secondaire : "+w.n, hit:M(ab)+(pr?PROF:0)+(w.mb||0), dmg:w.d+(dB?" "+sg(dB):""), t:w.t, p:(/légère/.test(o.w.p||"")?"légère":"à une main")+", attaque bonus après l'action Attaquer avec "+P.main.n, notes:(pr?[]:["non maîtrisée"]).concat(twfStyle()?["Combat à deux armes"]:["sans modificateur aux dégâts"], hasFeat("Ambidextre")?["Ambidextre"]:[], wmOf(w.id)?["maîtrise : "+WM_TXT[wmOf(w.id)][0]]:[]), ab, offhand:true, id:w.id, mast:wmOf(w.id)});
       out.forEach(a=>{ if(!a.offhand && !/deux mains/.test(a.n) && twfOk(W[(ws.find(x=>x.n===a.n)||{}).id])) a.tw = true; }); } }
   else { const lights = ws.filter(w=>!w.rng && /légère/.test(w.p||"")), cnt = lights.reduce((t,w)=>t+(qty[w.n]||1),0);
     if(lights.length && cnt>=2){ const w = lights[0], ab = w.fin ? (M("dex")>=M("for")?"dex":"for") : "for", pr = k.mode==="pack" || !w.id || weaponProf(w.id), twf = sts.includes("Combat à deux armes"), m = M(ab)+(w.mb||0), dB = twf ? m : Math.min(0, m);
@@ -2278,7 +2304,7 @@ function vEquip(){
     const save=S.pack;
     h+=c.packs.map((p,i)=>{ S.pack=i; const ai=acInfo(); S.pack=save;
       return `<button type="button" class="card ${S.pack===i?"sel":""}" data-act="pack" data-v="${i}"><span class="tag">CA ${ai.ac}</span><h3>${p.l}</h3><p>${[...new Set(p.w)].map(id=>W[id].n).concat(p.armor?[ARM[p.armor].n]:[]).join(", ")}</p><span class="meta">${p.it.join(" · ")}</span></button>`; }).join("");
-    return h+`</div>`+twfView();
+    return h+`</div>`+twfView()+wmView();
   }
   const w=WEALTH[c.id];
   h+=`<div class="detail" style="margin-top:0"><p class="lede" style="margin:0">Richesse de départ : <b>3 lancers de ${w[0]}d4 × ${String(wealthMult()).replace(".",",")} po</b>, tu gardes le meilleur. Le multiplicateur combine ta classe (${c.nom.toLowerCase()}, × ${w[1]}) et ton archétype (${BG()?esc(BG().nom).toLowerCase():"?"} : fortune ${wealthTier().lbl}, × ${String(wealthTier().f).replace(".",",")}). En échange, tu renonces au paquetage de classe ainsi qu'à l'équipement et à la bourse de ton historique.</p>`;
@@ -2298,7 +2324,7 @@ function vEquip(){
   const sh=shopItem("g:bouclier"), shOk=armorProf("s")&&!c.monk; if(shOk || owned("g:bouclier")) al.push(row(sh, "+2 à la CA", shOk, shOk?"":"non maîtrisé"));
   if(al.length) h+=sec(al.length>1||!shOk ? "Armures et bouclier" : "Bouclier", al);
   h+=sec("Matériel d'aventurier", GEAR.filter(g=>g[0]!=="bouclier" && (toolProf(g[0]) || owned("g:"+g[0]))).map(g=>{ const x=shopItem("g:"+g[0]); return row(x, g[3]||"&nbsp;", true, c.id==="magicien"&&g[0]==="grimoire"&&!(S.buy||{})["g:grimoire"]?"conseillé":""); }));
-  h+=`</div>`+twfView();
+  h+=`</div>`+twfView()+wmView();
   return h;
 }
 function vSpells(){
@@ -2723,7 +2749,7 @@ function character(){
     initiative:mod(sc.dex)+(jack?Math.floor(PROF/2):0)+(origFeats().includes("Vigilant")?PROF:0), vitesse_m:vit, dons_origine:origFeats(), taille:r.taille, vision_noir_m:r.vision,
     sauvegardes:Object.fromEntries(AB.map(a=>[a,mod(sc[a])+(svM.includes(a)?PROF:0)+aura])), sauvegardes_maitrisees:svM,
     competences:skills, perception_passive:10+skills.find(s=>s.nom==="Perception").bonus,
-    attaques:attacks(), attaque_extra:clv("guerrier")>=20 ? 4 : clv("guerrier")>=11 ? 3 : (["barbare","guerrier","moine","paladin","rodeur"].some(id=>clv(id)>=5) || (S.pacte==="Lame" && (S.invoc||[]).includes("Lame assoiffée") && clv("occultiste")>=5)) ? 2 : 1,
+    attaques:attacks(), maitrises_armes:wmList().map(id=>({id, arme:W[id].n, maitrise:WM_TXT[WMAST[id]][0]})), attaque_extra:clv("guerrier")>=20 ? 4 : clv("guerrier")>=11 ? 3 : (["barbare","guerrier","moine","paladin","rodeur"].some(id=>clv(id)>=5) || (S.pacte==="Lame" && (S.invoc||[]).includes("Lame assoiffée") && clv("occultiste")>=5)) ? 2 : 1,
     capacites:feats, sorts:spells, sorts_raciaux:extraCantrips,
     maitrises:{armures:c.armures+(c2&&MC_PROF[c2.id].arm?" ; "+MC_PROF[c2.id].arm:""),armes:c.armes+(c2&&MC_PROF[c2.id].wpn?" ; "+MC_PROF[c2.id].wpn:""),autres:bgOutils().join(", ")}, langues:r.langues.replace(/une langue au choix/, S.rlang ? S.rlang.toLowerCase() : "une langue au choix") + (c.draconic?", draconique":"") + (c.id==="druide"?", druidique":"") + (bgLangs().length?", "+bgLangs().map(x=>x.toLowerCase()).join(", "):""),
     equipement:pk.equip, cu:pk.cu, po:Math.floor(pk.cu/CU_PO), equipement_mode:pk.mode,
@@ -2929,6 +2955,7 @@ document.addEventListener("click",e=>{
     case "mis": { const [l, s] = [v.slice(0, v.indexOf("|")), v.slice(v.indexOf("|")+1)]; if(MI_LISTS[l]){ const m = miOf(l); m.s = m.s===s ? null : s; } break; }
     case "bg2": { const sp = bgSplit(); if(sp && sp.a.includes(v)){ if(S.bg1===v || (sp.p1===v)) S.bg1 = sp.p2; S.bg2 = v; } break; }
     case "bg1": { const sp = bgSplit(); if(sp && sp.a.includes(v) && v!==sp.p2) S.bg1 = v; break; }
+    case "wm": if(WMAST[v]){ if(!Array.isArray(S.wm)) S.wm = wmList(); toggle(S.wm, v, wmCount()); } break;
     case "cs": toggle(S.cs,v,C().pick); break;
     case "fs": toggle(S.fs,v,freeCount()); break;
     case "ex": toggle(S.ex,v,2); break;
@@ -3215,7 +3242,7 @@ function hasAmmo(a){ if(!/munitions/i.test(a.p||"")) return true; const n = norm
   const re = /arbalete/.test(n) ? /carreau/ : /fronde/.test(n) ? /bille|pierre/ : /mousquet|pistolet/.test(n) ? /\bballes? d.arme/ : /fleche/;
   return (G.inv||[]).some(x=>re.test(norm(x))); }
 function refreshGear(){ if(!G || !G.hero || !G.build) return; try{ const h = heroFrom(G.build);
-  G.hero.attaques = h.attaques; G.hero.ca = h.ca; G.hero.ca_detail = h.ca_detail; G.hero._gear = h._gear; G.ca = h.ca; }catch(e){} }
+  G.hero.attaques = h.attaques; G.hero.maitrises_armes = h.maitrises_armes; G.hero.ca = h.ca; G.hero.ca_detail = h.ca_detail; G.hero._gear = h._gear; G.ca = h.ca; }catch(e){} }
 function syncHero(){
   const old = G.hero, h = heroFrom(G.build);
   const d = h.pv.max - old.pv.max;
@@ -3230,7 +3257,7 @@ function syncHero(){
   { const ep = (h.sorts && h.sorts.emplPacte) || {}; for(const k in ns){ const pm = ep[k]||0, o = G.slots && G.slots[k]; ns[k].pmax = pm; ns[k].p = Math.min(pm, ns[k].val, o && o.p!=null ? o.p + Math.max(0, pm-(o.pmax||0)) : pm); } }
   G.slots = ns; G.hero = h;
 }
-function migrate(){ migrate0(); try{ fixJoueur(); prisG(); prisObjSync(); }catch(e){ console.error(e); } try{ objDedup(); objPurgeVague(); }catch(e){} try{ compPastMig(); }catch(e){} try{ actMig(); partSync(); }catch(e){} try{ if(G.mem && G.mem.p && G.mem.p.length) memFixAll(); }catch(e){} try{ if(G.notes) neufPrune(G.notes); }catch(e){}
+function migrate(){ migrate0(); try{ if(G.hero && G.build && !G.hero.maitrises_armes) refreshGear(); }catch(e){} try{ fixJoueur(); prisG(); prisObjSync(); }catch(e){ console.error(e); } try{ objDedup(); objPurgeVague(); }catch(e){} try{ compPastMig(); }catch(e){} try{ actMig(); partSync(); }catch(e){} try{ if(G.mem && G.mem.p && G.mem.p.length) memFixAll(); }catch(e){} try{ if(G.notes) neufPrune(G.notes); }catch(e){}
   try{ (G.journal||[]).forEach(x=>{ if(x && typeof x.t==="string"){ if(x.t.includes("[[")) x.t = noSpk(x.t); if(x.t.includes('class="spk"')) x.t = x.t.replace(/<span class="spk" data-spk="[^"]*"><\/span>/g,""); } }); (G.hist||[]).forEach(h=>{ if(h && typeof h.m==="string" && h.m.includes("[[")) h.m = noSpk(h.m); }); }catch(e){} try{ giftMig(); }catch(e){ console.error(e); } try{ refreshGear(); }catch(e){} try{ notesG(); pnjSync(); atlReorph(); atlSync(); }catch(e){ console.error(e); } }
 function migrate0(){
   if(!G) return;
@@ -5306,7 +5333,7 @@ function rest(kind){ compRest(kind); try{ allyRest(kind); }catch(e){}
     if(G.aide){ G.pvmax -= G.aide; G.aide = 0; }
     G.pv = G.pvmax; G.pvtemp = 0; G.dv = Math.min(L, (G.dv||0) + Math.max(1, Math.floor(L/2))); G.conc = null;
     for(const k in G.res) G.res[k].val = G.res[k].max; for(const k in G.slots){ G.slots[k].val = G.slots[k].max; if(G.slots[k].pmax!=null) G.slots[k].p = G.slots[k].pmax; }
-    G.buffs = {}; G.used = {}; G.forme = null; G.mort = {s:0,f:0}; G.statut = "ok"; G.rimpl = 0; G.canPrepare = PREPC.includes(G.cls) || !!(mcCls() && PREPC.includes(mcCls().id)); G.prepDone = {};
+    G.buffs = {}; G.used = {}; G.forme = null; G.mort = {s:0,f:0}; G.statut = "ok"; G.rimpl = 0; G.canPrepare = PREPC.includes(G.cls) || !!(mcCls() && PREPC.includes(mcCls().id)); G.prepDone = {}; G.wmChg = true;
     logJ("sys",`Repos long : PV, sorts et capacités récupérés ; dés de vie ${G.dv}/${L}.`+(G.canPrepare?" Tu peux changer tes sorts préparés (panneau de droite).":"")); lrSnap(); return;
   }
   let t = "Repos court.", spent = 0, gained = 0;
@@ -5382,7 +5409,7 @@ function heroBrief(short, invQ){
     `Caractéristiques : ${AB.map(a=>ABS[a]+" "+h.carac[a]+" ("+sg(h.mods[a])+")").join(", ")}. Maîtrise +${h.maitrise}.`,
     (()=>{ const S = subcls().filter(x=>x.ok); return S.length ? `Sous-classe : ${S.map(x=>x.cls+", "+x.nom).join(" ; ")}.` : ""; })(),
     `Compétences maîtrisées : ${h.competences.filter(c=>c.maitrise).map(c=>c.nom+" "+sg(c.bonus)).join(", ")}.`,
-    `Attaques : ${h.attaques.map(a=>a.n+" "+sg(a.hit)+", "+a.dmg).join(" ; ")}${h.attaque_extra>1?` (${h.attaque_extra} attaques par action)`:""}.`,
+    `Attaques : ${h.attaques.map(a=>a.n+" "+sg(a.hit)+", "+a.dmg+(a.mast?" (maîtrise : "+WM_TXT[a.mast][0]+")":"")).join(" ; ")}${h.attaque_extra>1?` (${h.attaque_extra} attaques par action)`:""}.`,
     h.sorts ? `Sorts : mineurs ${h.sorts.mineurs.join(", ")} ; disponibles ${h.sorts.prepares.join(", ")} ; emplacements ${slotLevels().map(k=>`niv. ${k} ${G.slots[k].val}/${G.slots[k].max}`).join(", ")}.` : "",
     (h.sorts_raciaux||[]).length ? `Sorts raciaux : ${h.sorts_raciaux.map(x=>x.nom).join(", ")}.` : "",
     `Capacités : ${h.capacites.map(c=>c.nom).join(", ")}.`,
@@ -6823,6 +6850,7 @@ function foeSanitize(list){ const L = Math.max(1, Math.min(20, G.niveau||1)), bu
 function startCombat(list, so={}){ try{ refreshGear(); }catch(e){}
   const ennemis = foeSanitize(list).map((e,i)=>({id:"e"+i, nom:String(e.nom||"Adversaire"), pv:Math.max(1,+e.pv||7), pvmax:Math.max(1,+e.pv||7), ca:+e.ca||12, att:+e.att||3, deg:String(e.deg||"1d6"), type:String(e.type||"contondant"), init:+e.init||0, sauv:+e.sauv||0, xp:Math.max(0, e.xp===0 || e.xp==="0" ? 0 : (+e.xp||25)), etat:"ok", portee:e.portee==="distance"?"distance":"contact", contact:(+e.distance>0 && +e.distance<=1.5), dist:Math.max(1.5, Math.min(120, +e.distance || (e.portee==="distance"?18:9)))}));
   const hi = d20("normal"); const iniB = checkBonus("competence","initiative").b, hInit = hi.r + iniB;
+  G.wmChg = false;
   G.combat = {ennemis, round:1, log:[], act:false, bon:false, hit:false, snk:false, colos:false, atkLeft:0, flurry:false};
   G.combat.amical = so.amical ? 1 : 0;
   try{ ennemis.forEach(e=>{ const r = notFind(e.nom), nom = notNom(e.nom); if(r && /s/.test(r[12])){ e.sanct = notCombatAt(r).dd; e.soin = 3; }
@@ -6863,6 +6891,7 @@ function advFor(e, o={}){
   if(HELPLESS.includes(e.etat) && e.etat!=="fascine") A.push("cible "+({endormi:"endormie",paralyse:"paralysée",etourdi:"étourdie",fascine:"fascinée"})[e.etat]);
   foeFix(e); if(e.aterre) (o.melee ? A : D).push(o.melee ? "cible à terre" : "cible à terre, tir à distance");
   if(e.trace) A.push("cible illuminée par l'éclair traçant");
+  if(e.vex!=null && G.combat && G.combat.round<=e.vex+1) A.push("ouverture");
   if(G.buffs.cache) A.push("tu es caché"); if(G.buffs.insp) A.push("inspiration héroïque");
   if(o.reckless) A.push("attaque téméraire");
   if(!o.melee && engaged()) D.push("tir à distance au contact d'un ennemi");
@@ -6876,11 +6905,34 @@ function atkAb(a){ return a.ab || (/munitions/i.test(a.p||"") ? "dex" : (/finess
 /* Sanctuaire : avant de frapper la prêtresse, le héros doit réussir un jet de Sagesse ; raté, il ne peut s'y résoudre et perd son attaque */
 function sanctBlock(e){ if(!e || !e.sanct) return null; const cb = checkBonus("sauvegarde","Sagesse"), d = d20("normal"), tot = d.r + cb.b, ok = tot >= e.sanct;
   return {ok, txt:`Sanctuaire de ${esc(e.nom)} : sauvegarde de Sagesse d20 (${d.txt}) ${sg(cb.b)} = <b>${tot}</b> contre DD ${e.sanct} → <b>${ok ? "tu passes outre" : "tu ne peux te résoudre à la frapper"}</b>`}; }
+function wmBig(e){ return /^g[ée]ant|dragon (adulte|ancien|vénérable)|titan|kraken|béhémoth|colosse|tarasque/i.test(e.nom||""); }
+function wmPanel(){ if(!G || !G.build) return ""; const n = withS(G.build, ()=>wmCount()); if(!n) return "";
+  const L = G.hero.maitrises_armes || [], edit = !G.combat && G.wmChg!==false && !busy;
+  let t = `<h4>Maîtrise des armes · ${L.length}/${n}</h4>` + L.map(x=>`<details><summary>${esc(x.arme)} <small>${esc(x.maitrise)}</small></summary><p>${esc(WM_TXT[WMAST[x.id]][1])}</p></details>`).join("");
+  if(edit){ const O = withS(G.build, ()=>wmOpts()), ids = L.map(x=>x.id);
+    t += `<p class="lede" style="margin:4px 0;font-size:.85rem">Tu peux changer tes maîtrises jusqu'à ton prochain combat.</p><div class="chips">` + O.map(id=>`<button type="button" class="chip ${ids.includes(id)?"sel":""}" data-g="wm" data-v="${id}" ${!ids.includes(id) && ids.length>=n ? "disabled" : ""}>${esc(W[id].n)} · ${WM_TXT[WMAST[id]][0]}</button>`).join("") + `</div>`; }
+  else t += `<p class="lede" style="margin:4px 0;font-size:.85rem">Tu pourras en changer après ton prochain repos long.</p>`;
+  return t; }
+function nickOk(){ const c = G.combat; return !!c && !G.forme && c.nickR!==c.round && (G.hero.attaques||[]).some(a=>a.mast==="coup" && atkHeld(a)); }
+/* Maîtrise des armes : effet de la propriété après le jet d'attaque */
+function wmApply(a, e, r, c){ const h = G.hero, k = a.mast, m = (h.mods||{})[a.ab || atkAb(a)] || 0; let t = "";
+  if(!r.hit){ if(k==="ecorchure" && m>0 && r.d.txt!=="—" && e.etat!=="mort"){ t += ` Écorchure : l'arme frôle ${esc(e.nom)}, <b>${m}</b> ${a.t}.` + dmgToFoe(e, m); } return t; }
+  if(k==="enchainement"){ if(c.cleaveR===c.round || /munitions|lancer/i.test(a.p||"")) return t; const e2 = c.ennemis.find(x=>x!==e && active(x) && x.contact && x.etat!=="coma"); if(!e2) return t; c.cleaveR = c.round;
+    const r2 = attackRoll(e2, atkHit(a, false), a.n+" (enchaînement)", {melee:true, enc:true}); t += ` ${r2.txt}`;
+    if(r2.hit){ const die = String(a.dmg).split(" ")[0], neg = Math.min(0, m), dm = roll(r2.crit ? critExpr(die) : die), n = Math.max(0, dm.total + neg); t += `, ${dm.detail}${neg ? " "+sg(neg) : ""} = <b>${n}</b> ${a.t}, sans modificateur.` + dmgToFoe(e2, n); } else t += ".";
+    return t; }
+  if(e.etat==="mort" || e.etat==="coma" || e.etat==="fui") return t;
+  if(k==="sape"){ e.sape = c.round; t += ` Sape : ${esc(e.nom)} aura le désavantage à sa prochaine attaque.`; }
+  else if(k==="ouverture"){ e.vex = c.round; t += ` Ouverture : avantage à ta prochaine attaque contre ${esc(e.nom)}.`; }
+  else if(k==="ralentissement"){ e.lent = c.round; t += ` Ralentissement : la vitesse de ${esc(e.nom)} baisse de 3 m jusqu'à ton prochain tour.`; }
+  else if(k==="repousser"){ if(wmBig(e)) t += ` Repousser : ${esc(e.nom)} est trop massif pour reculer.`; else { e.contact = false; e.dist = 4.5; t += ` Repousser : <b>${esc(e.nom)} recule à 4,5 m</b>.`; } }
+  else if(k==="renversement" && !e.aterre){ const dc = 8 + m + (h.maitrise||2), sv = saveFoe(e, dc); if(sv.v===99) return t; if(!sv.ok) e.aterre = true; t += ` Renversement : sauvegarde de Constitution ${sv.v} contre DD ${dc} → ${sv.ok ? "il garde l'équilibre" : `<b>${esc(e.nom)} tombe à terre</b>`}.`; }
+  return t; }
 function attackRoll(e, bonus, label, o={}){
   { const sb = sanctBlock(e); if(sb && !sb.ok) return {d:{r:1, txt:"—"}, tot:0, crit:false, hit:false, mode:"normal", txt:sb.txt}; if(sb) clog(sb.txt); }
   const R = advFor(e, o), mode = R.mode;
   if(G.buffs.cache) delete G.buffs.cache; if(G.buffs.insp) delete G.buffs.insp;
-  if(e.trace) delete e.trace;
+  if(e.trace) delete e.trace; if(e.vex!=null) delete e.vex;
   const d = d20(mode), bl = bless(); const tot = d.r + bonus + bl.v;
   let crit = d.r >= (o.critMin||20), hit = crit || (d.r!==1 && tot>=e.ca);
   if(o.melee && !o.noMove) e.contact = true;
@@ -6938,16 +6990,18 @@ function weaponAttack(i, kind){
       if(kind==="bonus" && c.flurry && hasC("moine",3)){ const dc = 8+h.maitrise+h.mods.sag; const sv = 1+rand(20)+e.sauv; if(sv<dc && !e.aterre){ e.aterre = true; t += ` Main ouverte : <b>${esc(e.nom)} tombe à terre</b>.`; } }
     }
   } else t += ".";
+  if(!beast && a.mast) t += wmApply(a, e, r, c);
   if(kind!=="bonus"){ c.hit = true; c.light = !G.forme && (a.tw || /légère/i.test(a.p||"")) && !a.offhand; }
   clog(t); afterPlayer();
 }
 function heroStyles(){ const b = G.build||{}; return [b.style, b.style2, b.mc && b.mc.style].filter(Boolean); }
 function bonusAttack(kind){
-  const c = G.combat; if(!c || c.bon) return; const h = G.hero, L = G.niveau;
+  const c = G.combat; if(!c || (c.bon && !(kind==="offhand" && nickOk()))) return; const h = G.hero, L = G.niveau;
   const ui = h.attaques.findIndex(a=>/mains nues/i.test(a.n));
   if(kind==="ma"){ if(!c.hit) return; c.bon = true; weaponAttack(ui,"bonus"); return; }
   if(kind==="deluge"){ const k = G.res["Ki"]; if(!c.hit || !k || k.val<1) return; k.val--; c.bon = true; c.flurry = true; clog("Déluge de coups (1 ki)."); weaponAttack(ui,"bonus"); if(G.combat && G.combat.ennemis.some(active)) weaponAttack(ui,"bonus"); if(G.combat) G.combat.flurry = false; return; }
-  if(kind==="offhand"){ if(!c.hit || !c.light) return; const i = h.attaques.findIndex(a=>a.offhand); if(i<0) return; c.bon = true; weaponAttack(i,"bonus"); return; }
+  if(kind==="offhand"){ if(!c.hit || !c.light || c.offR===c.round) return; const i = h.attaques.findIndex(a=>a.offhand); if(i<0) return; c.offR = c.round;
+    if(nickOk()){ c.nickR = c.round; clog("Coup double : ta seconde arme frappe dans le même élan, ton action bonus reste libre."); } else c.bon = true; weaponAttack(i,"bonus"); return; }
   if(kind==="frenesie"){ if(!G.buffs.rage || !hasC("barbare",3)) return; c.bon = true; const i = h.attaques.findIndex(a=>!/munitions|mains nues/i.test(a.n+" "+a.p)); weaponAttack(i<0?0:i,"bonus"); return; }
   if(kind==="spirit"){ if(!G.buffs.armeSpi) return; c.bon = true; spiritAttack(); afterPlayer(); return; }
 }
@@ -7118,6 +7172,7 @@ function enemyPhase(list){
     if(c.mil && G.statut!=="ok") return;   /* la milice ne frappe pas un héros à terre : elle l'arrête */
     if(e.sanct){ if(e.pv < e.pvmax && e.soin > 0){ e.soin--; const r = roll("1d8+3"), g = Math.min(e.pvmax - e.pv, r.total); e.pv += g; clog(`${esc(e.nom)} invoque la Dame des Cendres et se soigne : ${r.detail} = <b>+${g} PV</b> (${e.pv}/${e.pvmax}).`); }
       else clog(`${esc(e.nom)} ne frappe pas : elle prie la Dame des Cendres et appelle la milice à l'aide.`); return; }
+    if(e.lent===c.round && !e.contact && e.portee!=="distance" && foeD(e) > 6){ e.dist = Math.max(1.5, foeD(e) - 6); clog(`${esc(e.nom)}, ralenti, avance sans parvenir jusqu'à toi (encore ${String(e.dist).replace(".",",")} m).`); return; }
     { const al = allyPick(); if(al){ allyHit(e, al); return; } }
     if(compFight() && G.statut==="ok" && Math.random() < compAggro()){ compHit(e); return; }
     const A = [], D = [];
@@ -7126,6 +7181,7 @@ function enemyPhase(list){
     if(G.buffs.esquive) D.push("tu esquives");
     if(G.buffs.cache) D.push("tu es caché");
     if(e.moque){ D.push("moquerie cruelle"); delete e.moque; }
+    if(e.sape!=null){ if(e.sape===c.round) D.push("sape"); delete e.sape; }
     if(hasC("roublard",18) && G.statut==="ok") A.length = 0;
     const mode = modeOf(A, D), why = advWhy({A, D, mode});
     if(e.aterre){ delete e.aterre; clog(`${esc(e.nom)} se relève.`); }
@@ -7662,7 +7718,7 @@ function combatDock(){
   if(hasC("moine")){ bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="ma" ${B||!c.hit?"disabled":""}>Mains nues</button>`); if(R["Ki"]){ bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="deluge" ${B||!c.hit||R["Ki"].val<1?"disabled":""}>Déluge de coups (1 ki)</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="patiente" ${B||R["Ki"].val<1?"disabled":""}>Défense patiente (1 ki)</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="vent" ${B||R["Ki"].val<1?"disabled":""}>Pas du vent (1 ki)</button>`); } if(hasC("moine",5)&&R["Ki"]) tog.push(optChip("stun","Frappe étourdissante (1 ki)",R["Ki"].val<1)); }
   bon.push(...raceBtns(B));
   if(R["Rage"]) bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="rage" ${B||G.buffs.rage||R["Rage"].val<1?"disabled":""}>Rage (${R["Rage"].val})</button>`);
-  if(!beast && h.attaques.some(a=>a.offhand && atkHeld(a))){ const oh = h.attaques.find(a=>a.offhand); bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="offhand" ${B||!c.hit||!c.light?"disabled":""} title="Après une attaque avec une arme légère, frappe avec la seconde">${esc(oh.n)}</button>`); }
+  if(!beast && h.attaques.some(a=>a.offhand && atkHeld(a))){ const oh = h.attaques.find(a=>a.offhand); bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="offhand" ${(B&&!nickOk())||!c.hit||!c.light||c.offR===c.round?"disabled":""} title="Après une attaque avec une arme légère, frappe avec la seconde${nickOk()?" (coup double : sans action bonus)":""}">${esc(oh.n)}</button>`); }
   if(hasC("barbare",3)) bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="frenesie" ${B||!G.buffs.rage?"disabled":""}>Attaque frénétique</button>`);
   if(hasC("barbare",2)) tog.push(optChip("reckless","Attaque téméraire"));
   if(R["Second souffle"]) bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="souffle2" ${B||R["Second souffle"].val<1?"disabled":""}>Second souffle</button>`);
@@ -7735,6 +7791,7 @@ function side(){
   const fx = [["mage","Armure de mage"],["ecorce","Peau d'écorce"],["beni","Bénédiction"],["foi","Bouclier de la foi"],["faveur","Faveur divine"],["armeMag","Arme magique"],["sacree","Arme sacrée"],["armeSpi","Arme spirituelle"],["gardiens","Esprits gardiens"],["hate","Hâte"],["rage","Rage"],["temer","Attaque téméraire"],["esquive","Esquive"],["cache","Caché"]].filter(x=>G.buffs[x[0]]).map(x=>x[1]);
   if(G.buffs.marque) fx.push("Marque du chasseur"); if(G.buffs.malef) fx.push("Maléfice"); if(G.aide) fx.push(`Aide (+${G.aide} PV max)`); if(G.forme) fx.push(`Forme de ${G.forme.nom.toLowerCase()}`);
   if(fx.length || G.pvtemp) t += `<h4>Effets actifs</h4><div style="font-size:.88rem">${fx.concat(G.pvtemp?[G.pvtemp+" PV temporaires"]:[]).join(" · ")}</div>`;
+  t += wmPanel();
   t += `<h4>Capacités</h4><div class="caps">${h.capacites.map(f=>`<details><summary>${esc(f.nom)} <small>${esc(f.source)}</small></summary><p>${esc(f.texte)}</p></details>`).join("")}</div>`;
   t += `<h4>Repos</h4><p class="lede" style="margin:0;font-size:.85rem">Quand l'endroit est sûr, le maître du jeu ajoute le repos court ou long aux choix de réponse. Tu peux aussi le demander en écrivant ton action.</p>`;
   return t;
@@ -7824,6 +7881,8 @@ document.addEventListener("click", e=>{
     case "free": { const txt = $("g-free").value.trim(); if(!txt) return; freeAction(txt); return; }
     case "lvl": luOpen(null); return;
     case "prepchg": luOpen("prep", v||G.cls); return;
+    case "wm": { if(G.combat || G.wmChg===false || busy || !WMAST[v]) return; const b = G.build, n = withS(b, ()=>wmCount()), cur = (G.hero.maitrises_armes||[]).map(x=>x.id);
+      if(!Array.isArray(b.wm)) b.wm = cur; if(b.wm.includes(v)) b.wm = b.wm.filter(x=>x!==v); else if(b.wm.length<n && withS(b, ()=>wmOpts()).includes(v)) b.wm.push(v); refreshGear(); saveRender(); return; }
     case "hexlearn": G.hexDone = true; luOpen("prep", "occultiste"); return;
     case "tier": G.tier = v; saveRender(); return;
     case "enc": G.enc = v==="off" || v==="strict" ? v : "std"; logJ("sys", `Poids et encombrement : ${v==="off" ? "désactivés" : v==="strict" ? "variante stricte du SRD" : "règle standard"}.`); saveRender(); return;
