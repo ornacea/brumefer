@@ -3,7 +3,7 @@
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
 ## 0.119.0 — 2026-11-26
-- Personnages : notables et marchands nommés dans toutes les villes, tous suivent les règles de classe et de niveau.
+- Améliorations : personnages.
 
 ## 0.118.0 — 2026-11-26
 - Améliorations : choix de la carte par une liste déroulante, dans le carnet et dans la carte agrandie.
