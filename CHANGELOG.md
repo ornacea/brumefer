@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.128.0 — 2026-11-26
+- Améliorations : création du personnage (historiques).
+
 ## 0.127.0 — 2026-11-26
 - Améliorations : combat, création du personnage (historiques), Port-Argence.
 
