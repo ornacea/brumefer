@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.131.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.132.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.132.0","d":"2026-11-26","items":["Améliorations : création du personnage (espèces, lignages), combat, magie."]},
 {"v":"0.131.0","d":"2026-11-26","items":["Améliorations : création du personnage (dons d'origine), combat."]},
 {"v":"0.130.0","d":"2026-11-26","items":["Améliorations : création du personnage (noms d'archétype)."]},
 {"v":"0.129.0","d":"2026-11-26","items":["Améliorations : création du personnage (caractéristiques, historiques)."]},
@@ -1176,7 +1177,7 @@ const MOIS_K = ["givre","neige","degel","semaille","floraison","verdure","soleil
 const SAISONS = ["hiver","hiver","printemps","printemps","printemps","été","été","été","automne","automne","automne","hiver","hiver"];
 const GENRES = ["Masculin","Féminin","Non-binaire"];
 /* ===== Âge selon le peuple : [âge adulte, durée de vie] (repères 5e) ===== */
-const AGES = {humain:[18,90], "haut-elfe":[100,750], drow:[100,750], nain:[50,350], halfelin:[20,250], gnome:[40,450], "demi-elfe":[20,180], "demi-orc":[14,75], drakeide:[15,80], tieffelin:[18,100], aasimar:[18,160], goliath:[18,90]};
+const AGES = {elfe:[100,750], orc:[12,80], humain:[18,90], "haut-elfe":[100,750], drow:[100,750], nain:[50,350], halfelin:[20,250], gnome:[40,450], "demi-elfe":[20,180], "demi-orc":[14,75], drakeide:[15,80], tieffelin:[18,100], aasimar:[18,160], goliath:[18,90]};
 const AGE_LAB = [["adolescent","adolescente","adolescent·e"],["jeune adulte","jeune adulte","jeune adulte"],["homme d'âge mûr","femme d'âge mûr","personne d'âge mûr"],["homme âgé","femme âgée","personne âgée"],["vieillard","vieille femme","personne très âgée"]];
 const AGE_HOW = [
  g=>`les adultes lui parlent de haut, le tutoiement est de rigueur, on doute de sa parole, on hésite à lui confier armes, secrets ou responsabilités, ou on veut ${["le protéger malgré lui","la protéger malgré elle","l'en protéger malgré tout"][g]} (« ${["gamin","gamine","gamin·e"][g]} », « ${["petit","petite","petit·e"][g]} ») ; corps encore en croissance, voix, fougue et maladresse de la jeunesse`,
@@ -1242,8 +1243,69 @@ const RACES = [
  {id:"goliath",nom:"Goliath",desc:"Colosses des hautes cimes, épris de défis et de records.",bonus:{for:2,con:1},vit:9,taille:"Moyenne",vision:0,langues:"Commun, géant",skills:["Athlétisme"],
   traits:[["Athlète naturel","Maîtrise d'Athlétisme."],["Endurance de la pierre","Une fois par repos court, en réaction quand tu subis des dégâts : tu les réduis de 1d12 + ton modificateur de Constitution (appliqué automatiquement sur un coup sévère)."],["Puissante carrure","Tu comptes comme une taille plus grande pour porter, pousser ou soulever."],["Né des montagnes","Résistance aux dégâts de froid ; tu es acclimaté à l'altitude et au froid."]]},
  {id:"drow",nom:"Drow",desc:"Elfes des profondeurs, nés dans l'ombre et méfiants envers la lumière du jour.",bonus:{dex:2,cha:1},vit:9,taille:"Moyenne",vision:36,langues:"Commun, elfique",skills:["Perception"],
-  traits:[["Vision supérieure dans le noir","Tu vois dans la pénombre jusqu'à 36 m."],["Sensibilité au soleil","En plein soleil, désavantage aux attaques et aux tests de Perception fondés sur la vue."],["Ascendance féerique","Avantage aux sauvegardes contre le charme ; la magie ne peut pas t'endormir."],["Transe","4 heures de méditation remplacent une nuit de sommeil."],["Sens aiguisés","Maîtrise de Perception."],["Magie drow","Sort mineur Lumières dansantes ; Lueurs féeriques une fois par repos long dès le niveau 3, Ténèbres une fois par repos long dès le niveau 5 (Charisme, sans emplacement)."],["Entraînement aux armes drow","Rapière, épée courte et arbalète de poing."]]}
+  traits:[["Vision supérieure dans le noir","Tu vois dans la pénombre jusqu'à 36 m."],["Sensibilité au soleil","En plein soleil, désavantage aux attaques et aux tests de Perception fondés sur la vue."],["Ascendance féerique","Avantage aux sauvegardes contre le charme ; la magie ne peut pas t'endormir."],["Transe","4 heures de méditation remplacent une nuit de sommeil."],["Sens aiguisés","Maîtrise de Perception."],["Magie drow","Sort mineur Lumières dansantes ; Lueurs féeriques une fois par repos long dès le niveau 3, Ténèbres une fois par repos long dès le niveau 5 (Charisme, sans emplacement)."],["Entraînement aux armes drow","Rapière, épée courte et arbalète de poing."]]},
+ {id:"elfe",nom:"Elfe",v52:true,desc:"Gracieux et patients, nourris de magie ; leur lignage dit d'où vient leur sang : drow, haut-elfe ou elfe sylvestre.",bonus:{},vit:9,taille:"Moyenne",vision:18,langues:"Commun, elfique",skills:[],traits:[]},
+ {id:"orc",nom:"Orc",v52:true,desc:"Endurants et tenaces, portés par une fureur qui les relève quand d'autres tombent.",bonus:{},vit:9,taille:"Moyenne",vision:36,langues:"Commun, orc",skills:[],traits:[]}
 ];
+/* ===== Espèces de la règle 5.2 (nouveaux héros) : ces champs remplacent ceux du peuple ; demi-elfe et demi-orc gardent leurs traits ===== */
+const RACE52 = {
+ humain:{traits:[["Ingénieux","Tu regagnes l'Inspiration héroïque à chaque repos long : elle donne l'avantage à ta prochaine attaque."],["Doué","Maîtrise d'une compétence de plus, au choix."],["Polyvalent","Un don d'origine de plus, au choix (à l'étape Historique)."]],free:1},
+ elfe:{traits:[["Vision dans le noir","Tu vois dans la pénombre jusqu'à 18 m (36 m pour un drow)."],["Ascendance féerique","Avantage aux sauvegardes contre l'état charmé."],["Sens aiguisés","Maîtrise de Perception, de Perspicacité ou de Survie, au choix."],["Transe","4 heures de méditation remplacent une nuit de sommeil."],["Lignage elfique","Un sort mineur au niveau 1, un sort au niveau 3 et un autre au niveau 5, chacun une fois par repos long sans emplacement."]]},
+ nain:{nom:"Nain",vit:9,vision:36,traits:[["Vision dans le noir","Jusqu'à 36 m."],["Résilience naine","Avantage aux sauvegardes contre le poison et résistance aux dégâts de poison."],["Ténacité naine","+1 point de vie par niveau."],["Connaissance de la pierre","Action bonus, autant de fois que ton bonus de maîtrise par repos long : pendant 10 minutes, tu perçois les vibrations à 18 m au contact de la pierre."]]},
+ halfelin:{nom:"Halfelin",vit:9,traits:[["Chanceux","Quand tu fais 1 sur un d20 d'attaque, de test ou de sauvegarde, relance-le."],["Brave","Avantage aux sauvegardes contre la peur."],["Agilité halfeline","Tu traverses l'espace d'une créature plus grande que toi."],["Discrétion naturelle","Tu peux te cacher derrière une créature plus grande que toi."]]},
+ gnome:{nom:"Gnome",vit:9,traits:[["Vision dans le noir","Jusqu'à 18 m."],["Ruse gnome","Avantage aux sauvegardes d'Intelligence, de Sagesse et de Charisme."],["Lignage gnome","Des forêts ou des roches : sorts mineurs et talents de ton lignage."]]},
+ drakeide:{vision:18,traits:[["Ascendance draconique","Détermine ton type de dégâts et la forme de ton souffle."],["Souffle","Une action, autant de fois que ton bonus de maîtrise par repos long : 1d10 dégâts (2d10 au niveau 5, 3d10 au niveau 11, 4d10 au niveau 17)."],["Résistance","Résistance au type de dégâts de ton ascendance."],["Vision dans le noir","Jusqu'à 18 m."],["Vol draconique (niv. 5)","Action bonus, une fois par repos long : des ailes spectrales te portent pendant 10 minutes."]]},
+ tieffelin:{traits:[["Vision dans le noir","Jusqu'à 18 m."],["Présence d'outre-monde","Sort mineur Thaumaturgie."],["Héritage fiélon","Abyssal, chthonien ou infernal : une résistance, un sort mineur, un sort au niveau 3 et un autre au niveau 5, une fois par repos long sans emplacement."]]},
+ aasimar:{traits:[["Vision dans le noir","Jusqu'à 18 m."],["Résistance céleste","Résistance aux dégâts nécrotiques et radiants."],["Mains guérisseuses","Une action, une fois par repos long : tu touches une créature et elle regagne autant de d4 de PV que ton bonus de maîtrise."],["Porteur de lumière","Tu connais le sort mineur Lumière (Charisme)."],["Révélation céleste (niv. 3)","Une action, une fois par repos long : pendant 1 minute, des ailes de lumière te portent (vol 9 m), et une fois par tour une attaque ou un sort inflige en plus ton niveau en dégâts radiants."]]},
+ goliath:{vit:10.5,skills:[],traits:[["Ascendance géante","Un don de tes ancêtres géants, autant de fois que ton bonus de maîtrise par repos long."],["Forme imposante (niv. 5)","Action bonus, une fois par repos long : tu deviens de taille Grande pendant 10 minutes (avantage aux tests de Force, +3 m de vitesse)."],["Puissante carrure","Tu comptes comme une taille plus grande pour porter, pousser ou soulever, et tu as l'avantage pour mettre fin à l'état agrippé."]]},
+ orc:{traits:[["Montée d'adrénaline","Action bonus, autant de fois que ton bonus de maîtrise par repos court ou long : tu fonces et gagnes autant de PV temporaires que ton bonus de maîtrise."],["Vision dans le noir","Jusqu'à 36 m."],["Endurance implacable","Une fois par repos long, quand tu tombes à 0 PV sans mourir, tu restes à 1 PV."]]}
+};
+/* Lignages : c/c2 sorts mineurs, s3/s5 sorts des niveaux 3 et 5 (une fois par repos long), sPB sort lancé autant de fois que le bonus de maîtrise, g aptitude d'ascendance géante */
+const LIGNAGES = {
+ elfe:{lbl:"Lignage elfique", spell:true, opts:{
+  "drow":{nom:"Drow", ab:"cha", vision:36, c:"Lumières dansantes", s3:"Lueurs féeriques", s5:"Ténèbres", d:"Vision dans le noir portée à 36 m ; Lumières dansantes, puis Lueurs féeriques et Ténèbres."},
+  "haut-elfe":{nom:"Haut-elfe", ab:"int", cw:true, c:"Prestidigitation", s3:"Détection de la magie", s5:"Foulée brumeuse", d:"Un sort mineur de magicien (Prestidigitation par défaut), puis Détection de la magie et Foulée brumeuse."},
+  "sylvestre":{nom:"Elfe sylvestre", ab:"sag", vit:10.5, c:"Druidisme", s3:"Grande foulée", s5:"Passage sans trace", d:"Vitesse 10,5 m ; Druidisme, puis Grande foulée et Passage sans trace."}}},
+ gnome:{lbl:"Lignage gnome", spell:true, opts:{
+  "forets":{nom:"Gnome des forêts", ab:"int", c:"Illusion mineure", sPB:"Parler avec les animaux", d:"Illusion mineure ; Parler avec les animaux autant de fois que ton bonus de maîtrise par repos long."},
+  "roches":{nom:"Gnome des roches", ab:"int", c:"Réparation", c2:"Prestidigitation", d:"Réparation et Prestidigitation ; tu fabriques de petits mécanismes (jouet, briquet, boîte à musique)."}}},
+ tieffelin:{lbl:"Héritage fiélon", spell:true, opts:{
+  "abyssal":{nom:"Tieffelin abyssal", ab:"cha", res:"poison", c:"Bouffée de poison", s3:"Rayon de maladie", s5:"Immobilisation de personne", d:"Résistance au poison ; Bouffée de poison, puis Rayon de maladie et Immobilisation de personne."},
+  "chthonien":{nom:"Tieffelin chthonien", ab:"cha", res:"nécrotique", c:"Contact glacial", s3:"Simulacre de vie", s5:"Rayon affaiblissant", d:"Résistance aux dégâts nécrotiques ; Contact glacial, puis Simulacre de vie et Rayon affaiblissant."},
+  "infernal":{nom:"Tieffelin infernal", ab:"cha", res:"feu", c:"Trait de feu", s3:"Représailles infernales", s5:"Ténèbres", d:"Résistance au feu ; Trait de feu, puis Représailles infernales et Ténèbres."}}},
+ goliath:{lbl:"Ascendance géante", opts:{
+  "pierre":{nom:"Goliath, ascendance des pierres", g:"Endurance de la pierre", d:"Réaction quand tu subis des dégâts : tu les réduis de 1d12 + ton modificateur de Constitution (appliqué sur un coup sévère)."},
+  "feu":{nom:"Goliath, ascendance du feu", g:"Brûlure du feu", d:"Quand tu touches avec une attaque, la cible subit 1d10 dégâts de feu en plus."},
+  "givre":{nom:"Goliath, ascendance du givre", g:"Morsure du givre", d:"Quand tu touches, la cible subit 1d6 dégâts de froid en plus et sa vitesse baisse de 3 m."},
+  "collines":{nom:"Goliath, ascendance des collines", g:"Chute des collines", d:"Quand tu touches une créature, tu la jettes à terre."},
+  "nuages":{nom:"Goliath, ascendance des nuages", g:"Saut des nuages", d:"Action bonus : tu te téléportes jusqu'à 9 m dans un espace inoccupé que tu vois."},
+  "tempete":{nom:"Goliath, ascendance des tempêtes", g:"Tonnerre de la tempête", d:"Réaction quand une créature te blesse : elle subit 1d8 dégâts de tonnerre."}}}
+};
+const GIANT_HIT = /^(Brûlure du feu|Morsure du givre|Chute des collines)$/;
+function linOf(s){ s = s || S; const L = LIGNAGES[s.race]; return L && s.lin && L.opts[s.lin] ? L.opts[s.lin] : null; }
+function linAb(){ const g = linOf(); return ["int","sag","cha"].includes(S.lab) ? S.lab : (g && g.ab) || "cha"; }
+function raceList(){ return RACES.filter(x=>S.bg52 ? !["haut-elfe","drow"].includes(x.id) : !x.v52); }
+function raceSpells52(out){ const r = RACES.find(x=>x.id===S.race), g = linOf(), L = S.lvl||1, ab = linAb(), src = g ? g.nom : (r ? r.nom : "");
+  const add = (nom, res, carac)=>{ if(!nom || !SP[nom] || out.some(x=>x.nom===nom && !!x.res===!!res)) return; const o = {nom, carac:carac||ab, src}; if(res) o.res = res; out.push(o); };
+  if(S.race==="tieffelin") add("Thaumaturgie", null, ab); if(S.race==="aasimar") add("Lumière", null, "cha");
+  if(g){ add(g.cw && S.rc ? S.rc : g.c); add(g.c2); if(g.s3 && L>=3) add(g.s3, g.s3+" (lignage)"); if(g.s5 && L>=5) add(g.s5, g.s5+" (lignage)"); if(g.sPB) add(g.sPB, g.sPB+" (lignage)"); } }
+function raceRes52(o){ const L = S.lvl||1, g = linOf(), r = S.race;
+  if(r==="humain") o.push({nom:"Inspiration héroïque",max:1,recup:"long"});
+  if(r==="nain") o.push({nom:"Connaissance de la pierre",max:PROF,recup:"long"});
+  if(r==="drakeide" && S.dragon){ o.push({nom:"Souffle",max:PROF,recup:"long"}); if(L>=5) o.push({nom:"Vol draconique",max:1,recup:"long"}); }
+  if(r==="aasimar"){ o.push({nom:"Mains guérisseuses",max:1,recup:"long"}); if(L>=3) o.push({nom:"Âme radieuse",max:1,recup:"long"}); }
+  if(r==="goliath"){ if(g) o.push({nom:g.g,max:PROF,recup:"long"}); if(L>=5) o.push({nom:"Forme imposante",max:1,recup:"long"}); }
+  if(r==="orc"){ o.push({nom:"Montée d'adrénaline",max:PROF,recup:"court"}); o.push({nom:"Endurance implacable",max:1,recup:"long"}); }
+  if(g){ if(g.s3 && L>=3) o.push({nom:g.s3+" (lignage)",max:1,recup:"long"}); if(g.s5 && L>=5) o.push({nom:g.s5+" (lignage)",max:1,recup:"long"}); if(g.sPB) o.push({nom:g.sPB+" (lignage)",max:PROF,recup:"long"}); } }
+/* Aptitudes d'espèce à usage limité (action bonus), hors sorts */
+const RACE_ACT = {"Connaissance de la pierre":"pendant 10 minutes, tu perçois les vibrations à 18 m au contact de la pierre.",
+ "Vol draconique":"des ailes spectrales te portent pendant 10 minutes (vol à ta vitesse).",
+ "Forme imposante":"tu deviens de taille Grande pendant 10 minutes : avantage aux tests de Force, +3 m de vitesse.",
+ "Saut des nuages":"tu te téléportes jusqu'à 9 m dans un espace inoccupé que tu vois.",
+ "Montée d'adrénaline":"tu fonces et gagnes autant de PV temporaires que ton bonus de maîtrise."};
+function raceBtns(dis){ const R = G.res, out = []; Object.keys(RACE_ACT).forEach(k=>{ if(R[k]) out.push(`<button type="button" class="btn sm" data-g="rabil" data-v="${esc(k)}" ${dis||R[k].val<1?"disabled":""} title="${esc(RACE_ACT[k])}">${esc(k)} (${R[k].val}/${R[k].max||1})</button>`); });
+  if(R["Inspiration héroïque"]) out.push(`<button type="button" class="btn sm" data-g="insp" ${R["Inspiration héroïque"].val<1||G.buffs.insp?"disabled":""} title="Avantage à ta prochaine attaque">Inspiration héroïque${G.buffs.insp?" (prête)":""}</button>`); return out; }
+function giantOnHit(){ const g = G.build && G.build.bg52 && linOf(G.build); return g && g.g && GIANT_HIT.test(g.g) ? g.g : null; }
 const DRAGONS = [["Airain","feu","ligne de 1,5 × 9 m","DEX"],["Argent","froid","cône de 4,5 m","CON"],["Blanc","froid","cône de 4,5 m","CON"],["Bleu","foudre","ligne de 1,5 × 9 m","DEX"],["Bronze","foudre","ligne de 1,5 × 9 m","DEX"],["Cuivre","acide","ligne de 1,5 × 9 m","DEX"],["Noir","acide","ligne de 1,5 × 9 m","DEX"],["Or","feu","cône de 4,5 m","DEX"],["Rouge","feu","cône de 4,5 m","DEX"],["Vert","poison","cône de 4,5 m","CON"]];
 
 const W = {
@@ -1534,9 +1596,12 @@ const SP = {
  "Vague tonnante":[1,"Cube de 4,5 m : 2d8 tonnerre et repousse de 3 m (CON)."]
 };
 /* Portée et effet de la distance (règles 5e) : ad = attaque de sort à distance, ac = attaque de sort au contact, sv = sauvegarde, auto = touche toujours */
+SP["Foulée brumeuse"] = [2,"Action bonus : tu te téléportes jusqu'à 9 m dans un espace inoccupé que tu vois."];
+SP["Rayon affaiblissant"] = [2,"Un rayon noir à 18 m : la cible n'inflige plus que la moitié des dégâts avec les armes de Force (CON à chaque tour pour y mettre fin, concentration)."];
+SP["Rayon de maladie"] = [1,"Rayon verdâtre à 18 m : 2d8 poison, et la cible est empoisonnée jusqu'à la fin de ton prochain tour (attaque de sort à distance)."];
 const SPDIST = {
  "Trait de feu":["ad","36 m"], "Rayon de givre":["ad","18 m"], "Décharge occulte":["ad","36 m"], "Contact glacial":["ad","36 m"],
- "Production de flamme":["ad","9 m (lancée)"], "Éclair traçant":["ad","36 m"], "Flèche acide":["ad","27 m"], "Rayon ardent":["ad","36 m"],
+ "Production de flamme":["ad","9 m (lancée)"], "Éclair traçant":["ad","36 m"], "Rayon de maladie":["ad","18 m"], "Flèche acide":["ad","27 m"], "Rayon ardent":["ad","36 m"],
  "Poigne électrique":["ac","contact","avantage si la cible porte une armure de métal"], "Infliger des blessures":["ac","contact"], "Toucher du vampire":["ac","contact"],
  "Flamme sacrée":["sv","18 m","ignore les abris"], "Moquerie cruelle":["sv","18 m"], "Bouffée de poison":["sv","3 m"], "Aspersion acide":["sv","18 m"],
  "Mains brûlantes":["sv","cône de 4,5 m depuis toi"], "Vague tonnante":["sv","cube de 4,5 m depuis toi"], "Fracassement":["sv","18 m"], "Sphère de feu":["sv","18 m"],
@@ -1644,7 +1709,9 @@ const gDate = () => (G.temps && G.temps.date) || "";
 function saveRender(){ gsave(); grender(); }
 const mod = v => Math.floor((v-10)/2);
 const sg = n => n>=0 ? "+"+n : "−"+Math.abs(n);
-const R = () => RACES.find(r=>r.id===S.race);
+const R = () => { const r = RACES.find(r=>r.id===S.race); if(!r || !S.bg52 || !RACE52[r.id]) return r;
+  const o = Object.assign({}, r, RACE52[r.id]), g = linOf(); if(g){ o.nom = g.nom; if(g.vit) o.vit = g.vit; if(g.vision) o.vision = g.vision; if(g.cw) o.cantrip = true; }
+  if(r.id==="elfe") o.skills = [["Perception","Perspicacité","Survie"].includes(S.ksense) ? S.ksense : "Perception"]; return o; };
 const C = () => CLASSES.find(c=>c.id===S.cls);
 /* Multiclassage (SRD 5.1) : une seconde classe, choisie à un passage de niveau */
 const MC_REQ = {barbare:[["for"]],barde:[["cha"]],clerc:[["sag"]],druide:[["sag"]],guerrier:[["for","dex"]],magicien:[["int"]],moine:[["dex"],["sag"]],paladin:[["for"],["cha"]],rodeur:[["dex"],["sag"]],roublard:[["dex"]],ensorceleur:[["cha"]],occultiste:[["cha"]]};
@@ -1666,9 +1733,11 @@ const ARCH_RACE = {"drakeide":["draconique","draconique"],"haut-elfe":["sylvestr
 const ARCH_ALADJ = {"Loyal bon":["vertueux","vertueuse"],"Neutre bon":["bienveillant","bienveillante"],"Chaotique bon":["rebelle","rebelle"],"Loyal neutre":["austère","austère"],"Neutre":["pragmatique","pragmatique"],"Chaotique neutre":["imprévisible","imprévisible"],"Loyal mauvais":["impitoyable","impitoyable"],"Neutre mauvais":["calculateur","calculatrice"],"Chaotique mauvais":["sanguinaire","sanguinaire"]};
 /* Nuances croisées : pour chaque peuple et chaque alignement, [qualificatif du peuple teinté par l'alignement, adjectif d'alignement teinté par le peuple], chacun [masculin, féminin] */
 const ARCH_NUANCE = {"drakeide":{"Loyal bon":[["doré","dorée"],["honorable","honorable"]],"Neutre bon":[["argenté","argentée"],["magnanime","magnanime"]],"Chaotique bon":[["cuivré","cuivrée"],["fougueux","fougueuse"]],"Loyal neutre":[["d'airain","d'airain"],["fier","fière"]],"Neutre":[["draconique","draconique"],["réservé","réservée"]],"Chaotique neutre":[["flamboyant","flamboyante"],["ardent","ardente"]],"Loyal mauvais":[["chromatique","chromatique"],["tyrannique","tyrannique"]],"Neutre mauvais":[["d'onyx","d'onyx"],["cupide","cupide"]],"Chaotique mauvais":[["écarlate","écarlate"],["dévastateur","dévastatrice"]]},"haut-elfe":{"Loyal bon":[["lumineux","lumineuse"],["noble","noble"]],"Neutre bon":[["sylvestre","sylvestre"],["serein","sereine"]],"Chaotique bon":[["stellaire","stellaire"],["rêveur","rêveuse"]],"Loyal neutre":[["ancestral","ancestrale"],["patient","patiente"]],"Neutre":[["éthéré","éthérée"],["détaché","détachée"]],"Chaotique neutre":[["lunaire","lunaire"],["capricieux","capricieuse"]],"Loyal mauvais":[["hautain","hautaine"],["dédaigneux","dédaigneuse"]],"Neutre mauvais":[["glacé","glacée"],["insensible","insensible"]],"Chaotique mauvais":[["déchu","déchue"],["vindicatif","vindicative"]]},"gnome":{"Loyal bon":[["ingénieux","ingénieuse"],["dévoué","dévouée"]],"Neutre bon":[["espiègle","espiègle"],["jovial","joviale"]],"Chaotique bon":[["farfelu","farfelue"],["facétieux","facétieuse"]],"Loyal neutre":[["méticuleux","méticuleuse"],["pointilleux","pointilleuse"]],"Neutre":[["curieux","curieuse"],["pragmatique","pragmatique"]],"Chaotique neutre":[["fantasque","fantasque"],["imprévisible","imprévisible"]],"Loyal mauvais":[["retors","retorse"],["calculateur","calculatrice"]],"Neutre mauvais":[["sournois","sournoise"],["mesquin","mesquine"]],"Chaotique mauvais":[["détraqué","détraquée"],["pyromane","pyromane"]]},"halfelin":{"Loyal bon":[["avenant","avenante"],["dévoué","dévouée"]],"Neutre bon":[["affable","affable"],["généreux","généreuse"]],"Chaotique bon":[["insouciant","insouciante"],["hardi","hardie"]],"Loyal neutre":[["casanier","casanière"],["prudent","prudente"]],"Neutre":[["discret","discrète"],["débrouillard","débrouillarde"]],"Chaotique neutre":[["insaisissable","insaisissable"],["fantasque","fantasque"]],"Loyal mauvais":[["matois","matoise"],["rapace","rapace"]],"Neutre mauvais":[["chapardeur","chapardeuse"],["égoïste","égoïste"]],"Chaotique mauvais":[["fourbe","fourbe"],["perfide","perfide"]]},"demi-elfe":{"Loyal bon":[["conciliant","conciliante"],["loyal","loyale"]],"Neutre bon":[["cosmopolite","cosmopolite"],["charitable","charitable"]],"Chaotique bon":[["vagabond","vagabonde"],["libre","libre"]],"Loyal neutre":[["pondéré","pondérée"],["scrupuleux","scrupuleuse"]],"Neutre":[["partagé","partagée"],["modéré","modérée"]],"Chaotique neutre":[["déraciné","déracinée"],["versatile","versatile"]],"Loyal mauvais":[["ambitieux","ambitieuse"],["intrigant","intrigante"]],"Neutre mauvais":[["opportuniste","opportuniste"],["cynique","cynique"]],"Chaotique mauvais":[["renié","reniée"],["amer","amère"]]},"demi-orc":{"Loyal bon":[["rédempteur","rédemptrice"],["protecteur","protectrice"]],"Neutre bon":[["farouche","farouche"],["bourru","bourrue"]],"Chaotique bon":[["indompté","indomptée"],["téméraire","téméraire"]],"Loyal neutre":[["discipliné","disciplinée"],["inflexible","inflexible"]],"Neutre":[["endurci","endurcie"],["taciturne","taciturne"]],"Chaotique neutre":[["sauvage","sauvage"],["impétueux","impétueuse"]],"Loyal mauvais":[["brutal","brutale"],["impitoyable","impitoyable"]],"Neutre mauvais":[["carnassier","carnassière"],["féroce","féroce"]],"Chaotique mauvais":[["enragé","enragée"],["sanguinaire","sanguinaire"]]},"humain":{"Loyal bon":[["exemplaire","exemplaire"],["vertueux","vertueuse"]],"Neutre bon":[["polyvalent","polyvalente"],["bienveillant","bienveillante"]],"Chaotique bon":[["audacieux","audacieuse"],["rebelle","rebelle"]],"Loyal neutre":[["rigoureux","rigoureuse"],["austère","austère"]],"Neutre":[["adaptable","adaptable"],["pragmatique","pragmatique"]],"Chaotique neutre":[["aventureux","aventureuse"],["imprévisible","imprévisible"]],"Loyal mauvais":[["ambitieux","ambitieuse"],["impitoyable","impitoyable"]],"Neutre mauvais":[["arriviste","arriviste"],["calculateur","calculatrice"]],"Chaotique mauvais":[["dévoyé","dévoyée"],["sanguinaire","sanguinaire"]]},"nain":{"Loyal bon":[["inébranlable","inébranlable"],["intègre","intègre"]],"Neutre bon":[["robuste","robuste"],["loyal","loyale"]],"Chaotique bon":[["frondeur","frondeuse"],["batailleur","batailleuse"]],"Loyal neutre":[["traditionnel","traditionnelle"],["têtu","têtue"]],"Neutre":[["tenace","tenace"],["bourru","bourrue"]],"Chaotique neutre":[["querelleur","querelleuse"],["colérique","colérique"]],"Loyal mauvais":[["âpre","âpre"],["intraitable","intraitable"]],"Neutre mauvais":[["thésauriseur","thésauriseuse"],["avare","avare"]],"Chaotique mauvais":[["rancunier","rancunière"],["implacable","implacable"]]},"tieffelin":{"Loyal bon":[["repenti","repentie"],["scrupuleux","scrupuleuse"]],"Neutre bon":[["racheté","rachetée"],["compatissant","compatissante"]],"Chaotique bon":[["insoumis","insoumise"],["frondeur","frondeuse"]],"Loyal neutre":[["lié","liée"],["méthodique","méthodique"]],"Neutre":[["infernal","infernale"],["énigmatique","énigmatique"]],"Chaotique neutre":[["sulfureux","sulfureuse"],["provocateur","provocatrice"]],"Loyal mauvais":[["diabolique","diabolique"],["machiavélique","machiavélique"]],"Neutre mauvais":[["corrompu","corrompue"],["vénal","vénale"]],"Chaotique mauvais":[["démoniaque","démoniaque"],["cruel","cruelle"]]},"aasimar":{"Loyal bon":[["céleste","céleste"],["juste","juste"]],"Neutre bon":[["radieux","radieuse"],["miséricordieux","miséricordieuse"]],"Chaotique bon":[["ailé","ailée"],["ardent","ardente"]],"Loyal neutre":[["séraphique","séraphique"],["solennel","solennelle"]],"Neutre":[["voilé","voilée"],["mesuré","mesurée"]],"Chaotique neutre":[["errant","errante"],["exalté","exaltée"]],"Loyal mauvais":[["inquisiteur","inquisitrice"],["fanatique","fanatique"]],"Neutre mauvais":[["terni","ternie"],["hypocrite","hypocrite"]],"Chaotique mauvais":[["déchu","déchue"],["vengeur","vengeresse"]]},"goliath":{"Loyal bon":[["colossal","colossale"],["équitable","équitable"]],"Neutre bon":[["montagnard","montagnarde"],["fraternel","fraternelle"]],"Chaotique bon":[["intrépide","intrépide"],["casse-cou","casse-cou"]],"Loyal neutre":[["endurant","endurante"],["compétitif","compétitive"]],"Neutre":[["granitique","granitique"],["stoïque","stoïque"]],"Chaotique neutre":[["tempétueux","tempétueuse"],["fanfaron","fanfaronne"]],"Loyal mauvais":[["titanesque","titanesque"],["dominateur","dominatrice"]],"Neutre mauvais":[["glacial","glaciale"],["orgueilleux","orgueilleuse"]],"Chaotique mauvais":[["écrasant","écrasante"],["destructeur","destructrice"]]},"drow":{"Loyal bon":[["renégat","renégate"],["intègre","intègre"]],"Neutre bon":[["transfuge","transfuge"],["secourable","secourable"]],"Chaotique bon":[["affranchi","affranchie"],["rebelle","rebelle"]],"Loyal neutre":[["obscur","obscure"],["rigide","rigide"]],"Neutre":[["souterrain","souterraine"],["méfiant","méfiante"]],"Chaotique neutre":[["nocturne","nocturne"],["insaisissable","insaisissable"]],"Loyal mauvais":[["arachnéen","arachnéenne"],["intrigant","intrigante"]],"Neutre mauvais":[["ténébreux","ténébreuse"],["venimeux","venimeuse"]],"Chaotique mauvais":[["abyssal","abyssale"],["cruel","cruelle"]]}};
+ARCH_NUANCE.elfe = {"Loyal bon":[["sylvestre","sylvestre"],["noble","noble"]],"Neutre bon":[["feuillu","feuillue"],["serein","sereine"]],"Chaotique bon":[["vif-argent","vif-argent"],["libre","libre"]],"Loyal neutre":[["séculaire","séculaire"],["patient","patiente"]],"Neutre":[["sylvain","sylvaine"],["détaché","détachée"]],"Chaotique neutre":[["sauvage","sauvage"],["capricieux","capricieuse"]],"Loyal mauvais":[["altier","altière"],["dédaigneux","dédaigneuse"]],"Neutre mauvais":[["ombreux","ombreuse"],["insensible","insensible"]],"Chaotique mauvais":[["ronceux","ronceuse"],["vindicatif","vindicative"]]};
+ARCH_NUANCE.orc = {"Loyal bon":[["rédempteur","rédemptrice"],["protecteur","protectrice"]],"Neutre bon":[["robuste","robuste"],["bourru","bourrue"]],"Chaotique bon":[["indompté","indomptée"],["téméraire","téméraire"]],"Loyal neutre":[["discipliné","disciplinée"],["inflexible","inflexible"]],"Neutre":[["tenace","tenace"],["taciturne","taciturne"]],"Chaotique neutre":[["fougueux","fougueuse"],["impétueux","impétueuse"]],"Loyal mauvais":[["brutal","brutale"],["impitoyable","impitoyable"]],"Neutre mauvais":[["carnassier","carnassière"],["féroce","féroce"]],"Chaotique mauvais":[["enragé","enragée"],["sanguinaire","sanguinaire"]]};
 /* Nom : [Titre de classe] [qualificatif du peuple] — [Profession] [adjectif d'alignement], accordés */
 function archName(sk){ const p = ARCH_PROF[sk.slice().sort().join("|")]; if(!p) return null; const f = S.genre==="Féminin";
-  const c = C() && ARCH_CLS[C().id], nu = R() && (ARCH_NUANCE[R().id]||{})[ALIGN_TXT[S.align] ? S.align : "Neutre"];
+  const c = C() && ARCH_CLS[C().id], nu = R() && (ARCH_NUANCE[R().id==="elfe" ? ({drow:"drow","haut-elfe":"haut-elfe"})[S.lin] || "elfe" : R().id]||{})[ALIGN_TXT[S.align] ? S.align : "Neutre"];
   const r = nu ? nu[0] : R() && ARCH_RACE[R().id], a = nu ? nu[1] : ARCH_ALADJ[S.align] || ARCH_ALADJ["Neutre"];
   const tFem = c ? (c[2]==="f" || (c[2]==="p" && f)) : false, title = c ? (c[2]==="p" && f ? c[1] : c[0]) : "";
   const head = [title, r ? r[tFem?1:0] : ""].filter(Boolean).join(" "), prof = p[f?1:0];
@@ -1903,10 +1972,10 @@ function attacks(){
 function why(i){
   const r=R(), c=C();
   switch(i){
-    case 0: if(!r) return "Choisis un peuple."; if(r.dragonChoice&&!S.dragon) return "Choisis ton ascendance draconique."; if(raceFreeLang(r)&&!S.rlang) return "Choisis ta langue supplémentaire."; if(r.heChoice&&!S.bg52&&S.he.length<2) return "Choisis deux caractéristiques à +1."; return "";
+    case 0: if(!r) return "Choisis un peuple."; if(r.dragonChoice&&!S.dragon) return "Choisis ton ascendance draconique."; if(S.bg52&&LIGNAGES[r.id]&&!linOf()) return `Choisis ton ${LIGNAGES[r.id].lbl.toLowerCase()}.`; if(raceFreeLang(r)&&!S.rlang) return "Choisis ta langue supplémentaire."; if(r.heChoice&&!S.bg52&&S.he.length<2) return "Choisis deux caractéristiques à +1."; return "";
     case 1: if(!c) return "Choisis une classe."; if(c.id==="guerrier"&&!S.style) return "Choisis un style de combat."; if(c.id==="rodeur"&&(!S.enemy||!S.terrain)) return "Choisis un ennemi juré et un terrain."; return "";
     case 2: if(S.method==="pointbuy") return pbSpent()>27?"Tu dépasses 27 points.":""; if(S.method==="roll"&&S.rolls.length<6) return "Lance les dés."; return scoresReady()?"":"Attribue une valeur à chaque caractéristique.";
-    case 3: if(!S.genre) return "Choisis le genre de ton personnage."; if(bgSkills().length<2) return `Choisis encore ${2-bgSkills().length} compétence(s) d'historique.`; if(bgTools().length<2) return `Choisis encore ${2-bgTools().length} maîtrise(s) d'outil ou langue.`; { const mi = miIssue(); if(mi) return mi; } return "";
+    case 3: if(!S.genre) return "Choisis le genre de ton personnage."; if(bgSkills().length<2) return `Choisis encore ${2-bgSkills().length} compétence(s) d'historique.`; if(bgTools().length<2) return `Choisis encore ${2-bgTools().length} maîtrise(s) d'outil ou langue.`; if(S.bg52&&S.race==="humain"&&!S.hfeat) return "Choisis ton don d'origine supplémentaire (Polyvalent)."; { const mi = miIssue(); if(mi) return mi; } return "";
     case 4: { if(S.cs.length<c.pick) return `Choisis encore ${c.pick-S.cs.length} compétence(s) de classe.`; if(S.fs.length<freeCount()) return `Choisis encore ${freeCount()-S.fs.length} compétence(s) libre(s).`; if(c.expertise&&S.ex.length<c.expertise) return "Choisis tes deux expertises."; return ""; }
     case 5: { if(S.equipMode==="achat"){ if(S.wealth==null) return "Lance les dés de ta richesse de départ."; if(buySpent()>S.wealth*CU_PO) return "Tes achats dépassent ta bourse."; return ""; } return S.pack==null ? "Choisis ton équipement." : ""; }
     case 6: { const n=spellNeeds(); if(n){ if(S.cantrips.length<n.c) return "Choisis tes sorts mineurs."; if(S.spells.length<n.n) return "Choisis tes sorts de niveau 1."; if(n.p&&S.prep.length<n.p) return "Prépare tes sorts du jour."; } if(r&&r.cantrip&&!S.rc) return "Choisis ton sort mineur elfique."; return ""; }
@@ -2086,11 +2155,15 @@ function bonusText(b){ if(Object.keys(b).length===6) return "+1 partout"; return
 function vRace(){
   const r=R();
   let h=`<h2>Ton peuple</h2><p class="lede">Ton peuple fixe tes bonus de caractéristiques, ta vitesse et quelques dons de naissance.</p><div class="cards races">`;
-  h+=RACES.map(x=>`<button type="button" class="card ${S.race===x.id?"sel":""}" data-act="race" data-v="${x.id}"><span class="tag">${S.bg52 ? "Bonus de caractéristiques : par l'historique" : bonusText(x.bonus)+(x.heChoice?", +1 ×2 au choix":"")}</span><h3>${x.nom}</h3><p>${x.desc}</p><span class="meta">${String(x.vit).replace(".",",")} m · taille ${x.taille}${x.vision?` · vision ${x.vision} m`:""}</span></button>`).join("");
+  h+=raceList().map(x=>`<button type="button" class="card ${S.race===x.id?"sel":""}" data-act="race" data-v="${x.id}"><span class="tag">${S.bg52 ? "Bonus de caractéristiques : par l'historique" : bonusText(x.bonus)+(x.heChoice?", +1 ×2 au choix":"")}</span><h3>${x.nom}</h3><p>${x.desc}</p><span class="meta">${String(x.vit).replace(".",",")} m · taille ${x.taille}${x.vision?` · vision ${x.vision} m`:""}</span></button>`).join("");
   h+=`</div>`;
   if(r){
     h+=`<div class="detail"><h3>${r.nom}</h3><ul class="traits">${raceTraits(r).map(t=>`<li><b>${t[0]}.</b> ${t[1]}</li>`).join("")}<li><b>Langues.</b> ${r.langues}</li></ul>`;
     if(r.dragonChoice) h+=`<div class="sub"><span class="lbl">Ascendance draconique</span><div class="chips">${DRAGONS.map(d=>`<button type="button" class="chip ${S.dragon===d[0]?"sel":""}" data-act="dragon" data-v="${d[0]}">${d[0]} <small>${d[1]}, ${d[2]}</small></button>`).join("")}</div></div>`;
+    if(S.bg52 && LIGNAGES[r.id]){ const LG = LIGNAGES[r.id], g = linOf();
+      h+=`<div class="sub"><span class="lbl">${LG.lbl}</span><div class="chips">${Object.entries(LG.opts).map(([k,o])=>`<button type="button" class="chip ${S.lin===k?"sel":""}" data-act="lin" data-v="${k}">${esc(o.nom)}</button>`).join("")}</div>${g?`<p class="lede" style="margin:6px 0 0">${esc(g.d)}</p>`:""}</div>`;
+      if(LG.spell) h+=`<div class="sub"><span class="lbl">Caractéristique d'incantation du lignage</span><div class="chips">${["int","sag","cha"].map(a=>`<button type="button" class="chip ${linAb()===a?"sel":""}" data-act="lab" data-v="${a}">${ABN[a]}</button>`).join("")}</div></div>`; }
+    if(S.bg52 && r.id==="elfe") h+=`<div class="sub"><span class="lbl">Sens aiguisés</span><div class="chips">${["Perception","Perspicacité","Survie"].map(s=>`<button type="button" class="chip ${r.skills[0]===s?"sel":""}" data-act="ksense" data-v="${s}">${s}</button>`).join("")}</div></div>`;
     if(raceFreeLang(r)) h+=`<div class="sub"><span class="lbl">Langue supplémentaire</span><div class="chips">${raceLangOpts().map(l=>`<button type="button" class="chip ${S.rlang===l?"sel":""}" data-act="rlang" data-v="${esc(l)}">${esc(l)}</button>`).join("")}</div></div>`;
     if(r.heChoice && !S.bg52) h+=`<div class="sub"><span class="lbl">Deux caractéristiques à +1 (${S.he.length}/2)</span><div class="chips">${AB.filter(a=>a!=="cha").map(a=>`<button type="button" class="chip ${S.he.includes(a)?"sel":""}" data-act="he" data-v="${a}" ${!S.he.includes(a)&&S.he.length>=2?"disabled":""}>${ABN[a]}</button>`).join("")}</div></div>`;
     h+=`</div>`;
@@ -2158,6 +2231,8 @@ function vBg(){
       ${sp.m==="21" ? `<small class="lede" style="display:block;margin:6px 0 4px">+2</small><div class="chips">${sp.a.map(x=>`<button type="button" class="chip ${sp.p2===x?"sel":""}" data-act="bg2" data-v="${x}">${ABN[x]}</button>`).join("")}</div>
       <small class="lede" style="display:block;margin:6px 0 4px">+1</small><div class="chips">${sp.a.map(x=>`<button type="button" class="chip ${sp.p1===x?"sel":""}" data-act="bg1" data-v="${x}" ${x===sp.p2?"disabled":""}>${ABN[x]}</button>`).join("")}</div>` : ""}
       <p class="lede" style="margin:6px 0 0">Bonus : <b>${bgBonusTxt()}</b>${AB.some(a=>sc[a]!=null) ? ` · ${sp.a.map(x=>`${ABS[x]} ${sc[x]??"—"}`).join(", ")}` : ""}</p>`}</div></div>`; }
+  if(S.bg52 && S.race==="humain"){ const f = bgFeat(bgSkills()), opts = ["Vigilant","Attaquant sauvage","Doué","Initié à la magie (clerc)","Initié à la magie (druide)","Initié à la magie (magicien)"].filter(x=>x!==f || x==="Doué");
+    h+=`<div class="detail"><div class="sub"><span class="lbl">Polyvalent (humain) : un don d'origine de plus</span><div class="chips">${opts.map(x=>`<button type="button" class="chip ${S.hfeat===x?"sel":""}" data-act="hfeat" data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>${S.hfeat && opts.includes(S.hfeat) ? featView(S.hfeat, "Polyvalent") : ""}</div>`; }
   if(S.bg52){ const f = bgFeat(bgSkills()); h+=`<div class="detail">${f ? featView(f) : `<div class="sub"><span class="lbl">Don d'origine</span><p class="lede" style="margin:0">Il dépend de tes 2 compétences d'historique.</p></div>`}</div>`; }
   h+=`<div class="detail"><div class="sub"><span class="lbl">Compétences d'historique <span class="counter ${bs.length===2?"ok":""}">${bs.length}/2</span></span><div class="chips">${SKN.map(s=>{ const fx=rs.includes(s), on=bs.includes(s);
     return `<button type="button" class="chip ${on?"sel":""} ${fx?"fix":""}" data-act="bgs" data-v="${s}" ${fx||(!on&&bs.length>=2)?"disabled":""} ${fx?`title="Déjà donnée par ton peuple"`:""}>${s} <small>${ABS[SKILLS.find(k=>k[0]===s)[1]]}</small></button>`; }).join("")}</div></div>`;
@@ -2228,7 +2303,7 @@ function vSpells(){
   } else if(c.id==="paladin"||c.id==="rodeur"){
     h+=`<p class="lede">Ta magie s'éveillera au niveau 2.</p>`;
   }
-  if(r&&r.cantrip) h+=`<div class="detail"><div class="sub"><span class="lbl">Sort mineur elfique (Intelligence)</span><div class="spells">${WIZ0.map(s=>spellBtn(s,"rc",S.rc===s,S.cantrips.includes(s))).join("")}</div></div></div>`;
+  if(r&&r.cantrip) h+=`<div class="detail"><div class="sub"><span class="lbl">${S.bg52 ? `Sort mineur du lignage (${ABN[linAb()]})` : "Sort mineur elfique (Intelligence)"}</span><div class="spells">${WIZ0.map(s=>spellBtn(s,"rc",S.rc===s,S.cantrips.includes(s))).join("")}</div></div></div>`;
   if(!ca && !(c.id==="paladin"||c.id==="rodeur") && !(r&&r.cantrip)) h+=`<p class="lede">Ta classe ne lance pas de sorts. Tu peux continuer.</p>`;
   return h;
 }
@@ -2600,7 +2675,7 @@ function character(){
   const jack = clv("barde")>=2, c2 = MC(), L1 = clv(c.id);
   if(c2) (S.mc.ex||[]).forEach(x=>exp.add(x));
   const skills = SKILLS.map(([n,a])=>{ const p=ps.has(n), e=p&&exp.has(n); return {nom:n,carac:a,maitrise:p,expertise:e,bonus:mod(sc[a])+(p?PROF:(jack?Math.floor(PROF/2):0))+(e?PROF:0)}; });
-  const feats = [...raceTraits(r).map(t=>({nom:t[0],texte:t[1],source:r.nom})), ...c.feats.map(t=>({nom:t[0],texte:t[1],source:c.nom}))];
+  const feats = [...raceTraits(r).map(t=>({nom:t[0],texte:t[1],source:r.nom})), ...(S.bg52 && linOf() ? [{nom:LIGNAGES[S.race].lbl+" : "+linOf().nom, texte:linOf().d, source:r.nom}] : []), ...c.feats.map(t=>({nom:t[0],texte:t[1],source:c.nom}))];
   (LVLF[c.id]||[]).filter(f=>f[0]<=L1).forEach(f=>feats.push({nom:f[1],texte:f[2],source:c.nom+" niv. "+f[0]}));
   if(c2){ feats.push({nom:"Multiclassage : "+c2.nom,texte:"Maîtrises gagnées : "+mcProfTxt(c2.id)+".",source:c2.nom});
     c2.feats.forEach(t=>feats.push({nom:t[0],texte:t[1],source:c2.nom}));
@@ -2621,9 +2696,9 @@ function character(){
   const pk=kit();
   const spells = spellBlock(c, sc, L);
   if(spells && spells.mythiques && spells.mythiques.length) feats.push({nom:"Magie mythique", texte:"Niveau 40 : un emplacement de sort de niveau 10, récupéré après un repos long. Il sert à lancer un sort mythique (" + spells.mythiques.join(", ") + ") ou un sort ordinaire au niveau 10.", source:"Niveaux épiques"});
-  const extraCantrips=[]; if(S.rc) extraCantrips.push({nom:S.rc,carac:"int"}); if(r.id==="tieffelin"){ extraCantrips.push({nom:"Thaumaturgie",carac:"cha"}); if((S.lvl||1)>=3) extraCantrips.push({nom:"Représailles infernales",carac:"cha",res:"Représailles infernales (tieffelin)"}); if((S.lvl||1)>=5) extraCantrips.push({nom:"Ténèbres",carac:"cha",res:"Ténèbres (tieffelin)"}); } if(r.id==="aasimar") extraCantrips.push({nom:"Lumière",carac:"cha"});
+  const extraCantrips=[]; if(S.bg52) raceSpells52(extraCantrips); if(S.rc && !S.bg52) extraCantrips.push({nom:S.rc,carac:"int"}); if(r.id==="tieffelin" && !S.bg52){ extraCantrips.push({nom:"Thaumaturgie",carac:"cha"}); if((S.lvl||1)>=3) extraCantrips.push({nom:"Représailles infernales",carac:"cha",res:"Représailles infernales (tieffelin)"}); if((S.lvl||1)>=5) extraCantrips.push({nom:"Ténèbres",carac:"cha",res:"Ténèbres (tieffelin)"}); } if(r.id==="aasimar" && !S.bg52) extraCantrips.push({nom:"Lumière",carac:"cha"});
   origFeats().forEach(f=>{ const l = featList(f); if(!l) return; const m = miOf(l), src = "Initié à la magie ("+l+")"; m.c.forEach(n=>{ if(!extraCantrips.some(x=>x.nom===n)) extraCantrips.push({nom:n, carac:m.ab, src}); }); if(m.s) extraCantrips.push({nom:m.s, carac:m.ab, res:src, src}); });
-  if(r.id==="drow"){ extraCantrips.push({nom:"Lumières dansantes",carac:"cha"}); if((S.lvl||1)>=3) extraCantrips.push({nom:"Lueurs féeriques",carac:"cha",res:"Lueurs féeriques (drow)"}); if((S.lvl||1)>=5) extraCantrips.push({nom:"Ténèbres",carac:"cha",res:"Ténèbres (drow)"}); }
+  if(r.id==="drow" && !S.bg52){ extraCantrips.push({nom:"Lumières dansantes",carac:"cha"}); if((S.lvl||1)>=3) extraCantrips.push({nom:"Lueurs féeriques",carac:"cha",res:"Lueurs féeriques (drow)"}); if((S.lvl||1)>=5) extraCantrips.push({nom:"Ténèbres",carac:"cha",res:"Ténèbres (drow)"}); }
   const mkL = clv("moine"), mkV = mkL>=18 ? 9 : mkL>=14 ? 7.5 : mkL>=10 ? 6 : mkL>=6 ? 4.5 : mkL>=2 ? 3 : 0;
   let vit = r.vit + (clv("barbare")>=5 && !/^(Harnois|Clibanion|Broigne|Cotte de mailles)/.test(ai.how) ? 3 : 0) + (/^(Sans armure|Défense sans armure|Résilience draconique)$/.test(ai.how) ? mkV : 0);
   const svM = [...new Set([...c.saves, ...(clv("roublard")>=15 ? ["sag"] : []), ...(clv("moine")>=14 ? AB : [])])], aura = clv("paladin")>=6 ? Math.max(1, mod(sc.cha)) : 0;
@@ -2650,11 +2725,12 @@ function resources(c,sc){
   const o=[], cha=mod(sc.cha); const cl = [c.id]; if(MC()) cl.push(S.mc.cls);
   cl.forEach(id=>resOf(id, clv(id), o, cha));
   origFeats().forEach(f=>{ const l = featList(f); if(l) o.push({nom:"Initié à la magie ("+l+")",max:1,recup:"long"}); });
-  if(S.dragon) o.push({nom:"Souffle",max:1,recup:"court"});
+  if(S.bg52) raceRes52(o);
+  if(S.dragon && !S.bg52) o.push({nom:"Souffle",max:1,recup:"court"});
   if(S.race==="demi-orc") o.push({nom:"Endurance implacable",max:1,recup:"long"});
-  if(S.race==="aasimar"){ o.push({nom:"Mains guérisseuses",max:1,recup:"long"}); if((S.lvl||1)>=3) o.push({nom:"Âme radieuse",max:1,recup:"long"}); }
-  if(S.race==="goliath") o.push({nom:"Endurance de la pierre",max:1,recup:"court"}); if(S.race==="tieffelin"){ if((S.lvl||1)>=3) o.push({nom:"Représailles infernales (tieffelin)",max:1,recup:"long"}); if((S.lvl||1)>=5) o.push({nom:"Ténèbres (tieffelin)",max:1,recup:"long"}); }
-  if(S.race==="drow"){ if((S.lvl||1)>=3) o.push({nom:"Lueurs féeriques (drow)",max:1,recup:"long"}); if((S.lvl||1)>=5) o.push({nom:"Ténèbres (drow)",max:1,recup:"long"}); }
+  if(S.race==="aasimar" && !S.bg52){ o.push({nom:"Mains guérisseuses",max:1,recup:"long"}); if((S.lvl||1)>=3) o.push({nom:"Âme radieuse",max:1,recup:"long"}); }
+  if(S.race==="goliath" && !S.bg52) o.push({nom:"Endurance de la pierre",max:1,recup:"court"}); if(S.race==="tieffelin" && !S.bg52){ if((S.lvl||1)>=3) o.push({nom:"Représailles infernales (tieffelin)",max:1,recup:"long"}); if((S.lvl||1)>=5) o.push({nom:"Ténèbres (tieffelin)",max:1,recup:"long"}); }
+  if(S.race==="drow" && !S.bg52){ if((S.lvl||1)>=3) o.push({nom:"Lueurs féeriques (drow)",max:1,recup:"long"}); if((S.lvl||1)>=5) o.push({nom:"Ténèbres (drow)",max:1,recup:"long"}); }
   const seen = {}; return o.filter(r=>{ if(seen[r.nom]){ seen[r.nom].max = Math.max(seen[r.nom].max, r.max); return false; } seen[r.nom] = r; return true; });
 }
 function resOf(cid, L, o, cha){ const c = {id:cid};
@@ -2725,6 +2801,7 @@ function autoAssign(){
   const p=pool(); const order=p.map((v,i)=>i).sort((x,y)=>p[y]-p[x]); S.assign={}; prio.forEach((a,i)=>S.assign[a]=order[i]);
 }
 function doRoll(){ S.rolls=[]; for(let k=0;k<6;k++){ const d=[1,2,3,4].map(()=>1+Math.floor(Math.random()*6)).sort((x,y)=>y-x); S.rolls.push({dice:d,drop:3,total:d[0]+d[1]+d[2]}); } S.rolls.sort((x,y)=>y.total-x.total); S.assign={}; S._justRolled=true; }
+NAMES.elfe = NAMES.elfe || NAMES["haut-elfe"]; NAMES.orc = NAMES.orc || NAMES["demi-orc"];
 function randName(){ const n=NAMES[S.race]||NAMES.humain; let s=pick(n[0])+pick(n[1]); if(["humain","demi-elfe"].includes(S.race)||Math.random()<.3) s+=" "+pick(SURN); return s; }
 const RF = {trait:TRAITS,ideal:IDEALS,bond:BONDS,flaw:FLAWS};
 const SUG_SK = DATA("sug-sk");
@@ -2783,7 +2860,8 @@ function suggestions(id){ const b = BG(), out = [];
 
 function randomAll(){
   S=blankNew();
-  const r=pick(RACES); S.race=r.id; S.rlang = raceFreeLang(r) ? pick(raceLangOpts()) : null;
+  const r=pick(raceList()); S.race=r.id;
+  if(S.bg52 && LIGNAGES[r.id]) S.lin = pick(Object.keys(LIGNAGES[r.id].opts)); if(S.bg52 && r.id==="elfe") S.ksense = pick(["Perception","Perspicacité","Survie"]); S.rlang = raceFreeLang(r) ? pick(raceLangOpts()) : null;
   if(r.dragonChoice) S.dragon=pick(DRAGONS)[0];
   if(r.heChoice) S.he=shuffle(AB.filter(a=>a!=="cha")).slice(0,2);
   const c=pick(CLASSES); S.cls=c.id;
@@ -2797,7 +2875,8 @@ function randomAll(){
   if(c.expertise) S.ex=shuffle([...profSet()]).slice(0,c.expertise);
   S.equipMode="pack"; S.wealth=null; S.wroll=null; S.buy={}; S.pack=Math.floor(Math.random()*c.packs.length);
   const ca=CA(); if(ca){ const n=spellNeeds(); S.cantrips=shuffle(ca.l0).slice(0,n.c); S.spells=shuffle(ca.l1).slice(0,n.n); if(n.p) S.prep=shuffle(S.spells).slice(0,n.p); }
-  if(r.cantrip) S.rc=pick(WIZ0.filter(s=>!S.cantrips.includes(s)));
+  if(R().cantrip) S.rc=pick(WIZ0.filter(s=>!S.cantrips.includes(s)));
+  if(S.bg52 && S.race==="humain"){ const f = bgFeat(bgSkills()); S.hfeat = pick(["Vigilant","Attaquant sauvage","Doué","Initié à la magie (clerc)","Initié à la magie (druide)","Initié à la magie (magicien)"].filter(x=>x!==f)); }
   origFeats().forEach(f=>{ const l = featList(f); if(l) miAuto(l); });
   S.name=randName(); S.genre=pick(GENRES); S.align=pick(ALIGN); S.age=ageRandom(S.race);
   S.trait=pick(TRAITS); S.ideal=pick(IDEALS); S.bond=pick(BONDS); S.flaw=pick(FLAWS);
@@ -2830,6 +2909,10 @@ document.addEventListener("click",e=>{
     case "bgs": bgInit(); toggle(S.bgs,v,2); bgClean(); break;
     case "bgx": bgInit(); toggle(S.bgx,v,2); break;
     case "bgm": S.bgm = v==="111" ? "111" : "21"; break;
+    case "lin": { const LG = LIGNAGES[S.race]; if(LG && LG.opts[v]){ S.lin = v; S.lab = null; if(!LG.opts[v].cw) S.rc = null; } break; }
+    case "lab": if(["int","sag","cha"].includes(v)) S.lab = v; break;
+    case "ksense": if(["Perception","Perspicacité","Survie"].includes(v)){ S.ksense = v; bgClean(); } break;
+    case "hfeat": S.hfeat = S.hfeat===v ? null : v; { const l = featList(S.hfeat); if(l) miOf(l); } break;
     case "mia": { const [l, a] = v.split("|"); if(MI_LISTS[l] && ["int","sag","cha"].includes(a)) miOf(l).ab = a; break; }
     case "mic": { const [l, s] = [v.slice(0, v.indexOf("|")), v.slice(v.indexOf("|")+1)]; if(MI_LISTS[l]) toggle(miOf(l).c, s, 2); break; }
     case "mis": { const [l, s] = [v.slice(0, v.indexOf("|")), v.slice(v.indexOf("|")+1)]; if(MI_LISTS[l]){ const m = miOf(l); m.s = m.s===s ? null : s; } break; }
@@ -3244,8 +3327,8 @@ const maxDice = e => String(e).replace(/(\d*)d(\d+)/g,(m,n,f)=>String((+n||1)*(+
 function upDice(sp, slot){ let d = sp.d; const extra = slot - sp.niv; if(sp.up && extra>0) for(let i=0;i<extra;i++) d += "+" + sp.up; return d; }
 function allSpells(){ const h = G.hero; return [...(h.sorts?h.sorts.mineurs:[]), ...((h.sorts_raciaux||[]).filter(x=>!x.res).map(x=>x.nom)), ...(h.sorts?h.sorts.prepares:[])].filter((v,i,a)=>a.indexOf(v)===i); }
 
-function raceResist(){ const o = []; if(G.race==="aasimar") o.push("nécrotique","radiant"); if(G.race==="goliath") o.push("froid");
-  if(G.race==="tieffelin") o.push("feu"); if(G.race==="nain") o.push("poison");
+function raceResist(){ const o = [], b52 = !!(G.build && G.build.bg52), lg = b52 && linOf(G.build); if(G.race==="aasimar") o.push("nécrotique","radiant"); if(G.race==="goliath" && !b52) o.push("froid");
+  if(G.race==="tieffelin") o.push(b52 ? ((lg && lg.res) || "feu") : "feu"); if(G.race==="nain") o.push("poison");
   if(G.race==="drakeide"){ const dr = DRAGONS.find(d=>G.build && d[0]===G.build.dragon); if(dr) o.push(dr[1]); }
   return o; }
 function hurt(n,type,crit){
@@ -6636,7 +6719,7 @@ function compView(){ const p = G.compagnon; if(!p) return "";
 const CSP = {
  "Trait de feu":{k:"att",d:"1d10",t:"feu"}, "Rayon de givre":{k:"att",d:"1d8",t:"froid"}, "Décharge occulte":{k:"att",d:"1d10",t:"force"},
  "Contact glacial":{k:"att",d:"1d8",t:"nécrotique"}, "Poigne électrique":{k:"att",d:"1d8",t:"foudre"}, "Production de flamme":{k:"att",d:"1d8",t:"feu"},
- "Éclair traçant":{k:"att",d:"4d6",t:"radiant",niv:1,up:"1d6"}, "Infliger des blessures":{k:"att",d:"3d10",t:"nécrotique",niv:1,up:"1d10"},
+ "Éclair traçant":{k:"att",d:"4d6",t:"radiant",niv:1,up:"1d6"}, "Rayon de maladie":{k:"att",d:"2d8",t:"poison",niv:1,up:"1d8"}, "Infliger des blessures":{k:"att",d:"3d10",t:"nécrotique",niv:1,up:"1d10"},
  "Flèche acide":{k:"att",d:"4d4",t:"acide",niv:2,up:"1d4"},
  "Flamme sacrée":{k:"sv",d:"1d8",t:"radiant"}, "Moquerie cruelle":{k:"sv",d:"1d4",t:"psychique"}, "Bouffée de poison":{k:"sv",d:"1d12",t:"poison"}, "Aspersion acide":{k:"sv",d:"1d6",t:"acide"},
  "Mains brûlantes":{k:"sv",d:"3d6",t:"feu",niv:1,moitie:1,multi:1,up:"1d6"}, "Vague tonnante":{k:"sv",d:"2d8",t:"tonnerre",niv:1,moitie:1,multi:1,up:"1d8"},
@@ -6769,7 +6852,7 @@ function advFor(e, o={}){
   if(HELPLESS.includes(e.etat) && e.etat!=="fascine") A.push("cible "+({endormi:"endormie",paralyse:"paralysée",etourdi:"étourdie",fascine:"fascinée"})[e.etat]);
   foeFix(e); if(e.aterre) (o.melee ? A : D).push(o.melee ? "cible à terre" : "cible à terre, tir à distance");
   if(e.trace) A.push("cible illuminée par l'éclair traçant");
-  if(G.buffs.cache) A.push("tu es caché");
+  if(G.buffs.cache) A.push("tu es caché"); if(G.buffs.insp) A.push("inspiration héroïque");
   if(o.reckless) A.push("attaque téméraire");
   if(!o.melee && engaged()) D.push("tir à distance au contact d'un ennemi");
   if(o.enc){ try{ if(encHeavy()) D.push("charge trop lourde"); }catch(er){} }
@@ -6785,7 +6868,7 @@ function sanctBlock(e){ if(!e || !e.sanct) return null; const cb = checkBonus("s
 function attackRoll(e, bonus, label, o={}){
   { const sb = sanctBlock(e); if(sb && !sb.ok) return {d:{r:1, txt:"—"}, tot:0, crit:false, hit:false, mode:"normal", txt:sb.txt}; if(sb) clog(sb.txt); }
   const R = advFor(e, o), mode = R.mode;
-  if(G.buffs.cache) delete G.buffs.cache;
+  if(G.buffs.cache) delete G.buffs.cache; if(G.buffs.insp) delete G.buffs.insp;
   if(e.trace) delete e.trace;
   const d = d20(mode), bl = bless(); const tot = d.r + bonus + bl.v;
   let crit = d.r >= (o.critMin||20), hit = crit || (d.r!==1 && tot>=e.ca);
@@ -6829,6 +6912,8 @@ function weaponAttack(i, kind){
     if(hasC("roublard") && opt.sneak && !c.snk && /finesse|munitions/i.test(a.p||"") && !(r.mode==="avantage" || (r.mode!=="desavantage" && compFight() && c.compTgt===e.id))){ t += r.mode==="desavantage" ? " (désavantage : pas d'attaque sournoise)" : " (ni avantage ni allié au contact : pas d'attaque sournoise)"; }
     else if(hasC("roublard") && opt.sneak && !c.snk && /finesse|munitions/i.test(a.p||"")){ extras.push([Math.ceil(gclv("roublard")/2)+"d6","attaque sournoise"]); c.snk = true; opt.sneak = false; }
     if(hasC("paladin",2) && opt.smite && melee && !beast){ const k = pickSlot(1); if(k){ useSlot(k); const n = Math.min(5, 1+k) + (UNDEAD.test(e.nom) || /diable|demon|démon|diablotin|succube|incube|fielon|fiélon|imp\b/i.test(e.nom) ? 1 : 0); extras.push([n+"d8","châtiment divin, emplacement niv. "+k]); } opt.smite = false; }
+    { const g = !beast && giantOnHit(), gr = g && G.res[g]; if(g && opt.giant && gr && gr.val>0 && c.giantR!==c.round){ gr.val--; c.giantR = c.round; opt.giant = false;
+      if(g==="Brûlure du feu") extras.push(["1d10","brûlure du feu"]); else if(g==="Morsure du givre"){ extras.push(["1d6","morsure du givre, froid"]); t += " (morsure du givre : sa vitesse baisse de 3 m)"; } else if(g==="Chute des collines"){ e.aterre = true; t += " (chute des collines : la cible est jetée à terre)"; } } }
     const gwf = !beast && melee && /deux mains/i.test(a.n+" "+(a.p||"")) && heroStyles().includes("Arme à deux mains");
     let dm = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0), savT = "";
     if(!beast && c.savR!==c.round && (h.dons_origine||[]).includes("Attaquant sauvage")){ const d2 = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0); c.savR = c.round; savT = ` (attaquant sauvage : ${dm.total} et ${d2.total}, tu gardes ${Math.max(dm.total, d2.total)})`; if(d2.total > dm.total) dm = d2; }
@@ -6943,7 +7028,7 @@ function castSpell(name, free){
 function breath(){
   const c = G.combat, r = G.res["Souffle"]; if(!c || c.act || !r || r.val<1) return;
   const dr = DRAGONS.find(d=>d[0]===G.build.dragon); if(!dr) return;
-  const dc = 8 + G.hero.mods.con + G.hero.maitrise; const dm = roll("2d6"); r.val--; c.act = true;
+  const L = G.niveau||1, dc = 8 + G.hero.mods.con + G.hero.maitrise; const dm = roll(G.build.bg52 ? (L>=17?4:L>=11?3:L>=5?2:1)+"d10" : "2d6"); r.val--; c.act = true;
   const zone = /ligne/.test(dr[2]) ? ["moi",9,dr[2]] : ["moi",4.5,dr[2]], tg = aoeTargets("", zone);
   let t = `Souffle (${dr[2]}, ${dr[1]}), DD ${dc} ${dr[3]}, ${dm.detail} = ${dm.total}${aoeTxt("", tg, zone)} :`; if(!tg.length) t += " aucun ennemi à portée.";
   tg.forEach(e=>{ const sv = 1+rand(20)+e.sauv; const ok = sv>=dc; const n = ok?Math.floor(dm.total/2):dm.total; t += `<br>${esc(e.nom)} ${sv} → ${ok?"réussie":"ratée"}, <b>${n}</b>.` + dmgToFoe(e,n); });
@@ -6971,7 +7056,7 @@ function classAct(k){
     case "renvoi": { const r = R["Conduit divin"]; if(!c||c.act||!r||r.val<1) return; const und = c.ennemis.filter(e=>active(e) && UNDEAD.test(e.nom)); if(!und.length){ toast("Aucun mort-vivant à renvoyer."); return; } r.val--; c.act = true; const dc = spellDC("Soins"); let t = `Renvoi des morts-vivants, DD ${dc} :`;
       und.forEach(e=>{ const sv = 1+rand(20)+e.sauv; if(sv>=dc){ t += ` ${esc(e.nom)} ${sv} → résiste.`; } else if(hasC("clerc",5) && e.xp<=(hasC("clerc",17)?1100:hasC("clerc",14)?700:hasC("clerc",11)?450:hasC("clerc",8)?200:100)){ e.etat = "mort"; e.pv = 0; t += ` ${esc(e.nom)} ${sv} → <b>détruit</b>.`; } else { e.etat = "fui"; t += ` ${esc(e.nom)} ${sv} → <b>s'enfuit</b>.`; } }); lg(t); break; }
     case "radieuse": { const r = R["Âme radieuse"]; if(!c||c.act||!r||r.val<1) return; r.val--; c.act = true; G.buffs.radieuse = c.round; lg(`Âme radieuse : des ailes de lumière te portent (vol 9 m) ; une fois par tour, <b>+${G.niveau} radiant</b> sur une attaque ou un sort, pendant 1 minute.`); break; }
-    case "mguer": { const r = R["Mains guérisseuses"]; if((c&&c.act)||!r||r.val<1) return; if(G.pv>=G.pvmax){ toast("Tu es déjà en pleine forme."); return; } r.val--; const g = heal(G.niveau); if(c) c.act = true; lg(`Mains guérisseuses : <b>+${g} PV</b>.`); break; }
+    case "mguer": { const r = R["Mains guérisseuses"]; if((c&&c.act)||!r||r.val<1) return; if(G.pv>=G.pvmax){ toast("Tu es déjà en pleine forme."); return; } r.val--; const g = heal(G.build && G.build.bg52 ? roll(G.hero.maitrise+"d4").total : G.niveau); if(c) c.act = true; lg(`Mains guérisseuses : <b>+${g} PV</b>.`); break; }
     case "sacree": { const r = R["Conduit divin"]; if(!c||c.act||!r||r.val<1) return; r.val--; c.act = true; G.buffs.sacree = true; lg(`Arme sacrée : <b>+${Math.max(1,h.mods.cha)}</b> à tes attaques pendant le combat.`); break; }
     case "patiente": { const r = R["Ki"]; if(!c||c.bon||!r||r.val<1) return; r.val--; c.bon = true; G.buffs.esquive = true; lg("Défense patiente (1 ki) : les attaques contre toi ont le désavantage jusqu'à ton prochain tour."); break; }
     case "vent": { const r = R["Ki"]; if(!c||c.bon||!r||r.val<1) return; r.val--; c.bon = true; c.ennemis.forEach(x=>{ if(x.contact) x.dist = 9; x.contact = false; }); lg("Pas du vent (1 ki) : tu te désengages et bondis hors de portée."); break; }
@@ -7040,7 +7125,7 @@ function enemyPhase(list){
     if(opt.cing){ const ins = G.res["Inspiration bardique"]; if(ins && ins.val>0){ ins.val--; const dv = roll(bardDie()).total; tot -= dv; cut = ` − ${dv} (mots cinglants)`; } opt.cing = false; }
     const crit = r===20 || (G.statut==="a_terre" && e.portee!=="distance" && r!==1 && tot>=ac), hit = crit || (r!==1 && tot>=ac);
     let t = `${esc(e.nom)} attaque : d20 (${b==null?a:a+" / "+b}${mode!=="normal"?", "+(mode==="avantage"?"avantage":"désavantage"):""}${why}) ${sg(e.att)}${cut} = <b>${tot}</b> contre ta CA ${ac} → <b>${crit?"critique !":hit?"touché":"raté"}</b>`;
-    if(hit){ const dm = roll(crit?critExpr(e.deg):e.deg); let n = dm.total, ud = ""; if(hasC("roublard",5) && !dodged && G.statut==="ok"){ dodged = true; n = Math.floor(n/2); ud = " (esquive instinctive : moitié)"; } t += `, ${dm.detail} = <b>${n}</b> ${esc(e.type)}${ud}.`; t += hurt(n, e.type, crit); }
+    if(hit){ const dm = roll(crit?critExpr(e.deg):e.deg); let n = dm.total, ud = ""; if(hasC("roublard",5) && !dodged && G.statut==="ok"){ dodged = true; n = Math.floor(n/2); ud = " (esquive instinctive : moitié)"; } t += `, ${dm.detail} = <b>${n}</b> ${esc(e.type)}${ud}.`; t += hurt(n, e.type, crit); { const tr = G.res["Tonnerre de la tempête"]; if(tr && tr.val>0 && n>0 && G.statut==="ok" && e.pv>0){ tr.val--; const d = roll("1d8"); t += ` Tonnerre de la tempête : ${d.detail} = <b>${d.total}</b> tonnerre à ${esc(e.nom)}.` + dmgToFoe(e, d.total); } } }
     else t += ".";
     clog(t);
   });
@@ -7564,6 +7649,7 @@ function combatDock(){
   const spells = beast && !hasC("druide",18) ? "" : allSpells().map(n=>{ const sp = CSP[n]; const lv = spLvl(n); const noSlot = lv>=1 && !pickSlot(lv); const used = sp&&sp.bonus ? B : AA; const dz = SPDIST[n] && SPDIST[n][0]==="ad" && engaged(); return `<button type="button" class="btn sm" data-g="cast" data-v="${esc(n)}" ${used||noSlot||LONG_CAST[n]?"disabled":""} title="${LONG_CAST[n]?`${LONG_CAST[n]} minutes d'incantation : impossible en combat`:esc(spTextPlain(n))}">${esc(n)}${lv?` <small>niv. ${lv}</small>`:""}${sp&&sp.bonus?" (bonus)":""}${dz?` <small class="adv-d">· désavantage</small>`:""}</button>`; }).join("");
   const bon = [], act = [], tog = [];
   if(hasC("moine")){ bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="ma" ${B||!c.hit?"disabled":""}>Mains nues</button>`); if(R["Ki"]){ bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="deluge" ${B||!c.hit||R["Ki"].val<1?"disabled":""}>Déluge de coups (1 ki)</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="patiente" ${B||R["Ki"].val<1?"disabled":""}>Défense patiente (1 ki)</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="vent" ${B||R["Ki"].val<1?"disabled":""}>Pas du vent (1 ki)</button>`); } if(hasC("moine",5)&&R["Ki"]) tog.push(optChip("stun","Frappe étourdissante (1 ki)",R["Ki"].val<1)); }
+  bon.push(...raceBtns(B));
   if(R["Rage"]) bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="rage" ${B||G.buffs.rage||R["Rage"].val<1?"disabled":""}>Rage (${R["Rage"].val})</button>`);
   if(!beast && h.attaques.some(a=>a.offhand && atkHeld(a))){ const oh = h.attaques.find(a=>a.offhand); bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="offhand" ${B||!c.hit||!c.light?"disabled":""} title="Après une attaque avec une arme légère, frappe avec la seconde">${esc(oh.n)}</button>`); }
   if(hasC("barbare",3)) bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="frenesie" ${B||!G.buffs.rage?"disabled":""}>Attaque frénétique</button>`);
@@ -7572,9 +7658,9 @@ function combatDock(){
   if(R["Fougue"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="fougue" ${!c.act||R["Fougue"].val<1?"disabled":""}>Fougue (action en plus)</button>`);
   if(hasC("roublard")){ tog.push(optChip("sneak","Attaque sournoise possible",c.snk)); if(hasC("roublard",2)){ bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="cacher" ${B?"disabled":""}>Se cacher</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="desengager" ${B?"disabled":""}>Se désengager</button>`); } }
   if(hasC("paladin",2)) tog.push(optChip("smite","Châtiment divin au prochain coup",!pickSlot(1)));
-  (G.hero.sorts_raciaux||[]).filter(x=>x.res && R[x.res]).forEach(x=>act.push(`<button type="button" class="btn sm" data-g="drowsp" data-v="${esc(x.nom)}" ${AA||R[x.res].val<1?"disabled":""}>${esc(x.nom)} (${R[x.res].val}/1)</button>`));
+  (G.hero.sorts_raciaux||[]).filter(x=>x.res && R[x.res]).forEach(x=>act.push(`<button type="button" class="btn sm" data-g="drowsp" data-v="${esc(x.nom)}" ${AA||R[x.res].val<1?"disabled":""}>${esc(x.nom)} (${R[x.res].val}/${R[x.res].max||1})</button>`));
   if(R["Plénitude du corps"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="plenitude" ${AA||R["Plénitude du corps"].val<1||G.pv>=G.pvmax?"disabled":""}>Plénitude du corps (+${3*gclv("moine")} PV)</button>`);
-  if(R["Mains guérisseuses"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="mguer" ${AA||R["Mains guérisseuses"].val<1||G.pv>=G.pvmax?"disabled":""}>Mains guérisseuses (+${G.niveau} PV)</button>`);
+  if(R["Mains guérisseuses"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="mguer" ${AA||R["Mains guérisseuses"].val<1||G.pv>=G.pvmax?"disabled":""}>Mains guérisseuses (+${G.build && G.build.bg52 ? G.hero.maitrise+"d4" : G.niveau} PV)</button>`);
   if(R["Âme radieuse"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="radieuse" ${AA||R["Âme radieuse"].val<1||G.buffs.radieuse?"disabled":""}>Âme radieuse</button>`);
   if(R["Imposition des mains (PV)"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="mains" ${AA||R["Imposition des mains (PV)"].val<1?"disabled":""}>Imposition des mains (${R["Imposition des mains (PV)"].val})</button>`);
   if(R["Conduit divin"] && hasC("clerc",2)){ act.push(`<button type="button" class="btn sm" data-g="ca" data-v="preserv" ${AA||R["Conduit divin"].val<1?"disabled":""}>Préservation de la vie</button>`); act.push(`<button type="button" class="btn sm" data-g="ca" data-v="renvoi" ${AA||R["Conduit divin"].val<1?"disabled":""}>Renvoi des morts-vivants</button>`); }
@@ -7583,6 +7669,7 @@ function combatDock(){
   if(G.buffs.marque){ const mx = G.combat.ennemis.find(e=>e.id===G.buffs.marque); if(!mx || mx.etat==="mort" || mx.etat==="fui") bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="marqueT" ${B?"disabled":""}>Déplacer la Marque</button>`); }
   if(G.buffs.malef){ const hx = G.combat.ennemis.find(e=>e.id===G.buffs.malef); if(!hx || hx.etat==="mort" || hx.etat==="fui") bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="malef" ${B?"disabled":""}>Transférer Maléfice</button>`); }
   if(G.buffs.armeSpi) bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="spirit" ${B?"disabled":""}>Arme spirituelle</button>`);
+  { const g = giantOnHit(); if(g && R[g]) tog.push(optChip("giant", `${g} sur ta prochaine attaque qui touche (${R[g].val}/${R[g].max||1})`, R[g].val<1)); }
   if(hasC("barde",3) && R["Inspiration bardique"]) tog.push(optChip("cing","Mots cinglants sur la prochaine attaque ennemie",R["Inspiration bardique"].val<1));
   if(hasC("ensorceleur",3)){ const m = G.build.meta||[], p = R["Points de sorcellerie"]; if(m.includes("Sort accéléré")) tog.push(optChip("accel","Sort accéléré (2 pts)",!p||p.val<2)); if(m.includes("Sort intensifié")) tog.push(optChip("intens","Sort intensifié (3 pts)",!p||p.val<3)); }
   if(R["Souffle"]) act.push(`<button type="button" class="btn sm" data-g="breath" ${AA||R["Souffle"].val<1?"disabled":""}>Souffle draconique</button>`);
@@ -7607,10 +7694,10 @@ function side(){
   }
   t += `<h4>Compétences maîtrisées</h4>${subcls().map(x=>`<div class="subcl" style="font-size:.88rem;margin:0 0 4px;cursor:help" title="${esc(x.eff.join(String.fromCharCode(10)))}">🛡️ <b>${esc(x.nom)}</b> <small class="lede">${esc(x.cls)}</small></div>`).join("")}<div style="font-size:.88rem">${h.competences.filter(c=>c.maitrise).map(c=>`${c.nom} ${sg(c.bonus)}${c.expertise?" ★":""}`).join(" · ")}</div>`;
   const rs = Object.entries(G.res); t += `<h4>Ressources</h4>${rs.map(([k,r])=>`<div class="kv"><span>${esc(k)}</span><b>${r.val}/${r.max}</b></div>`).join("")}<div class="kv"><span>Dés de vie (d${cls().hd}${mcCls()&&mcCls().hd!==cls().hd?"/d"+mcCls().hd:""})</span><b>${G.dv}/${L}</b></div>`;
-  const R = G.res, util = [];
+  const R = G.res, util = []; if(!G.combat) util.push(...raceBtns(!ok));
   if(R["Second souffle"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="souffle2" ${!ok||R["Second souffle"].val<1||G.pv>=G.pvmax?"disabled":""}>Second souffle</button>`);
   if(R["Plénitude du corps"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="plenitude" ${!ok||R["Plénitude du corps"].val<1||G.pv>=G.pvmax?"disabled":""}>Plénitude du corps</button>`);
-  if(R["Imposition des mains (PV)"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="mains" ${!ok||G.pv>=G.pvmax?"disabled":""}>Imposition des mains</button>`); (G.hero.sorts_raciaux||[]).filter(x=>x.res && R[x.res]).forEach(x=>util.push(`<button type="button" class="btn sm" data-g="drowsp" data-v="${esc(x.nom)}" ${!ok||R[x.res].val<1?"disabled":""}>${esc(x.nom)} (${R[x.res].val}/1)</button>`)); if(R["Mains guérisseuses"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="mguer" ${!ok||R["Mains guérisseuses"].val<1||G.pv>=G.pvmax?"disabled":""}>Mains guérisseuses (+${G.niveau} PV)</button>`);
+  if(R["Imposition des mains (PV)"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="mains" ${!ok||G.pv>=G.pvmax?"disabled":""}>Imposition des mains</button>`); (G.hero.sorts_raciaux||[]).filter(x=>x.res && R[x.res]).forEach(x=>util.push(`<button type="button" class="btn sm" data-g="drowsp" data-v="${esc(x.nom)}" ${!ok||R[x.res].val<1?"disabled":""}>${esc(x.nom)} (${R[x.res].val}/${R[x.res].max||1})</button>`)); if(R["Mains guérisseuses"]) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="mguer" ${!ok||R["Mains guérisseuses"].val<1||G.pv>=G.pvmax?"disabled":""}>Mains guérisseuses (+${G.build && G.build.bg52 ? G.hero.maitrise+"d4" : G.niveau} PV)</button>`);
   if(R["Conduit divin"] && hasC("clerc",2)) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="preserv" ${!ok||R["Conduit divin"].val<1?"disabled":""}>Préservation de la vie</button>`);
   if(R["Forme sauvage"]) util.push(G.forme ? `<button type="button" class="btn sm" data-g="ca" data-v="revert" ${!ok?"disabled":""}>Reprendre forme</button>` : FORMES.filter(f=>gclv("druide")>=f.min).map((f,i)=>`<button type="button" class="btn sm" data-g="wild" data-v="${i}" ${!ok||R["Forme sauvage"].val<1?"disabled":""}>Forme : ${f.nom.toLowerCase()}</button>`).join(""));
   if((G.build.invoc||[]).includes("Armure des ombres")) util.push(`<button type="button" class="btn sm" data-g="ca" data-v="ombres" ${!ok||G.buffs.mage?"disabled":""}>Armure des ombres</button>`);
@@ -7690,6 +7777,10 @@ document.addEventListener("click", e=>{
     case "cast": castSpell(v); return;
     case "breath": breath(); return;
     case "potion": usePotion(); return;
+    case "rabil": { const r = G.res[v], c = G.combat; if(!r || r.val<1 || !RACE_ACT[v] || (c && c.bon) || busy) return; r.val--; if(c) c.bon = true;
+      let t = `${esc(v)} : ${RACE_ACT[v]}`; if(v==="Montée d'adrénaline"){ G.pvtemp = Math.max(G.pvtemp||0, G.hero.maitrise); t += ` (<b>${G.pvtemp} PV temporaires</b>)`; } if(v==="Forme imposante") G.buffs.imposante = true;
+      if(c) clog(t); else logJ("sys", t); saveRender(); return; }
+    case "insp": { const r = G.res["Inspiration héroïque"]; if(!r || r.val<1 || G.buffs.insp) return; r.val--; G.buffs.insp = true; if(G.combat) clog("Inspiration héroïque : avantage à ta prochaine attaque."); else logJ("sys", "Inspiration héroïque : avantage à ta prochaine attaque."); saveRender(); return; }
     case "drowsp": { const c = G.combat, sr = (G.hero.sorts_raciaux||[]).find(x=>x.res && x.nom===v), r = sr && G.res[sr.res]; if(!r||r.val<1||(c&&(c.act||(c.spellBon&&spLvl(v)>=1)))||busy||G.forme||G.buffs.rage) return; r.val--; castSpell(v, true); return; }
     case "conso": useConso(v); return;
     case "renc": rencAct(v); return;
