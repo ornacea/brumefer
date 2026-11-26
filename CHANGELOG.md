@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.134.0 — 2026-11-26
+- Améliorations : création du personnage (noms d'archétype).
+
 ## 0.133.0 — 2026-11-26
 - Améliorations : création du personnage (espèces).
 
