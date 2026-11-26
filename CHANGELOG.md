@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.120.0 — 2026-11-26
+- Améliorations : carnet sans défilement horizontal, position du héros dans la liste des cartes.
+
 ## 0.119.0 — 2026-11-26
 - Améliorations : personnages.
 
