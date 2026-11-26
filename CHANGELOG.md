@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.133.0 — 2026-11-26
+- Améliorations : création du personnage (espèces).
+
 ## 0.132.0 — 2026-11-26
 - Améliorations : création du personnage (espèces, lignages), combat, magie.
 

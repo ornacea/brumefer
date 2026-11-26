@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.132.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.133.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.133.0","d":"2026-11-26","items":["Améliorations : création du personnage (espèces)."]},
 {"v":"0.132.0","d":"2026-11-26","items":["Améliorations : création du personnage (espèces, lignages), combat, magie."]},
 {"v":"0.131.0","d":"2026-11-26","items":["Améliorations : création du personnage (dons d'origine), combat."]},
 {"v":"0.130.0","d":"2026-11-26","items":["Améliorations : création du personnage (noms d'archétype)."]},
@@ -1258,6 +1259,8 @@ const RACE52 = {
  tieffelin:{traits:[["Vision dans le noir","Jusqu'à 18 m."],["Présence d'outre-monde","Sort mineur Thaumaturgie."],["Héritage fiélon","Abyssal, chthonien ou infernal : une résistance, un sort mineur, un sort au niveau 3 et un autre au niveau 5, une fois par repos long sans emplacement."]]},
  aasimar:{traits:[["Vision dans le noir","Jusqu'à 18 m."],["Résistance céleste","Résistance aux dégâts nécrotiques et radiants."],["Mains guérisseuses","Une action, une fois par repos long : tu touches une créature et elle regagne autant de d4 de PV que ton bonus de maîtrise."],["Porteur de lumière","Tu connais le sort mineur Lumière (Charisme)."],["Révélation céleste (niv. 3)","Une action, une fois par repos long : pendant 1 minute, des ailes de lumière te portent (vol 9 m), et une fois par tour une attaque ou un sort inflige en plus ton niveau en dégâts radiants."]]},
  goliath:{vit:10.5,skills:[],traits:[["Ascendance géante","Un don de tes ancêtres géants, autant de fois que ton bonus de maîtrise par repos long."],["Forme imposante (niv. 5)","Action bonus, une fois par repos long : tu deviens de taille Grande pendant 10 minutes (avantage aux tests de Force, +3 m de vitesse)."],["Puissante carrure","Tu comptes comme une taille plus grande pour porter, pousser ou soulever, et tu as l'avantage pour mettre fin à l'état agrippé."]]},
+ "demi-elfe":{free:1,traits:[["Vision dans le noir","Jusqu'à 18 m."],["Ascendance féerique","Avantage aux sauvegardes contre l'état charmé."],["Héritage elfique","Le sort mineur et le sort du niveau 3 d'un lignage elfique au choix, une fois par repos long sans emplacement (pas celui du niveau 5)."],["Doué","Ta part humaine : maîtrise d'une compétence de plus, au choix."]]},
+ "demi-orc":{free:1,traits:[["Vision dans le noir","Jusqu'à 18 m."],["Menaçant","Maîtrise d'Intimidation."],["Endurance implacable","Une fois par repos long, quand tu tombes à 0 PV sans mourir, tu restes à 1 PV."],["Montée d'adrénaline","Action bonus, autant de fois que ton bonus de maîtrise par repos court ou long : tu fonces et gagnes autant de PV temporaires que ton bonus de maîtrise."],["Doué","Ta part humaine : maîtrise d'une compétence de plus, au choix."]]},
  orc:{traits:[["Montée d'adrénaline","Action bonus, autant de fois que ton bonus de maîtrise par repos court ou long : tu fonces et gagnes autant de PV temporaires que ton bonus de maîtrise."],["Vision dans le noir","Jusqu'à 36 m."],["Endurance implacable","Une fois par repos long, quand tu tombes à 0 PV sans mourir, tu restes à 1 PV."]]}
 };
 /* Lignages : c/c2 sorts mineurs, s3/s5 sorts des niveaux 3 et 5 (une fois par repos long), sPB sort lancé autant de fois que le bonus de maîtrise, g aptitude d'ascendance géante */
@@ -1281,6 +1284,8 @@ const LIGNAGES = {
   "nuages":{nom:"Goliath, ascendance des nuages", g:"Saut des nuages", d:"Action bonus : tu te téléportes jusqu'à 9 m dans un espace inoccupé que tu vois."},
   "tempete":{nom:"Goliath, ascendance des tempêtes", g:"Tonnerre de la tempête", d:"Réaction quand une créature te blesse : elle subit 1d8 dégâts de tonnerre."}}}
 };
+LIGNAGES["demi-elfe"] = {lbl:"Héritage elfique", spell:true, opts:Object.fromEntries(Object.entries(LIGNAGES.elfe.opts).map(([k,o])=>[k, {nom:`Demi-elfe (${k==="sylvestre" ? "elfe sylvestre" : o.nom.toLowerCase()})`, ab:o.ab, cw:o.cw, c:o.c, s3:o.s3,
+  d:`${o.cw ? "Un sort mineur de magicien (Prestidigitation par défaut)" : o.c}, puis ${o.s3} au niveau 3.`}]))};
 const GIANT_HIT = /^(Brûlure du feu|Morsure du givre|Chute des collines)$/;
 function linOf(s){ s = s || S; const L = LIGNAGES[s.race]; return L && s.lin && L.opts[s.lin] ? L.opts[s.lin] : null; }
 function linAb(){ const g = linOf(); return ["int","sag","cha"].includes(S.lab) ? S.lab : (g && g.ab) || "cha"; }
@@ -1296,6 +1301,7 @@ function raceRes52(o){ const L = S.lvl||1, g = linOf(), r = S.race;
   if(r==="aasimar"){ o.push({nom:"Mains guérisseuses",max:1,recup:"long"}); if(L>=3) o.push({nom:"Âme radieuse",max:1,recup:"long"}); }
   if(r==="goliath"){ if(g) o.push({nom:g.g,max:PROF,recup:"long"}); if(L>=5) o.push({nom:"Forme imposante",max:1,recup:"long"}); }
   if(r==="orc"){ o.push({nom:"Montée d'adrénaline",max:PROF,recup:"court"}); o.push({nom:"Endurance implacable",max:1,recup:"long"}); }
+  if(r==="demi-orc") o.push({nom:"Montée d'adrénaline",max:PROF,recup:"court"});
   if(g){ if(g.s3 && L>=3) o.push({nom:g.s3+" (lignage)",max:1,recup:"long"}); if(g.s5 && L>=5) o.push({nom:g.s5+" (lignage)",max:1,recup:"long"}); if(g.sPB) o.push({nom:g.sPB+" (lignage)",max:PROF,recup:"long"}); } }
 /* Aptitudes d'espèce à usage limité (action bonus), hors sorts */
 const RACE_ACT = {"Connaissance de la pierre":"pendant 10 minutes, tu perçois les vibrations à 18 m au contact de la pierre.",
@@ -6917,7 +6923,7 @@ function weaponAttack(i, kind){
     const gwf = !beast && melee && /deux mains/i.test(a.n+" "+(a.p||"")) && heroStyles().includes("Arme à deux mains");
     let dm = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0), savT = "";
     if(!beast && c.savR!==c.round && (h.dons_origine||[]).includes("Attaquant sauvage")){ const d2 = roll(r.crit ? critExpr(base) : base, gwf ? 2 : 0); c.savR = c.round; savT = ` (attaquant sauvage : ${dm.total} et ${d2.total}, tu gardes ${Math.max(dm.total, d2.total)})`; if(d2.total > dm.total) dm = d2; }
-    let tot = dm.total, dt = dm.detail + (gwf ? " (1 et 2 relancés)" : "") + savT; { const xd=(String(base).match(/d\d+/)||[])[0]; if(xd && r.crit && melee && !beast && G.race==="demi-orc"){ const sv=roll("1"+xd); tot+=sv.total; dt+=" + "+sv.detail.replace(/^\+ /,"")+" (attaques sauvages)"; } }
+    let tot = dm.total, dt = dm.detail + (gwf ? " (1 et 2 relancés)" : "") + savT; { const xd=(String(base).match(/d\d+/)||[])[0]; if(xd && r.crit && melee && !beast && G.race==="demi-orc" && !(G.build && G.build.bg52)){ const sv=roll("1"+xd); tot+=sv.total; dt+=" + "+sv.detail.replace(/^\+ /,"")+" (attaques sauvages)"; } }
     if(r.crit && melee && !beast && hasC("barbare",9)){ const xd = (String(base).match(/d\d+/)||[])[0]; if(xd){ const nb = hasC("barbare",17) ? 3 : hasC("barbare",13) ? 2 : 1; const bc = roll(nb+xd); tot += bc.total; dt += " + "+bc.detail.replace(/^\+ /,"")+" (critique brutal)"; } }
     extras.forEach(([x,l])=>{ const rr = roll(r.crit && /d/.test(x) ? critExpr(x) : x); tot += rr.total; dt += ` + ${rr.detail.replace(/^\+ /,"")} (${l})`; });
     t += `, dégâts ${dt} = <b>${tot}</b> ${a.t}.` + dmgToFoe(e, tot);
