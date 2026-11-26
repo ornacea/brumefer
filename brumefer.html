@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.135.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.136.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.136.0","d":"2026-11-26","items":["Améliorations : action Influencer de la règle 5.2 (Persuasion, Tromperie, Intimidation, Représentation, Dressage), avec DD selon l'intelligence de la cible, attitude et refus de 24 h après un échec."]},
 {"v":"0.135.0","d":"2026-11-26","items":["Améliorations : maîtrise des armes de la règle 5.2 pour tous les héros, avec huit propriétés d'arme en combat, choisies à la forge et modifiables après un repos long."]},
 {"v":"0.134.1","d":"2026-11-26","items":["Corrections et améliorations : fiche du personnage."]},
 {"v":"0.134.0","d":"2026-11-26","items":["Améliorations : création du personnage (noms d'archétype)."]},
@@ -5393,6 +5394,7 @@ FORMAT DE RÉPONSE OBLIGATOIRE. La narration, puis une ligne contenant exactemen
 Champs facultatifs : "lieu" (lieu actuel), "quete" (objectif principal en une phrase), "test", "combat", "fin_combat", "effets":{"degats","soins","monnaie":{"po","pa","pc"},"xp","ajouter":[],"retirer":[]}, "armes", "armes_lieu", "repos", "faits", "objectifs", "notes", "decouvre", "marchand".
 "choix" : hors test et hors combat, une action par alignement de « CHOIX PROPOSÉS » (3 à 5), courte, concrète, à la 1re personne, adaptée à la situation, avec son "alignement" exact ; jamais vide, jamais un autre alignement.
 "test" : {"type":"competence|sauvegarde|carac","nom":"Discrétion","dd":13,"mode":"normal|avantage|desavantage","cause":"circonstance qui justifie l'avantage ou le désavantage, sinon vide","raison":"pour quoi faire"} ; "choix" est alors vide.
+INFLUENCER (règle 5.2) : quand le héros pousse un PNJ ou une créature à faire quelque chose (Persuasion, Tromperie, Intimidation, Représentation, ou Dressage pour une bête), ajoute dans "test" "influence":{"cible":"nom exact","demande":"ce qu'il demande, en quelques mots","attitude":"amicale|indifferente|hostile","int":valeur d'Intelligence de la cible} ; la page fixe le DD (15, ou l'Intelligence de la cible si elle est plus haute) et donne l'avantage si la cible est amicale, le désavantage si elle est hostile. Aucun test si la demande va dans le sens des envies de la cible (elle accepte) ou si elle lui répugne, trahit ses valeurs ou son allégeance (elle refuse) : narre directement. Après un échec, la même demande à la même cible est impossible pendant 24 h : la cible refuse sans test, seule une autre demande peut être tentée.
 ⟦COMBAT⟧"combat" : {"ennemis":[{"nom":"Kobold","pv":5,"ca":12,"att":4,"deg":"1d4+2","type":"perforant","init":2,"sauv":0,"xp":25,"portee":"contact|distance","distance":9}]} ("distance" : mètres entre l'ennemi et le héros, 1.5 au contact) ; "choix" est alors vide. "fin_combat": true si les ennemis restants fuient ou se rendent.⟦/COMBAT⟧`;
 
 function invList(a){ const m = new Map(); (a||[]).forEach(x=>{ const k = String(x).trim(); if(k) m.set(k, (m.get(k)||0) + 1); }); return [...m].map(([k,n])=>n>1 ? k+" ×"+n : k); }
@@ -5517,7 +5519,7 @@ function buildLean(action, extra){ const h = G.hero, last = lastMJ().slice(-700)
   return `Tu es le maître du jeu d'une partie de jeu de rôle en solo (5e édition), dark fantasy${audKey()==="adulte" ? " pour adultes" : audKey()==="ado" ? " pour adolescents" : ", version pour enfants"}, en français, au présent, à la 2e personne (tu). La page lance tous les dés et applique toutes les règles : raconte fidèlement les résultats mécaniques fournis, sans en inventer ni en modifier aucun. Violence âpre et concrète, sans complaisance gore. Ne décide pas à la place du héros au-delà de son action.
 ${genreRule()}
 ${ageRule()}
-${audRule()}${krakenRule() ? "\n"+krakenRule() : ""}
+${audRule()}${krakenRule() ? "\n"+krakenRule() : ""}${infRule() ? "\n"+infRule() : ""}
 HÉROS : ${h.nom}, ${h.peuple}, ${h.classe} niveau ${G.niveau}, PV ${G.pv}/${G.pvmax}, CA ${curAC()}, état : ${G.statut==="ok"?"valide":G.statut}.${G.niveau>20 ? ` NIVEAUX ÉPIQUES : niveau global ${G.niveau} sur ${MAXLVL} (deux classes au plus, 20 niveaux chacune). Suis la partie en cours de la BIBLE, quel que soit le niveau, avec des menaces à la mesure d'un héros de légende.` : ""}${partNote()}
 LIEU : ${G.lieu}. TEMPS : ${tempsTxt()}.
 OBJECTIFS ACTIFS :
@@ -5526,7 +5528,7 @@ FAITS ÉTABLIS : ${F.join(" | ")||"(aucun)"}
 ${combatBrief()}
 DERNIÈRE NARRATION : """${last}"""
 ${extra?extra+"\n":""}ÉVÉNEMENT : ${action}
-Réponds par la narration (2 à 4 phrases sauf indication contraire), puis une ligne ⟦META⟧, puis un objet JSON qui ne contient que les champs utiles parmi : "resume" (une phrase factuelle, toujours), "temps":{"heure":"HH:MM"} (ajoute "ellipse_jours":N et la nouvelle "date" seulement si le récit saute plusieurs jours ou plus ; l'âge du héros, tenu par la page, avance avec ce temps et ne change jamais autrement), "fin_combat":true, "pris":{"sauve":[],"repris":[],"mort":[],"libere":[],"nouveau":[]} (voir DÉCOMPTE DES PRIS DE LA BRUME), "lanterne_brisee":true (seulement quand le héros brise la lanterne de la Mère-Brume), "lanterne_soeur":"detruite" (seulement quand le héros détruit la lanterne sœur, après que la page l'a fait trouver), "registre":{"de":"…"} ou {"complete_par":"Odilon Marc"} (registre des pleurés : qui le remet au héros ; le greffier qui le complète), "acte_acheve":4 (numéro de l'acte de la partie EN COURS que le héros vient d'achever ; voir ACTES DE LA PARTIE EN COURS), "partie_terminee":true (quand le héros vient de conclure l'acte final de la partie EN COURS de la BIBLE, ou quand le récit montre qu'il l'a déjà conclu ; la page ouvre alors la partie suivante), "test":{"type":"competence|sauvegarde|carac","nom":"…","dd":13,"mode":"normal|avantage|desavantage","cause":"circonstance qui justifie l'avantage ou le désavantage","raison":"…"}, "effets":{"xp":0,"monnaie":{"po":0,"pa":0,"pc":0},"ajouter":[],"retirer":[]}, "lieu", "armes":"deposer|perdre|reprendre", "faits":{"ajouter":[],"retirer":[]}, "objectifs":{"ajouter":[{"titre":"…","parent":null}],"accomplir":[],"abandonner":[]}, "notes":{"pnj":[{"nom","info","relation","statut"}]}. ${G.combat ? 'Jamais de "choix" ni de "combat".' : `Ajoute ${alignRule(true)}, chaque entrée {"action":"…","alignement":"…"}, et "repos_ok" ; jamais de "combat".`}`; }
+Réponds par la narration (2 à 4 phrases sauf indication contraire), puis une ligne ⟦META⟧, puis un objet JSON qui ne contient que les champs utiles parmi : "resume" (une phrase factuelle, toujours), "temps":{"heure":"HH:MM"} (ajoute "ellipse_jours":N et la nouvelle "date" seulement si le récit saute plusieurs jours ou plus ; l'âge du héros, tenu par la page, avance avec ce temps et ne change jamais autrement), "fin_combat":true, "pris":{"sauve":[],"repris":[],"mort":[],"libere":[],"nouveau":[]} (voir DÉCOMPTE DES PRIS DE LA BRUME), "lanterne_brisee":true (seulement quand le héros brise la lanterne de la Mère-Brume), "lanterne_soeur":"detruite" (seulement quand le héros détruit la lanterne sœur, après que la page l'a fait trouver), "registre":{"de":"…"} ou {"complete_par":"Odilon Marc"} (registre des pleurés : qui le remet au héros ; le greffier qui le complète), "acte_acheve":4 (numéro de l'acte de la partie EN COURS que le héros vient d'achever ; voir ACTES DE LA PARTIE EN COURS), "partie_terminee":true (quand le héros vient de conclure l'acte final de la partie EN COURS de la BIBLE, ou quand le récit montre qu'il l'a déjà conclu ; la page ouvre alors la partie suivante), "test":{"type":"competence|sauvegarde|carac","nom":"…","dd":13,"mode":"normal|avantage|desavantage","cause":"circonstance qui justifie l'avantage ou le désavantage","raison":"…","influence":{"cible":"…","demande":"…","attitude":"amicale|indifferente|hostile","int":10}} ("influence" seulement pour Influencer un PNJ ou une bête : DD et avantage fixés par la page ; aucun test si la cible accepte d'emblée ou refuse par principe), "effets":{"xp":0,"monnaie":{"po":0,"pa":0,"pc":0},"ajouter":[],"retirer":[]}, "lieu", "armes":"deposer|perdre|reprendre", "faits":{"ajouter":[],"retirer":[]}, "objectifs":{"ajouter":[{"titre":"…","parent":null}],"accomplir":[],"abandonner":[]}, "notes":{"pnj":[{"nom","info","relation","statut"}]}. ${G.combat ? 'Jamais de "choix" ni de "combat".' : `Ajoute ${alignRule(true)}, chaque entrée {"action":"…","alignement":"…"}, et "repos_ok" ; jamais de "combat".`}`; }
 function bestiaryPart(action, short){
   return (short ? `BESTIAIRE : pour une créature connue de la page (bêtes, kobolds, cultistes, morts-vivants, adversaires du scénario…), son nom exact suffit dans "combat" ; la liste est fournie dès qu'un combat se prépare.\n`
     : "BESTIAIRE : pour ces créatures, mets seulement leur nom exact dans \"combat\" (la page applique elle-même leurs statistiques). Adversaires connus : " + bestKnown().map(x=>x.replace(/ CA .*XP (\d+).*/," ($1 XP)")).join(", ") + "\n") + `BUDGET D'UNE RENCONTRE (héros seul, XP totale des adversaires) au niveau ${G.niveau||1} : ${budgetOf(G.niveau)} XP. Un boss peut dépasser d'un tiers ; les adversaires uniques du scénario peuvent dépasser davantage.`; }
@@ -5653,7 +5655,7 @@ ${genreRule()}
 ${ageRule()}
 ${audRule()}
 ${alignRule()}
-${krakenRule()}
+${krakenRule()}${infRule() ? "\n"+infRule() : ""}
 LIEU : ${G.lieu}
 TEMPS (heure tenue par la page) : ${G.temps ? tempsTxt() : "à fixer (début de l'aventure, en fin d'après-midi, en automne)"}
 QUÊTE : ${G.quete}
@@ -6463,12 +6465,33 @@ function applyMeta(m, said){
   if(m.test && m.test.nom && G.statut==="ok"){
     if(justTested && nk(justTested)===nk(m.test.nom)) logJ("sys", `Pas de nouvelle tentative de ${esc(m.test.nom)} dans la foulée : le résultat du jet est acquis.`);
     else { const md = ["avantage","desavantage"].includes(m.test.mode) ? m.test.mode : "normal", cause = String(m.test.cause||"").trim().slice(0,120);
-      G.test = {type:m.test.type||"competence", nom:String(m.test.nom), dd:ddSnap(m.test.dd), mode:cause ? md : "normal", cause:md!=="normal" && cause ? cause : "", raison:m.test.raison||""}; try{ encTest(G.test); }catch(e){} try{ if(norm(G.test.nom)==="persuasion" && notPersMal()){ G.test.mode = G.test.mode==="avantage" ? "normal" : "desavantage"; G.test.cause = "ta réputation à Brumefer"; } }catch(e){} G.choix = []; G.choixAl = ""; } }
+      G.test = {type:m.test.type||"competence", nom:String(m.test.nom), dd:ddSnap(m.test.dd), mode:cause ? md : "normal", cause:md!=="normal" && cause ? cause : "", raison:m.test.raison||""}; try{ encTest(G.test); }catch(e){} try{ if(norm(G.test.nom)==="persuasion" && notPersMal()){ G.test.mode = G.test.mode==="avantage" ? "normal" : "desavantage"; G.test.cause = "ta réputation à Brumefer"; } }catch(e){} try{ if(!infApply(G.test, m.test)) G.test = null; }catch(e){ console.error(e); } if(G.test){ G.choix = []; G.choixAl = ""; } } }
   try{ prisNuits(); }catch(e){ console.error(e); }
   if(m.combat && Array.isArray(m.combat.ennemis) && m.combat.ennemis.length && !G.combat) startCombat(m.combat.ennemis, {amical:m.combat.amical===true, par:norm(String(m.combat.initiateur||""))});
   if(G.statut==="mort") setTimeout(endGame, 0);
 }
 
+/* ---------- Influencer (SRD 5.2) : DD 15 ou Intelligence de la cible, avantage si amicale, désavantage si hostile ;
+   après un échec, la même demande à la même cible est refusée pendant 24 h ---------- */
+const INF_SK = ["persuasion","tromperie","intimidation","representation","dressage"];
+function infInt(cible, given){ const r = notFind(cible); if(r){ try{ const v = Math.round(notCarac(r, notLv(r))[3]); if(v>0) return v; }catch(e){} } const n = +given; return n>0 && n<=30 ? Math.round(n) : 0; }
+function infWords(s){ return nk(String(s||"")).split(/\s+/).filter(w=>w.length>3); }
+function infSame(a, b){ const A = infWords(a), B = infWords(b); if(!A.length || !B.length) return nk(a)===nk(b); return A.filter(w=>B.includes(w)).length / Math.min(A.length, B.length) >= 0.5; }
+function infRefus(){ if(!G) return []; const now = G.clock||0; G.infRef = (G.infRef||[]).filter(x=>now - x.at < 1440); return G.infRef; }
+function infLeft(x){ return durTxt(Math.max(1, 1440 - ((G.clock||0) - x.at))); }
+function infBlocked(cible, demande){ return infRefus().find(x=>nk(x.cible)===nk(cible) && infSame(x.demande, demande)) || null; }
+function infApply(t, mt){ const inf = mt && mt.influence; if(!t || !inf || typeof inf!=="object" || !inf.cible || !INF_SK.includes(norm(t.nom))) return true;
+  const cible = String(notNom(String(inf.cible)) || inf.cible).slice(0, 60), demande = String(inf.demande || t.raison || "").slice(0, 120);
+  const b = infBlocked(cible, demande); if(b){ logJ("sys", `${esc(cible)} a déjà refusé cette demande (« ${esc(b.demande)} ») : pas de nouvel essai avant ${infLeft(b)}. Tente une autre demande.`); return false; }
+  const iv = infInt(cible, inf.int), att = ({amicale:"amicale", amical:"amicale", indifferente:"indifferente", indifferent:"indifferente", hostile:"hostile"})[norm(inf.attitude)] || "indifferente";
+  t.dd = Math.max(15, iv); t.inf = {cible, demande, att, int:iv};
+  const A = t.mode==="avantage" ? [t.cause] : [], D = t.mode==="desavantage" ? [t.cause] : [];
+  if(att==="amicale") A.push(cible + " t'est favorable"); if(att==="hostile") D.push(cible + " t'est hostile");
+  t.mode = modeOf(A, D); const a = A.filter(Boolean).join(", "), d = D.filter(Boolean).join(", ");
+  t.cause = t.mode==="avantage" ? a : t.mode==="desavantage" ? d : (A.length && D.length ? `avantage (${a}) et désavantage (${d}) s'annulent` : "");
+  return true; }
+function infRule(){ const L = infRefus(); if(!L.length) return "";
+  return "INFLUENCER, REFUS EN COURS (après un échec, la même demande est impossible pendant 24 h : la cible refuse sans test ; seule une autre demande peut être tentée) : " + L.map(x=>`${x.cible} — ${x.demande} (encore ${infLeft(x)})`).join(" ; ") + "."; }
 /* ---------- Tests ---------- */
 var justTested = null;
 const DD_ECH = [10,13,15,18,20,25];
@@ -6485,7 +6508,8 @@ function doTest(){
   const tot = d.r + b + extra, ok = tot >= t.dd;
   logJ("de", `${esc(label)} : d20 (${d.txt}) ${sg(b)}${xtxt} = <b>${tot}</b> contre DD ${t.dd} → <b>${ok?"réussite":"échec"}</b>${d.r===20?" (20 naturel)":d.r===1?" (1 naturel)":""}`);
   G.test = null; justTested = t.nom;
-  mj(`Résultat du test de ${label} (${t.raison||"action en cours"}) : ${tot} contre DD ${t.dd}, ${ok?"RÉUSSITE":"ÉCHEC"}${d.r===20?" éclatante":d.r===1?" cuisante":""}. Raconte la conséquence.`, null);
+  if(t.inf && !ok){ infRefus().push({cible:t.inf.cible, demande:t.inf.demande, at:G.clock||0}); logJ("sys", `${esc(t.inf.cible)} refuse : pas de nouvel essai de cette demande avant 24 h.`); }
+  mj(`Résultat du test de ${label} (${t.raison||"action en cours"}) : ${tot} contre DD ${t.dd}, ${ok?"RÉUSSITE":"ÉCHEC"}${d.r===20?" éclatante":d.r===1?" cuisante":""}.${t.inf && !ok ? ` Influencer raté : ${t.inf.cible} refuse ; la même demande lui est impossible pendant 24 h.` : ""} Raconte la conséquence.`, null);
 }
 function deathSave(){
   const r0 = d20("normal").r, bl = (r0>1 && r0<20) ? bless() : {v:0,t:""}, r = r0===1||r0===20 ? r0 : Math.min(19, r0+bl.v); let t = `Jet contre la mort : d20 = <b>${r0}</b>${bl.t} → `;
@@ -7511,7 +7535,7 @@ function dock(){
   if(busy) return `<div class="row" style="justify-content:space-between"><span><span class="spin"></span>Le maître du jeu écrit…</span><button type="button" class="btn sm" data-g="stop">Arrêter</button></div>`;
   if(G.statut==="a_terre") return `<div class="testbox"><p><b>Tu es à terre, inconscient.</b> Succès ${G.mort.s}/3 · Échecs ${G.mort.f}/3</p><button type="button" class="btn primary" data-g="death">Jet contre la mort</button></div>`;
   if(G.test){ const t = G.test, {b,label} = checkBonus(t.type,t.nom);
-    return `<div class="testbox"><p><b>Jet de ${esc(label)} (${sg(b)})</b> contre DD ${t.dd}${t.mode==="avantage"?", avec avantage":t.mode==="desavantage"?", avec désavantage":""}${t.cause?` (${esc(t.cause)})`:""}<br><span class="lede">${esc(t.raison)} · chances de réussite : ${Math.round(100*testChance(b, t.dd, t.mode))} %</span></p><button type="button" class="btn primary" data-g="test">Lancer le d20</button></div>`; }
+    return `<div class="testbox"><p><b>Jet de ${esc(label)} (${sg(b)})</b> contre DD ${t.dd}${t.mode==="avantage"?", avec avantage":t.mode==="desavantage"?", avec désavantage":""}${t.cause?` (${esc(t.cause)})`:""}<br><span class="lede">${esc(t.raison)}${t.inf ? ` · Influencer ${esc(t.inf.cible)} : DD ${t.dd} (${t.inf.int>15 ? "Intelligence "+t.inf.int : "15 de base"}), attitude ${({amicale:"amicale", indifferente:"indifférente", hostile:"hostile"})[t.inf.att]}` : ""} · chances de réussite : ${Math.round(100*testChance(b, t.dd, t.mode))} %</span></p><button type="button" class="btn primary" data-g="test">Lancer le d20</button></div>`; }
   if(c) return combatDock();
   if(G.rencontre) return rencDock();
   const restLbl = {court:"Prendre un repos court (1 h)", long:"Prendre un repos long (8 h)"};

@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.136.0 — 2026-11-26
+- Améliorations : action Influencer de la règle 5.2 (Persuasion, Tromperie, Intimidation, Représentation, Dressage), avec DD selon l'intelligence de la cible, attitude et refus de 24 h après un échec.
+
 ## 0.135.0 — 2026-11-26
 - Améliorations : maîtrise des armes de la règle 5.2 pour tous les héros, avec huit propriétés d'arme en combat, choisies à la forge et modifiables après un repos long.
 
