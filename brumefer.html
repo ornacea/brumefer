@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.128.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.129.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.129.0","d":"2026-11-26","items":["Améliorations : création du personnage (caractéristiques, historiques)."]},
 {"v":"0.128.0","d":"2026-11-26","items":["Améliorations : création du personnage (historiques)."]},
 {"v":"0.127.0","d":"2026-11-26","items":["Améliorations : combat, création du personnage (historiques), Port-Argence."]},
 {"v":"0.126.0","d":"2026-11-26","items":["Améliorations : cartes."]},
@@ -1605,7 +1606,9 @@ function skeyN(k, n){ return n===1 ? k : k+".s"+n; }
 function skey(k){ return skeyN(k, SLOT); }
 const KEY = "brumefer.creation.v1";
 function blank(){return {step:0,equipMode:"pack",wealth:null,wroll:null,buy:{},twf:null,race:null,dragon:null,he:[],cls:null,style:null,enemy:null,terrain:null,method:"standard",assign:{},pb:{for:8,dex:8,con:8,int:8,sag:8,cha:8},rolls:[],bg:null,bgs:null,bgx:null,cs:[],fs:[],ex:[],pack:null,cantrips:[],spells:[],prep:[],rc:null,name:"",genre:"",align:"Neutre bon",age:"",look:"",trait:"",ideal:"",bond:"",flaw:""};}
-let S = blank();
+/* Nouveau héros : règle 5.2, les bonus de caractéristiques viennent de l'historique et non du peuple (bg52) */
+function blankNew(){ const s = blank(); s.bg52 = true; return s; }
+let S = blankNew();
 try{ const raw = LS.get(skey(KEY)); if(raw) S = Object.assign(blank(), JSON.parse(raw)); }catch(e){}
 if(window.claude && window.claude.hot && window.claude.hot.data && window.claude.hot.data.S && (window.claude.hot.data.SLOT||1)===SLOT) S = Object.assign(blank(), window.claude.hot.data.S);
 window.claude?.hot?.snapshot?.(()=>({S}));
@@ -1686,6 +1689,13 @@ const BG = () => S.bgs ? bgMatch() : BGS.find(b=>b.id===S.bg);
    de compétences ; la première est la plus naturelle. Les 4 historiques de la SRD 5.2.1 gardent les leurs ; les 20 combinaisons possibles sont accessibles. */
 const BG_AB = {"Acrobaties|Arcanes":"dex,int,con","Acrobaties|Athlétisme":"dex,for,con","Acrobaties|Discrétion":"dex,con,sag","Acrobaties|Dressage":"dex,sag,for","Acrobaties|Escamotage":"dex,cha,int","Acrobaties|Histoire":"dex,int,cha","Acrobaties|Intimidation":"dex,cha,con","Acrobaties|Investigation":"dex,int,sag","Acrobaties|Médecine":"sag,dex,con","Acrobaties|Nature":"dex,int,con","Acrobaties|Perception":"dex,sag,cha","Acrobaties|Perspicacité":"dex,sag,for","Acrobaties|Persuasion":"cha,dex,con","Acrobaties|Religion":"dex,int,sag","Acrobaties|Représentation":"dex,cha,for","Acrobaties|Survie":"dex,sag,con","Acrobaties|Tromperie":"dex,cha,int","Arcanes|Athlétisme":"int,for,con","Arcanes|Discrétion":"int,dex,sag","Arcanes|Dressage":"int,sag,cha","Arcanes|Escamotage":"dex,int,cha","Arcanes|Histoire":"int,sag,con","Arcanes|Intimidation":"int,cha,con","Arcanes|Investigation":"int,sag,dex","Arcanes|Médecine":"int,sag,con","Arcanes|Nature":"int,sag,con","Arcanes|Perception":"int,sag,con","Arcanes|Perspicacité":"sag,int,cha","Arcanes|Persuasion":"int,cha,sag","Arcanes|Religion":"int,sag,cha","Arcanes|Représentation":"int,cha,dex","Arcanes|Survie":"int,sag,con","Arcanes|Tromperie":"cha,int,dex","Athlétisme|Discrétion":"for,dex,con","Athlétisme|Dressage":"for,sag,cha","Athlétisme|Escamotage":"dex,for,int","Athlétisme|Histoire":"for,int,con","Athlétisme|Intimidation":"for,con,dex","Athlétisme|Investigation":"for,int,sag","Athlétisme|Médecine":"for,sag,con","Athlétisme|Nature":"for,con,int","Athlétisme|Perception":"for,sag,con","Athlétisme|Perspicacité":"for,sag,dex","Athlétisme|Persuasion":"for,cha,con","Athlétisme|Religion":"for,cha,int","Athlétisme|Représentation":"for,cha,dex","Athlétisme|Survie":"for,sag,con","Athlétisme|Tromperie":"for,cha,con","Discrétion|Dressage":"dex,sag,con","Discrétion|Escamotage":"dex,con,int","Discrétion|Histoire":"dex,int,sag","Discrétion|Intimidation":"dex,cha,con","Discrétion|Investigation":"int,dex,sag","Discrétion|Médecine":"sag,int,dex","Discrétion|Nature":"dex,sag,int","Discrétion|Perception":"sag,dex,con","Discrétion|Perspicacité":"dex,sag,cha","Discrétion|Persuasion":"cha,dex,int","Discrétion|Religion":"int,dex,cha","Discrétion|Représentation":"dex,cha,con","Discrétion|Survie":"dex,sag,con","Discrétion|Tromperie":"dex,cha,int","Dressage|Escamotage":"dex,sag,con","Dressage|Histoire":"int,cha,sag","Dressage|Intimidation":"sag,cha,con","Dressage|Investigation":"sag,int,dex","Dressage|Médecine":"sag,int,con","Dressage|Nature":"sag,con,for","Dressage|Perception":"sag,dex,int","Dressage|Perspicacité":"sag,for,con","Dressage|Persuasion":"sag,cha,con","Dressage|Religion":"sag,int,cha","Dressage|Représentation":"cha,sag,for","Dressage|Survie":"sag,con,dex","Dressage|Tromperie":"cha,sag,int","Escamotage|Histoire":"int,dex,cha","Escamotage|Intimidation":"cha,dex,for","Escamotage|Investigation":"dex,int,con","Escamotage|Médecine":"dex,sag,int","Escamotage|Nature":"int,dex,sag","Escamotage|Perception":"dex,sag,cha","Escamotage|Perspicacité":"dex,sag,cha","Escamotage|Persuasion":"cha,dex,sag","Escamotage|Religion":"dex,int,con","Escamotage|Représentation":"dex,cha,con","Escamotage|Survie":"dex,sag,con","Escamotage|Tromperie":"cha,dex,int","Histoire|Intimidation":"cha,int,for","Histoire|Investigation":"int,sag,cha","Histoire|Médecine":"int,sag,con","Histoire|Nature":"int,sag,dex","Histoire|Perception":"int,sag,con","Histoire|Perspicacité":"int,sag,cha","Histoire|Persuasion":"cha,int,sag","Histoire|Religion":"int,sag,cha","Histoire|Représentation":"cha,int,dex","Histoire|Survie":"int,sag,con","Histoire|Tromperie":"int,cha,dex","Intimidation|Investigation":"int,cha,con","Intimidation|Médecine":"cha,sag,con","Intimidation|Nature":"int,sag,for","Intimidation|Perception":"cha,sag,con","Intimidation|Perspicacité":"sag,cha,int","Intimidation|Persuasion":"cha,for,con","Intimidation|Religion":"cha,int,con","Intimidation|Représentation":"cha,dex,con","Intimidation|Survie":"dex,sag,cha","Intimidation|Tromperie":"cha,int,sag","Investigation|Médecine":"int,sag,dex","Investigation|Nature":"int,sag,con","Investigation|Perception":"int,sag,cha","Investigation|Perspicacité":"sag,int,cha","Investigation|Persuasion":"cha,int,sag","Investigation|Religion":"int,sag,con","Investigation|Représentation":"int,cha,sag","Investigation|Survie":"sag,int,dex","Investigation|Tromperie":"cha,int,dex","Médecine|Nature":"sag,int,con","Médecine|Perception":"sag,con,int","Médecine|Perspicacité":"sag,int,cha","Médecine|Persuasion":"sag,cha,int","Médecine|Religion":"sag,int,con","Médecine|Représentation":"sag,cha,dex","Médecine|Survie":"sag,con,int","Médecine|Tromperie":"sag,cha,dex","Nature|Perception":"sag,int,con","Nature|Perspicacité":"sag,int,cha","Nature|Persuasion":"cha,int,sag","Nature|Religion":"sag,int,con","Nature|Représentation":"cha,int,dex","Nature|Survie":"sag,dex,int","Nature|Tromperie":"dex,int,cha","Perception|Perspicacité":"sag,con,dex","Perception|Persuasion":"sag,cha,int","Perception|Religion":"for,sag,int","Perception|Représentation":"cha,sag,con","Perception|Survie":"sag,con,dex","Perception|Tromperie":"sag,cha,dex","Perspicacité|Persuasion":"sag,cha,int","Perspicacité|Religion":"sag,int,cha","Perspicacité|Représentation":"cha,sag,int","Perspicacité|Survie":"sag,con,dex","Perspicacité|Tromperie":"cha,sag,int","Persuasion|Religion":"cha,int,sag","Persuasion|Représentation":"cha,int,sag","Persuasion|Survie":"cha,con,sag","Persuasion|Tromperie":"cha,int,dex","Religion|Représentation":"cha,int,sag","Religion|Survie":"sag,con,cha","Religion|Tromperie":"cha,int,sag","Représentation|Survie":"cha,dex,con","Représentation|Tromperie":"cha,dex,int","Survie|Tromperie":"dex,sag,cha"};
 function bgAbil(sk){ sk = (sk||[]).slice(0,2); if(sk.length<2) return null; const v = BG_AB[sk.slice().sort().join("|")]; return v ? v.split(",") : null; }
+/* Répartition choisie : S.bgm "21" (+2 à S.bg2, +1 à S.bg1) ou "111" (+1 aux trois) ; par défaut +2 et +1 aux deux plus naturelles */
+function bgSplit(){ const a = bgAbil(bgSkills()); if(!a) return null; if(S.bgm==="111") return {m:"111", a, p2:null, p1:null};
+  const p2 = a.includes(S.bg2) ? S.bg2 : a[0], p1 = a.includes(S.bg1) && S.bg1!==p2 ? S.bg1 : a.find(x=>x!==p2); return {m:"21", a, p2, p1}; }
+function bgBonus(){ const s = bgSplit(), o = {}; if(!s) return o; if(s.m==="111") s.a.forEach(x=>o[x]=1); else { o[s.p2] = 2; o[s.p1] = 1; } return o; }
+function bgBonusTxt(){ const s = bgSplit(); if(!s) return ""; return s.m==="111" ? s.a.map(x=>ABS[x]+" +1").join(", ") : `${ABS[s.p2]} +2, ${ABS[s.p1]} +1`; }
+const RACE_BONUS_TRAIT = /^(Polyvalence|Héritage mêlé)$/;
+function raceTraits(r){ return (r ? r.traits : []).filter(t=>!(S.bg52 && RACE_BONUS_TRAIT.test(t[0]))); }
 function bgAbilTxt(sk){ const a = bgAbil(sk); return a ? `${a.map(x=>ABS[x]).join(", ")} : +2 à l'une et +1 à une autre, ou +1 à chacune (la première est la plus naturelle)` : ""; }
 const BG_TL = {charlatan:["Kit de déguisement","Kit de contrefaçon"],etranger:["Flûte","Géant"],acolyte:["Céleste","Elfique"],soldat:["Dés","Véhicules terrestres"],criminel:["Outils de voleur","Cartes"],sage:["Draconique","Elfique"],artisan:["Outils de forgeron","Nain"],ermite:["Matériel d'herboriste","Sylvestre"],heros:["Outils de charpentier","Véhicules terrestres"],noble:["Échecs des dragons","Elfique"],saltimbanque:["Kit de déguisement","Luth"],gamin:["Kit de déguisement","Outils de voleur"],marin:["Instruments de navigateur","Véhicules marins"]};
 const TL_GROUPS = [
@@ -1715,7 +1725,7 @@ let PROF = 2;
 const pick = a => a[Math.floor(Math.random()*a.length)];
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 
-function bonus(){ const b={for:0,dex:0,con:0,int:0,sag:0,cha:0}; const r=R(); if(r){ for(const k in r.bonus) b[k]+=r.bonus[k]; if(r.heChoice) S.he.forEach(k=>b[k]+=1); } if(S.asi) for(const k in S.asi) b[k]+=S.asi[k]; if(S.cls && clv("barbare")>=20){ b.for+=4; b.con+=4; } return b; }
+function bonus(){ const b={for:0,dex:0,con:0,int:0,sag:0,cha:0}; const r=R(); if(S.bg52){ const g = bgBonus(); for(const k in g) b[k]+=g[k]; } else if(r){ for(const k in r.bonus) b[k]+=r.bonus[k]; if(r.heChoice) S.he.forEach(k=>b[k]+=1); } if(S.asi) for(const k in S.asi) b[k]+=S.asi[k]; if(S.cls && clv("barbare")>=20){ b.for+=4; b.con+=4; } return b; }
 function pool(){ return S.method==="standard" ? STD : S.rolls.map(r=>r.total); }
 function base(){ if(S.method==="pointbuy") return {...S.pb}; const p=pool(), o={}; AB.forEach(a=>{ o[a] = (S.assign[a]!=null && p[S.assign[a]]!=null) ? p[S.assign[a]] : null; }); return o; }
 function scores(){ const b=base(), bo=bonus(), o={}; AB.forEach(a=>o[a]= b[a]==null?null:b[a]+bo[a]); return o; }
@@ -1862,7 +1872,7 @@ function attacks(){
 function why(i){
   const r=R(), c=C();
   switch(i){
-    case 0: if(!r) return "Choisis un peuple."; if(r.dragonChoice&&!S.dragon) return "Choisis ton ascendance draconique."; if(raceFreeLang(r)&&!S.rlang) return "Choisis ta langue supplémentaire."; if(r.heChoice&&S.he.length<2) return "Choisis deux caractéristiques à +1."; return "";
+    case 0: if(!r) return "Choisis un peuple."; if(r.dragonChoice&&!S.dragon) return "Choisis ton ascendance draconique."; if(raceFreeLang(r)&&!S.rlang) return "Choisis ta langue supplémentaire."; if(r.heChoice&&!S.bg52&&S.he.length<2) return "Choisis deux caractéristiques à +1."; return "";
     case 1: if(!c) return "Choisis une classe."; if(c.id==="guerrier"&&!S.style) return "Choisis un style de combat."; if(c.id==="rodeur"&&(!S.enemy||!S.terrain)) return "Choisis un ennemi juré et un terrain."; return "";
     case 2: if(S.method==="pointbuy") return pbSpent()>27?"Tu dépasses 27 points.":""; if(S.method==="roll"&&S.rolls.length<6) return "Lance les dés."; return scoresReady()?"":"Attribue une valeur à chaque caractéristique.";
     case 3: if(!S.genre) return "Choisis le genre de ton personnage."; if(bgSkills().length<2) return `Choisis encore ${2-bgSkills().length} compétence(s) d'historique.`; if(bgTools().length<2) return `Choisis encore ${2-bgTools().length} maîtrise(s) d'outil ou langue.`; return "";
@@ -2045,13 +2055,13 @@ function bonusText(b){ if(Object.keys(b).length===6) return "+1 partout"; return
 function vRace(){
   const r=R();
   let h=`<h2>Ton peuple</h2><p class="lede">Ton peuple fixe tes bonus de caractéristiques, ta vitesse et quelques dons de naissance.</p><div class="cards races">`;
-  h+=RACES.map(x=>`<button type="button" class="card ${S.race===x.id?"sel":""}" data-act="race" data-v="${x.id}"><span class="tag">${bonusText(x.bonus)}${x.heChoice?", +1 ×2 au choix":""}</span><h3>${x.nom}</h3><p>${x.desc}</p><span class="meta">${String(x.vit).replace(".",",")} m · taille ${x.taille}${x.vision?` · vision ${x.vision} m`:""}</span></button>`).join("");
+  h+=RACES.map(x=>`<button type="button" class="card ${S.race===x.id?"sel":""}" data-act="race" data-v="${x.id}"><span class="tag">${S.bg52 ? "Bonus de caractéristiques : par l'historique" : bonusText(x.bonus)+(x.heChoice?", +1 ×2 au choix":"")}</span><h3>${x.nom}</h3><p>${x.desc}</p><span class="meta">${String(x.vit).replace(".",",")} m · taille ${x.taille}${x.vision?` · vision ${x.vision} m`:""}</span></button>`).join("");
   h+=`</div>`;
   if(r){
-    h+=`<div class="detail"><h3>${r.nom}</h3><ul class="traits">${r.traits.map(t=>`<li><b>${t[0]}.</b> ${t[1]}</li>`).join("")}<li><b>Langues.</b> ${r.langues}</li></ul>`;
+    h+=`<div class="detail"><h3>${r.nom}</h3><ul class="traits">${raceTraits(r).map(t=>`<li><b>${t[0]}.</b> ${t[1]}</li>`).join("")}<li><b>Langues.</b> ${r.langues}</li></ul>`;
     if(r.dragonChoice) h+=`<div class="sub"><span class="lbl">Ascendance draconique</span><div class="chips">${DRAGONS.map(d=>`<button type="button" class="chip ${S.dragon===d[0]?"sel":""}" data-act="dragon" data-v="${d[0]}">${d[0]} <small>${d[1]}, ${d[2]}</small></button>`).join("")}</div></div>`;
     if(raceFreeLang(r)) h+=`<div class="sub"><span class="lbl">Langue supplémentaire</span><div class="chips">${raceLangOpts().map(l=>`<button type="button" class="chip ${S.rlang===l?"sel":""}" data-act="rlang" data-v="${esc(l)}">${esc(l)}</button>`).join("")}</div></div>`;
-    if(r.heChoice) h+=`<div class="sub"><span class="lbl">Deux caractéristiques à +1 (${S.he.length}/2)</span><div class="chips">${AB.filter(a=>a!=="cha").map(a=>`<button type="button" class="chip ${S.he.includes(a)?"sel":""}" data-act="he" data-v="${a}" ${!S.he.includes(a)&&S.he.length>=2?"disabled":""}>${ABN[a]}</button>`).join("")}</div></div>`;
+    if(r.heChoice && !S.bg52) h+=`<div class="sub"><span class="lbl">Deux caractéristiques à +1 (${S.he.length}/2)</span><div class="chips">${AB.filter(a=>a!=="cha").map(a=>`<button type="button" class="chip ${S.he.includes(a)?"sel":""}" data-act="he" data-v="${a}" ${!S.he.includes(a)&&S.he.length>=2?"disabled":""}>${ABN[a]}</button>`).join("")}</div></div>`;
     h+=`</div>`;
   }
   return h;
@@ -2088,7 +2098,8 @@ function vAbil(){
     S._justRolled=false;
   }
   const p=pool(); const used=Object.values(S.assign);
-  h+=`<div class="scroll-x" style="margin-top:12px"><table class="abil"><thead><tr><th>Caractéristique</th><th>Base</th><th>Peuple</th><th>Total</th><th>Mod.</th></tr></thead><tbody>`;
+  if(S.bg52) h+=`<p class="lede" style="margin:10px 0 0">Règle 5.2 : ton peuple ne donne plus de bonus de caractéristiques ; ils viennent de ton historique (étape suivante), ${bgSplit() ? `actuellement <b>${bgBonusTxt()}</b>` : "à choisir"}.</p>`;
+  h+=`<div class="scroll-x" style="margin-top:12px"><table class="abil"><thead><tr><th>Caractéristique</th><th>Base</th><th>${S.bg52?"Historique":"Peuple"}</th><th>Total</th><th>Mod.</th></tr></thead><tbody>`;
   AB.forEach(a=>{
     let ctl;
     if(S.method==="pointbuy"){ const v=S.pb[a]; const nextCost = v<15 ? PBC[v+1]-PBC[v] : 99;
@@ -2108,7 +2119,14 @@ function vBg(){
   h+=`<div class="sub" style="margin-top:10px"><span class="lbl">Alignement</span><div class="align-grid">${ALIGN.map(a=>`<button type="button" class="al-c ${S.align===a?"sel":""}" style="${alStyle(a)}" data-act="salign" data-v="${a}"><b><span class="al-sw"></span>${a}</b><small>${ALIGN_TXT[a]}</small></button>`).join("")}</div></div>`;
   const rs=r?r.skills:[], bs=bgSkills(), bt=bgTools(), kl=knownLangs();
   const done = bs.length===2 && bt.length===2;
-  h+=`<div class="bg-arch ${b?"on":""}">${b?`<span class="lbl">${done?"Ton archétype":"Archétype pressenti"}</span><h3>${b.nom}</h3><p>${b.desc}</p>${bgAbil(bs.length===2?bs:b.skills)?`<span class="meta">Caractéristiques d'historique (règle 5.2) : ${bgAbilTxt(bs.length===2?bs:b.skills)}</span>`:""}<span class="meta">Bourse de départ : ${b.po} po${bs.length<2?" · encore "+(2-bs.length)+" compétence(s) pour fixer ton archétype":""}</span>`:`<span class="lbl">Archétype</span><p class="lede" style="margin:0">Il apparaîtra dès ton premier choix.</p>`}</div>`;
+  h+=`<div class="bg-arch ${b?"on":""}">${b?`<span class="lbl">${done?"Ton archétype":"Archétype pressenti"}</span><h3>${b.nom}</h3><p>${b.desc}</p>${!S.bg52 && bgAbil(bs.length===2?bs:b.skills)?`<span class="meta">Caractéristiques d'historique (règle 5.2) : ${bgAbilTxt(bs.length===2?bs:b.skills)}</span>`:""}<span class="meta">Bourse de départ : ${b.po} po${bs.length<2?" · encore "+(2-bs.length)+" compétence(s) pour fixer ton archétype":""}</span>`:`<span class="lbl">Archétype</span><p class="lede" style="margin:0">Il apparaîtra dès ton premier choix.</p>`}</div>`;
+  if(S.bg52){ const sp = bgSplit(), sc = scores();
+    h+=`<div class="detail"><div class="sub"><span class="lbl">Bonus de caractéristiques de l'historique (règle 5.2)</span>${!sp ? `<p class="lede" style="margin:0">Choisis tes 2 compétences d'historique : elles fixent les 3 caractéristiques que tu peux augmenter.</p>` :
+      `<p class="lede" style="margin:0 0 6px">${sp.a.map(x=>ABN[x]).join(", ")} : +2 à l'une et +1 à une autre, ou +1 à chacune.</p>
+      <div class="chips"><button type="button" class="chip ${sp.m==="21"?"sel":""}" data-act="bgm" data-v="21">+2 / +1</button><button type="button" class="chip ${sp.m==="111"?"sel":""}" data-act="bgm" data-v="111">+1 / +1 / +1</button></div>
+      ${sp.m==="21" ? `<small class="lede" style="display:block;margin:6px 0 4px">+2</small><div class="chips">${sp.a.map(x=>`<button type="button" class="chip ${sp.p2===x?"sel":""}" data-act="bg2" data-v="${x}">${ABN[x]}</button>`).join("")}</div>
+      <small class="lede" style="display:block;margin:6px 0 4px">+1</small><div class="chips">${sp.a.map(x=>`<button type="button" class="chip ${sp.p1===x?"sel":""}" data-act="bg1" data-v="${x}" ${x===sp.p2?"disabled":""}>${ABN[x]}</button>`).join("")}</div>` : ""}
+      <p class="lede" style="margin:6px 0 0">Bonus : <b>${bgBonusTxt()}</b>${AB.some(a=>sc[a]!=null) ? ` · ${sp.a.map(x=>`${ABS[x]} ${sc[x]??"—"}`).join(", ")}` : ""}</p>`}</div></div>`; }
   h+=`<div class="detail"><div class="sub"><span class="lbl">Compétences d'historique <span class="counter ${bs.length===2?"ok":""}">${bs.length}/2</span></span><div class="chips">${SKN.map(s=>{ const fx=rs.includes(s), on=bs.includes(s);
     return `<button type="button" class="chip ${on?"sel":""} ${fx?"fix":""}" data-act="bgs" data-v="${s}" ${fx||(!on&&bs.length>=2)?"disabled":""} ${fx?`title="Déjà donnée par ton peuple"`:""}>${s} <small>${ABS[SKILLS.find(k=>k[0]===s)[1]]}</small></button>`; }).join("")}</div></div>`;
   h+=`<div class="sub"><span class="lbl">Outils ou langues <span class="counter ${bt.length===2?"ok":""}">${bt.length}/2</span></span>`;
@@ -2550,7 +2568,7 @@ function character(){
   const jack = clv("barde")>=2, c2 = MC(), L1 = clv(c.id);
   if(c2) (S.mc.ex||[]).forEach(x=>exp.add(x));
   const skills = SKILLS.map(([n,a])=>{ const p=ps.has(n), e=p&&exp.has(n); return {nom:n,carac:a,maitrise:p,expertise:e,bonus:mod(sc[a])+(p?PROF:(jack?Math.floor(PROF/2):0))+(e?PROF:0)}; });
-  const feats = [...r.traits.map(t=>({nom:t[0],texte:t[1],source:r.nom})), ...c.feats.map(t=>({nom:t[0],texte:t[1],source:c.nom}))];
+  const feats = [...raceTraits(r).map(t=>({nom:t[0],texte:t[1],source:r.nom})), ...c.feats.map(t=>({nom:t[0],texte:t[1],source:c.nom}))];
   (LVLF[c.id]||[]).filter(f=>f[0]<=L1).forEach(f=>feats.push({nom:f[1],texte:f[2],source:c.nom+" niv. "+f[0]}));
   if(c2){ feats.push({nom:"Multiclassage : "+c2.nom,texte:"Maîtrises gagnées : "+mcProfTxt(c2.id)+".",source:c2.nom});
     c2.feats.forEach(t=>feats.push({nom:t[0],texte:t[1],source:c2.nom}));
@@ -2566,7 +2584,7 @@ function character(){
   (S.meta||[]).forEach(m=>feats.push({nom:"Métamagie : "+m,texte:METAM[m]||"",source:c.nom}));
   (S.feats||[]).forEach(n=>{ if(FEATS[n]) feats.push({nom:"Don : "+n, texte:FEATS[n], source:"Don"}); });
   if(S.asi && Object.keys(S.asi).length) feats.push({nom:"Amélioration de caractéristique",texte:Object.entries(S.asi).filter(x=>x[1]).map(([k,v])=>ABN[k]+" +"+v).join(", "),source:c.nom});
-  feats.push({nom:"Historique : "+b.nom,texte:b.desc+" Maîtrises : "+bgSkills().concat(bgTools()).join(", ")+"."+(bgAbil(bgSkills()) ? " Caractéristiques d'historique (règle 5.2) : "+bgAbilTxt(bgSkills())+"." : ""),source:b.nom});
+  feats.push({nom:"Historique : "+b.nom,texte:b.desc+" Maîtrises : "+bgSkills().concat(bgTools()).join(", ")+"."+(S.bg52 && bgSplit() ? " Bonus de caractéristiques : "+bgBonusTxt()+"." : bgAbil(bgSkills()) ? " Caractéristiques d'historique (règle 5.2) : "+bgAbilTxt(bgSkills())+"." : ""),source:b.nom});
   const pk=kit();
   const spells = spellBlock(c, sc, L);
   if(spells && spells.mythiques && spells.mythiques.length) feats.push({nom:"Magie mythique", texte:"Niveau 40 : un emplacement de sort de niveau 10, récupéré après un repos long. Il sert à lancer un sort mythique (" + spells.mythiques.join(", ") + ") ou un sort ordinaire au niveau 10.", source:"Niveaux épiques"});
@@ -2729,7 +2747,7 @@ function suggestions(id){ const b = BG(), out = [];
   const n = 4, st = ((S.sugSeed||0)*n) % L.length; return Array.from({length:n},(_,i)=>L[(st+i)%L.length]); }
 
 function randomAll(){
-  S=blank();
+  S=blankNew();
   const r=pick(RACES); S.race=r.id; S.rlang = raceFreeLang(r) ? pick(raceLangOpts()) : null;
   if(r.dragonChoice) S.dragon=pick(DRAGONS)[0];
   if(r.heChoice) S.he=shuffle(AB.filter(a=>a!=="cha")).slice(0,2);
@@ -2775,6 +2793,9 @@ document.addEventListener("click",e=>{
     case "salign": S.align=v; break;
     case "bgs": bgInit(); toggle(S.bgs,v,2); bgClean(); break;
     case "bgx": bgInit(); toggle(S.bgx,v,2); break;
+    case "bgm": S.bgm = v==="111" ? "111" : "21"; break;
+    case "bg2": { const sp = bgSplit(); if(sp && sp.a.includes(v)){ if(S.bg1===v || (sp.p1===v)) S.bg1 = sp.p2; S.bg2 = v; } break; }
+    case "bg1": { const sp = bgSplit(); if(sp && sp.a.includes(v) && v!==sp.p2) S.bg1 = v; break; }
     case "cs": toggle(S.cs,v,C().pick); break;
     case "fs": toggle(S.fs,v,freeCount()); break;
     case "ex": toggle(S.ex,v,2); break;
@@ -2794,7 +2815,7 @@ document.addEventListener("click",e=>{
     case "random": randomAll(); toast("Un héros se présente à la forge."); window.scrollTo({top:0}); break;
     case "reset-ask":
       if(!resetArmed){ resetArmed=true; el.textContent="Confirmer : tout effacer"; setTimeout(()=>{ resetArmed=false; el.textContent="Recommencer"; },3500); return; }
-      resetArmed=false; el.textContent="Recommencer"; S=blank(); toast("Fiche effacée."); break;
+      resetArmed=false; el.textContent="Recommencer"; S=blankNew(); toast("Fiche effacée."); break;
     case "herodl": { const ch = character(); saveFile(`brumefer-heros-${fileSlug(ch.nom||S.name||"heros")}.txt`, `BRUMEFER · HÉROS · ${ch.nom||S.name||"?"} · ${ch.classe||""} · ${new Date().toLocaleString("fr-FR")}\nFichier de héros de « Ironhaze's Curse ». Charge-le depuis la Forge (Fichier du héros) ou dans un emplacement libre. Ne modifie pas la ligne ci-dessous.\n`+JSON.stringify(ch)); return; }
     case "enter": window.enterGame && window.enterGame(el); return;
     case "loadsave": { if(busy || notesBusy){ toastBusy(); return; } const o = el._data || null;
@@ -2879,7 +2900,7 @@ function slotClear(){ if(busy || notesBusy || persoBusy){ toastBusy(); return; }
   if(!slotDelArmed){ slotDelArmed = true; slotsView(); clearTimeout(slotDelT); slotDelT = setTimeout(()=>{ slotDelArmed = false; slotsView(); }, 4000); return; }
   slotDelArmed = false; clearTimeout(slotDelT);
   [KEY, GKEY, "brumefer.sum"].forEach(k=>LS.del(skey(k))); cloudFlush();
-  S = blank(); G = null; if(window.claude && window.claude.hot && window.claude.hot.data) window.claude.hot.data.S = null;
+  S = blankNew(); G = null; if(window.claude && window.claude.hot && window.claude.hot.data) window.claude.hot.data.S = null;
   uiReset();
   setView("forge"); render(); slotsView(); window.scrollTo({top:0}); toast(`Partie ${SLOT} effacée : charge une sauvegarde ou forge un nouveau héros.`); }
 /* États d'interface propres à une partie : remis à zéro quand la partie change */
@@ -2887,7 +2908,7 @@ function uiReset(){ ctl = null; liveText = ""; sel = []; opt = {...OPT0}; askMod
 function slotSwitch(n){ n = n>=1 && n<=NSLOTS ? Math.floor(n) : 1; if(n===SLOT) return; if(busy || notesBusy || persoBusy){ toastBusy(); return; }
   if(G) gsave(); persist(); slotSum();
   SLOT = n; try{ LS.set("brumefer.slot", String(n)); }catch(e){}
-  S = blank(); try{ const r = LS.get(skey(KEY)); if(r) S = Object.assign(blank(), JSON.parse(r)); }catch(e){}
+  S = blankNew(); try{ const r = LS.get(skey(KEY)); if(r) S = Object.assign(blank(), JSON.parse(r)); }catch(e){}
   G = null; try{ const r = LS.get(skey(GKEY)); if(r) G = JSON.parse(r); }catch(e){}
   uiReset();
   try{ migrate(); }catch(e){ console.error(e); }
@@ -2962,7 +2983,7 @@ async function clApply(n, m){
   const o = JSON.parse(await clDec(b, m.z));
   [[KEY,o.c],[GKEY,o.p],["brumefer.sum",o.s]].forEach(([k,v])=>{ if(v) LS.set(skeyN(k,n), v); else LS.del(skeyN(k,n)); });
   clRecSet(n, {v:m.v, h:clHash(clPay(n))});
-  if(n===SLOT){ S = blank(); try{ if(o.c) S = Object.assign(blank(), JSON.parse(o.c)); }catch(e){}
+  if(n===SLOT){ S = blankNew(); try{ if(o.c) S = Object.assign(blank(), JSON.parse(o.c)); }catch(e){}
     G = null; try{ if(o.p) G = JSON.parse(o.p); }catch(e){}
     if(window.claude && window.claude.hot && window.claude.hot.data){ window.claude.hot.data.S = null; window.claude.hot.data.G = null; }
     uiReset(); try{ migrate(); }catch(e){ console.error(e); }

@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.129.0 — 2026-11-26
+- Améliorations : création du personnage (caractéristiques, historiques).
+
 ## 0.128.0 — 2026-11-26
 - Améliorations : création du personnage (historiques).
 
