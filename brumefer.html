@@ -278,7 +278,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .ngrp{margin-top:6px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:4px}.ngrp::-webkit-details-marker{display:none}
 .ngrp::before{content:"▸";font-size:.7rem;transition:transform .15s}.ngrpd[open]>.ngrp::before{transform:rotate(90deg)}.ngrp-ko{color:var(--accent)}.ngrp-warn{color:var(--warn)}.ngrp-ok{color:var(--good)}
 .pris-rep{cursor:help}.rel{font-size:.7rem;padding:0 6px;border-radius:8px;border:1px solid var(--line);color:var(--muted)}.rel.ok{border-color:var(--good);color:var(--good)}.rel.warn{border-color:var(--warn);color:var(--warn)}.rel.ko{border-color:var(--accent);color:var(--accent)}
-.maptabs{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px}.maptabs .chip{font-size:.75rem;padding:2px 8px}.maptabs small{color:var(--muted)}
+.maptabs{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px;align-items:center}.maptabs .mapsel{flex:1;min-width:0;width:auto;font-size:.82rem;padding:4px 8px}.maptabs .chip{font-size:.75rem;padding:2px 8px}.maptabs small{color:var(--muted)}
 .mapbox{position:relative;border:1px solid var(--line);border-radius:var(--r);background:var(--sunk);overflow:hidden}
 .mapbig{position:absolute;top:4px;right:4px;padding:1px 8px;font-size:.72rem;z-index:2}
 .mapzoom{position:absolute;left:4px;top:4px;z-index:2;display:flex;flex-direction:column;gap:3px}
@@ -490,7 +490,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.117.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.118.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -906,6 +906,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.118.0","d":"2026-11-26","items":["Améliorations : choix de la carte par une liste déroulante, dans le carnet et dans la carte agrandie."]},
 {"v":"0.117.0","d":"2026-11-26","items":["Améliorations : carte de Haut-Givre et de ses boutiques ; les bâtiments et rues cités en ville apparaissent sur le plan."]},
 {"v":"0.116.3","d":"2026-11-26","items":["Corrections et améliorations : inventaire."]},
 {"v":"0.116.2","d":"2026-11-26","items":["Corrections et améliorations : combat, inventaire."]},
@@ -5047,7 +5048,7 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   h += `<details class="nsec" open><summary>Cartes <small>${M.length}</small></summary>`;
   if(!M.length) h += `<p class="lede">Les cartes se dévoilent au fil de l'exploration et des indications des PNJ.</p>`;
   else { const mp = N.cartes[cur];
-    h += `<div class="maptabs">${M.map(([k,m])=>`<button type="button" class="chip ${k===cur?"sel":""}" data-g="mapview" data-v="${esc(k)}">${esc(m.nom)} <small>${m.lbl||MAPT[m.type]||""}</small></button>`).join("")}${mp.atlas?"":`<button type="button" class="ndel" data-g="ndel" data-v="c:${esc(cur)}" title="Supprimer la carte ${esc(mp.nom)}" aria-label="Supprimer la carte ${esc(mp.nom)}">×</button>`}</div>`;
+    h += `<div class="maptabs">${mapSelect(M, cur, N.cur)}${mp.atlas?"":`<button type="button" class="ndel" data-g="ndel" data-v="c:${esc(cur)}" title="Supprimer la carte ${esc(mp.nom)}" aria-label="Supprimer la carte ${esc(mp.nom)}">×</button>`}</div>`;
     h += `<div class="mapbox"><button type="button" class="btn sm mapbig" data-g="mapbig">Agrandir</button>${mapBody(mp)}`; }
   { let dv = ""; try{ dv = domView(); }catch(e){} if(dv) h += `<div class="row" style="gap:6px;flex-wrap:wrap"><button type="button" class="btn sm ghost" data-g="domwin" data-v="titres" title="Tes titres et ton prestige">👑 Titres <small>${titres().length}</small></button><button type="button" class="btn sm ghost" data-g="domwin" data-v="domaines" title="Tes domaines, les biens à vendre et le travail sur place">🏰 Domaines <small>${doms().length}</small></button></div>`; }
   h += `</details>`;
@@ -5061,11 +5062,13 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   return h; }
 /* Boutons de zoom, carte et légende (carnet et carte agrandie) */
 function mapBody(mp){ return `<div class="mapzoom"><button type="button" class="btn sm" data-mz="1" title="Zoomer" aria-label="Zoomer">+</button><button type="button" class="btn sm" data-mz="-1" title="Dézoomer" aria-label="Dézoomer">−</button>${mp.type==="region"&&mp.atlas?`<button type="button" class="btn sm" data-mz="0" title="Recentrer sur ce que tu connais" aria-label="Recentrer">⌖</button>`:""}</div>${mapSVG(mp)}</div><div class="maplg"><span><i class="lg lg-visite"></i>visité</span><span><i class="lg lg-connu"></i>connu</span><span><i class="lg lg-rumeur"></i>rumeur</span><span><i class="lg lg-here"></i>toi</span>${(mp.eaux||[]).length?`<span><i class="lg lg-eau"></i>eau</span>`:""}${sanctZones(mp).length?`<span><i class="lg lg-sanct"></i>sanctuaire</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="foret"||z.type==="clairiere")?`<span><i class="lg lg-foret"></i>forêt</span>`:""}${(mp.reliefs||[]).some(z=>z.type==="montagne"||z.type==="colline")?`<span><i class="lg lg-mont"></i>relief</span>`:""}</div>`; }
+/* Liste déroulante des cartes connues (carnet et carte agrandie) : un choix change la carte affichée */
+function mapSelect(M, cur, here){ return `<select class="mapsel" data-g="mapview" aria-label="Carte affichée">${M.map(([k,m])=>`<option value="${esc(k)}" ${k===cur?"selected":""}>${esc(m.nom)} — ${esc(m.lbl||MAPT[m.type]||"")}${k===here?" 📍":""}</option>`).join("")}</select>`; }
 function bigMapModal(){ const N = G.notes; if(!N || !N.big) return ""; const MU = Object.entries(N.cartes).filter(([k,m])=>mapUsable(m)), ok = new Set(MU.map(e=>e[0]));
   const cur = N.view && ok.has(N.view) ? N.view : N.cur && ok.has(N.cur) ? N.cur : (MU[0]||[])[0]; const mp = N.cartes[cur];
   if(!mp){ N.big = false; return ""; }
   return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="Carte agrandie" data-close="big"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">${esc(mp.nom)} <small class="lede">${mp.lbl||MAPT[mp.type]||""}</small></h3><button type="button" class="btn sm" data-g="mapbig">Fermer</button></div>
-    <div class="maptabs">${MU.map(([k,m])=>`<button type="button" class="chip ${k===cur?"sel":""}" data-g="mapview" data-v="${esc(k)}">${esc(m.nom)} <small>${m.lbl||MAPT[m.type]||""}</small></button>`).join("")}</div>
+    <div class="maptabs">${mapSelect(MU, cur, N.cur)}</div>
     <div class="mapbox">${mapBody(mp)}</div></div>`; }
 function invView(){
   const h = G.hero, groups = {arme:[],armure:[],conso:[],objet:[]}, seen = {};
@@ -7616,6 +7619,7 @@ document.addEventListener("click", e=>{
 document.addEventListener("change", e=>{
   const el = e.target;
   if(el.dataset.g==="clvl"){ castLvl = +el.value; if(G) grender(); }
+  if(el.dataset.g==="mapview" && G){ notesG().view = el.value; saveRender(); }
 });
 document.addEventListener("keydown", e=>{
   if(e.key==="Escape" && G && G.shop){ G.shop = null; saveRender(); return; }
