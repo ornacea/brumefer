@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.116.3 — 2026-11-26
+- Correctif : une arme gardée par le héros n'est plus retirée à la place d'une autre arme de même nom qu'il a laissée.
+
 ## 0.116.2 — 2026-11-26
 - Combat : une arme que le héros a donnée ou laissée à quelqu'un n'est plus utilisable ; l'inventaire la retire même si le récit l'a oubliée.
 
