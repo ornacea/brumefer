@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.123.0 — 2026-11-26
+- Améliorations : cartes plus cohérentes entre elles.
+
 ## 0.122.0 — 2026-11-26
 - Améliorations : cartes plus cohérentes entre elles.
 
