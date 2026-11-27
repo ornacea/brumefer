@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.10 — 2026-11-27
+- Corrections et améliorations : le don Vigilant compte bien à l'initiative en combat, les titres gagnés par une héroïne sont accordés au féminin.
+
 ## 0.140.9 — 2026-11-27
 - Améliorations : au campement, le compagnon animal doit connaître « Garde ! » pour veiller, et chaque nuit de garde le fatigue.
 
