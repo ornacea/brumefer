@@ -289,7 +289,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .mapdom{border-top:1px solid var(--line);padding-top:6px}.mapdom h4{font-family:var(--f-display);font-size:1rem;color:var(--brass);margin:4px 0 6px}
 .mapmodal-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;width:min(900px,100%);max-height:100%;overflow:auto;display:grid;gap:8px}
 .mapmodal .map{max-height:70vh}
-.regtab{width:100%;border-collapse:collapse;font-size:.85em}.regtab th,.regtab td{text-align:left;padding:3px 6px;border-bottom:1px solid var(--line);vertical-align:top}.regtab tr.regpl td:first-child{color:var(--pleure)}.regtab tr.regmort td:first-child{font-style:italic}
+.regtab{width:100%;border-collapse:collapse;font-size:.85em}.regtab th,.regtab td{text-align:left;padding:3px 6px;border-bottom:1px solid var(--line);vertical-align:top}.regtab tr.regpl td:first-child{color:var(--pleure)}.regtab tr.regmort td:first-child{font-style:italic}.regtab tr.regperso td{background:color-mix(in srgb,var(--pleure) 8%,transparent)}.regtab .ndel{margin-left:4px}.regform{display:grid;gap:6px;border:1px solid var(--line);border-radius:var(--r);padding:8px}
 .map{display:block;width:100%;height:auto;max-height:420px;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none}.map.zoomed{touch-action:none}
 .map.dragging{cursor:grabbing}
 :root{--wline:#1A4F8B;--wfill:#7FA8D4;--wlab:#123E70;--zfor:#9DBF8E;--zforl:#3F6B33;--zcla:#DCE6B8;--zmon:#C9B79A;--zmonl:#6B5537;--zhil:#D6CDA8}
@@ -498,7 +498,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.142.1</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.143.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -914,6 +914,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.143.0","d":"2026-11-27","items":["Améliorations : carnet, prise de notes sur les personnages rencontrés."]},
 {"v":"0.142.1","d":"2026-11-27","items":["Corrections et améliorations : les personnes prises par la brume se comportent de façon plus cohérente, où qu'on les croise."]},
 {"v":"0.142.0","d":"2026-11-27","items":["Améliorations : les personnages non joueurs ont désormais un alignement qui guide leur conduite, et une nouvelle habitante tient les quais de la ville."]},
 {"v":"0.141.1","d":"2026-11-27","items":["Corrections et améliorations : un titre infamant ne rapporte plus de prestige."]},
@@ -3048,6 +3049,7 @@ document.addEventListener("input",e=>{
   if(e.target && e.target.id==="notes-info"){ notesDraft = e.target.value; return; }
   if(e.target && e.target.id==="n-corr-cat"){ corrCat = e.target.value; return; }
   if(e.target && e.target.id==="n-div"){ diversDraft = e.target.value; return; }
+  if(e.target && /^reg-[bln]$/.test(e.target.id)){ regDraft[{b:"b", l:"lieu", n:"note"}[e.target.id.slice(4)]] = e.target.value; return; }
   const f=e.target.dataset.field; if(!f) return;
   S[f]=e.target.value; persist(); ledger();
   if(e.target.classList.contains("autogrow")) autogrow(e.target.parentNode);
@@ -3111,7 +3113,7 @@ function slotClear(){ if(busy || notesBusy || persoBusy){ toastBusy(); return; }
   uiReset();
   setView("forge"); render(); slotsView(); window.scrollTo({top:0}); toast(`Partie ${SLOT} effacée : charge une sauvegarde ou forge un nouveau héros.`); }
 /* États d'interface propres à une partie : remis à zéro quand la partie change */
-function uiReset(){ ctl = null; liveText = ""; sel = []; opt = {...OPT0}; askMode = false; undoArmed = false; newArmed = false; castLvl = 0; notesDraft = ""; diversDraft = ""; advMode = "normal"; lakeDocs._c = null; SHOPCMP = null; mapDrag = null; }
+function uiReset(){ ctl = null; liveText = ""; sel = []; opt = {...OPT0}; askMode = false; undoArmed = false; newArmed = false; castLvl = 0; notesDraft = ""; diversDraft = ""; regDraft = {b:"", lieu:"", note:""}; regEdit = ""; advMode = "normal"; lakeDocs._c = null; SHOPCMP = null; mapDrag = null; }
 function slotSwitch(n){ n = n>=1 && n<=NSLOTS ? Math.floor(n) : 1; if(n===SLOT) return; if(busy || notesBusy || persoBusy){ toastBusy(); return; }
   if(G) gsave(); persist(); slotSum();
   SLOT = n; try{ LS.set("brumefer.slot", String(n)); }catch(e){}
@@ -4299,11 +4301,36 @@ function regEtat(x){ if(!x) return "";
   return "pleuré"; }
 /* morts (morts revenus, morts sous l'emprise, libérés) : obèles et italique ; pleurés vivants : gras italique ; rendus à leur nom : écriture normale */
 function regCls(x){ if(!x || x.e==="sauve") return ""; return x.m || x.e==="perdu" || x.e==="libere" ? ' class="regmort"' : ' class="regpl"'; }
-function regModal(){ if(!regOpen) return ""; if(!regHas()){ regOpen = false; return ""; } const n = prisCount(), R = regRows();
+/* Inscriptions du héros : un pris croisé sous son nom de Brume, avec ce qu'il sait de sa demeure, en attendant son vrai nom et sa famille.
+   G.regPerso = [{id, b, lieu, note, d}] ; une inscription est « résolue » dès que le héros connaît le vrai nom de ce pris : elle rejoint alors sa ligne */
+let regDraft = {b:"", lieu:"", note:""}, regEdit = "";
+const REGP_MAX = {b:60, lieu:120, note:200};
+function regPerso(){ if(!Array.isArray(G.regPerso)) G.regPerso = []; return G.regPerso; }
+function regPersoX(o){ const x = o && o.b ? prisFind(o.b) : null; return x && prisDn(x)===x.nom && nk(x.nom)!==nk(o.b) ? x : null; }
+const regPersoOuverts = () => regPerso().filter(o=>!regPersoX(o));
+function regPersoSet(d){ const c = (v, k) => String(v||"").replace(/\s+/g," ").trim().slice(0, REGP_MAX[k]);
+  const b = c(d.b, "b").replace(/^[«"“\s]+|[»"”\s]+$/g, ""), lieu = c(d.lieu, "lieu"), note = c(d.note, "note"); if(!b) return false;
+  const L = regPerso(), o = (regEdit && L.find(z=>z.id===regEdit)) || L.find(z=>nk(z.b)===nk(b));
+  if(o){ Object.assign(o, {b, lieu, note}); }
+  else { L.push({id:"p" + Date.now().toString(36) + Math.random().toString(36).slice(2,5), b, lieu, note, d:gDate()}); logJ("sys", `📜 Tu inscris « ${esc(b)} » au registre des pleurés${lieu ? `, demeure : ${esc(lieu)}` : ""}.`); }
+  G.regMaj = gDate(); regDraft = {b:"", lieu:"", note:""}; regEdit = ""; return true; }
+function regPersoDel(id){ const L = regPerso(), i = L.findIndex(z=>z.id===id); if(i<0) return false; L.splice(i, 1); if(regEdit===id){ regEdit = ""; regDraft = {b:"", lieu:"", note:""}; } return true; }
+function regPersoEdit(id){ const o = regPerso().find(z=>z.id===id); if(!o) return false; regEdit = id; regDraft = {b:o.b, lieu:o.lieu||"", note:o.note||""}; return true; }
+/* ce que le héros a noté d'un pris désormais nommé : sa demeure et sa note complètent sa ligne */
+function regPersoDe(nom){ return regPerso().filter(o=>{ const x = regPersoX(o); return x && nk(x.nom)===nk(nom); }); }
+function regPersoRow(o){ return `<tr class="regpl regperso"><td>« ${esc(o.b)} »</td><td><i>à retrouver</i></td><td>${esc(o.lieu||"")}</td><td>pleuré — nom à retrouver${o.note ? ` · ${esc(o.note)}` : ""}${o.d ? ` <small class="lede">(inscrit le ${esc(o.d)})</small>` : ""} <button type="button" class="btn sm ghost" data-g="regmod" data-v="${esc(o.id)}" title="Modifier cette inscription">Modifier</button><button type="button" class="ndel" data-g="regdel" data-v="${esc(o.id)}" title="Effacer cette inscription" aria-label="Effacer cette inscription">×</button></td></tr>`; }
+function regPersoForm(){ const D = regDraft, ed = regEdit && regPerso().some(z=>z.id===regEdit);
+  return `<div class="regform"><b>${ed ? "Modifier l'inscription" : "Inscrire un pris"}</b> <small class="lede">sous son nom de Brume, en attendant de retrouver son nom et sa famille</small>
+    <div class="row"><input type="text" id="reg-b" maxlength="${REGP_MAX.b}" placeholder="Nom de Brume" value="${esc(D.b)}" style="flex:1 1 160px"><input type="text" id="reg-l" maxlength="${REGP_MAX.lieu}" placeholder="Demeure : où il hante, où il vivait…" value="${esc(D.lieu)}" style="flex:2 1 220px"></div>
+    <div class="row"><input type="text" id="reg-n" maxlength="${REGP_MAX.note}" placeholder="Signes, indices, proches (facultatif)" value="${esc(D.note)}" style="flex:1 1 260px"><button type="button" class="btn sm" data-g="regadd">${ed ? "Mettre à jour" : "Consigner"}</button>${ed ? `<button type="button" class="btn sm ghost" data-g="regann">Annuler</button>` : ""}</div></div>`; }
+function regModal(){ if(!regOpen) return ""; if(!regHas()){ regOpen = false; return ""; } const n = prisCount(), R = regRows(); const RP = regPersoOuverts();
   return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="Registre des pleurés" data-close="reg"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">Registre des pleurés <small class="lede">${regComplet() ? "toute la ville, recensée par le greffier" : `noms connus de toi et de ${esc(((regSrcInit()||{}).de)||"Mirelle Aubrac")}`}</small></h3><button type="button" class="btn sm" data-g="registre">Fermer</button></div>
-    <small class="lede">Encore sous l'emprise de la Brume : <b>${n.zz}</b> · rendus à leur nom : <b>${n.sauve}</b>${n.perdu ? ` · morts sous son emprise : <b>${n.perdu}</b>` : ""}${n.libere ? ` · morts libérés : <b>${n.libere}</b>` : ""}${G.regMaj ? ` · dernière inscription : ${esc(G.regMaj)}` : ""}</small>
-    <table class="regtab"><thead><tr><th>Nom</th><th>Famille</th><th>Demeure</th><th>Mention</th></tr></thead><tbody>${R.map(o=>`<tr${regCls(o.x)}><td>${o.x && (o.x.m || o.x.e==="perdu" || o.x.e==="libere") ? `† ${esc(o.nom)} †` : esc(o.nom)}</td><td>${esc([o.fam, o.rel].filter(Boolean).join(" — "))}</td><td>${esc(o.lieu)}</td><td>${regEtat(o.x)}</td></tr>`).join("")}</tbody></table></div></div>`; }
-function regBrief(){ if(regHas()) return ` Le héros détient le REGISTRE DES PLEURÉS (la page lui en montre le contenu : nom, famille et demeure ; noms de Brume des seuls sauvés). ${regComplet() ? "Il recense toute la ville (registre du greffier)." : `Il ne porte que les habitants que connaissent le héros et ${(regSrcInit()||{}).de||"Mirelle Aubrac"}, qui le lui a remis ; si le héros le fait compléter par le greffier Odilon Marc, mets "registre":{"complete_par":"Odilon Marc"} : il recensera alors toute la ville.`}`;
+    <small class="lede">Encore sous l'emprise de la Brume : <b>${n.zz}</b> · rendus à leur nom : <b>${n.sauve}</b>${n.perdu ? ` · morts sous son emprise : <b>${n.perdu}</b>` : ""}${n.libere ? ` · morts libérés : <b>${n.libere}</b>` : ""}${RP.length ? ` · tes inscriptions à nommer : <b>${RP.length}</b>` : ""}${G.regMaj ? ` · dernière inscription : ${esc(G.regMaj)}` : ""}</small>
+    ${regPersoForm()}
+    <table class="regtab"><thead><tr><th>Nom</th><th>Famille</th><th>Demeure</th><th>Mention</th></tr></thead><tbody>${RP.map(regPersoRow).join("")}${R.map(o=>{ const H = regPersoDe(o.nom), hl = H.map(h=>h.lieu).filter(l=>l && nk(l)!==nk(o.lieu)), hn = H.map(h=>h.note).filter(Boolean);
+      return `<tr${regCls(o.x)}><td>${o.x && (o.x.m || o.x.e==="perdu" || o.x.e==="libere") ? `† ${esc(o.nom)} †` : esc(o.nom)}</td><td>${esc([o.fam, o.rel].filter(Boolean).join(" — "))}</td><td>${esc(o.lieu)}${hl.length ? `${o.lieu ? " · " : ""}<i>noté : ${esc(hl.join(" ; "))}</i>` : ""}</td><td>${regEtat(o.x)}${H.length && !(o.x && o.x.e==="sauve") ? ` — inscrit par toi sous « ${esc(H[0].b)} »` : ""}${hn.length ? ` · ${esc(hn.join(" ; "))}` : ""}</td></tr>`; }).join("")}</tbody></table></div></div>`; }
+function regPersoBrief(){ const L = regPersoOuverts(); return L.length ? ` Le héros y a inscrit lui-même, sous leur nom de Brume, des pris qu'il n'a pas encore nommés : ${L.map(o=>`« ${o.b} »${o.lieu ? ` (demeure notée : ${o.lieu})` : ""}${o.note ? ` [${o.note}]` : ""}`).join(", ")}. Ce sont ses notes, non des preuves : elles ne valent pas rapprochement et peuvent être fausses ; ne les corrige pas dans le récit.` : ""; }
+function regBrief(){ if(regHas()) return ` Le héros détient le REGISTRE DES PLEURÉS (la page lui en montre le contenu : nom, famille et demeure ; noms de Brume des seuls sauvés). ${regComplet() ? "Il recense toute la ville (registre du greffier)." : `Il ne porte que les habitants que connaissent le héros et ${(regSrcInit()||{}).de||"Mirelle Aubrac"}, qui le lui a remis ; si le héros le fait compléter par le greffier Odilon Marc, mets "registre":{"complete_par":"Odilon Marc"} : il recensera alors toute la ville.`}${regPersoBrief()}`;
   return " OBJET SECRET « Registre des pleurés » : Mirelle le tient au Temple et le greffier Odilon Marc en garde la copie. Ne le remets au héros que si l'histoire le permet : Mirelle ou Marc le lui confie de son plein gré, parce que le héros a gagné sa confiance et a une vraie raison de le consulter ; alors note-le dans effets.ajouter : [\"Registre des pleurés\"] et mets \"registre\":{\"de\":\"nom complet de qui le remet\"}. Ne le propose jamais, ne le suggère dans aucun choix, ne laisse entendre à personne qu'il peut être obtenu."; }
 /* Combat : un mort revenu mis hors de combat meurt une seconde fois, ce qui le libère ; un pris vivant abattu au combat est mort sous l'emprise, compté dès sa chute */
 function prisCombat(L){ (L||[]).filter(e=>e && e.etat==="mort").forEach(e=>{ const x = prisFind(e.nom); if(!x) return;
@@ -8065,6 +8092,11 @@ document.addEventListener("click", e=>{
     case "mapview": notesG().view = v; saveRender(); return;
     case "mapbig": notesG().big = !notesG().big; saveRender(); return;
     case "registre": regOpen = !regOpen; grender(); return;
+    case "regadd": { const g = id => { const t = document.getElementById(id); return t ? t.value : ""; }; const d = {b:g("reg-b"), lieu:g("reg-l"), note:g("reg-n")};
+      if(!regPersoSet(d)){ const t = document.getElementById("reg-b"); t && t.focus(); return; } saveRender(); const n = document.getElementById("reg-b"); n && n.focus(); return; }
+    case "regdel": if(regPersoDel(v)) saveRender(); return;
+    case "regmod": if(regPersoEdit(v)){ grender(); const n = document.getElementById("reg-b"); n && n.focus(); } return;
+    case "regann": regEdit = ""; regDraft = {b:"", lieu:"", note:""}; grender(); return;
     case "notesref": refreshNotes(); return;
     case "ndel": delEntry(v); return;
     case "ndiv": { const t = document.getElementById("n-div"), val = t ? t.value : diversDraft; if(!val.trim()){ t && t.focus(); return; } diversAdd(val); diversDraft = ""; saveRender(); const n = document.getElementById("n-div"); n && n.focus(); return; }
@@ -8109,6 +8141,7 @@ document.addEventListener("keydown", e=>{
   if(e.key==="Enter" && !e.shiftKey && e.target && e.target.id==="g-act"){ e.preventDefault(); const b = document.querySelector('[data-g="ask"],[data-g="send"]'); b && b.click(); }
   if(e.key==="Enter" && e.target && e.target.id==="g-q"){ e.preventDefault(); const b = document.querySelector('[data-g="askc"]'); b && b.click(); }
   if(e.key==="Enter" && e.target && e.target.id==="comp-nom"){ e.preventDefault(); const b = document.querySelector('[data-g="compnom"]'); b && b.click(); }
+  if(e.key==="Enter" && e.target && /^reg-[bln]$/.test(e.target.id)){ e.preventDefault(); const b = document.querySelector('[data-g="regadd"]'); b && b.click(); }
   if(e.key==="Enter" && e.target && e.target.id==="n-div"){ e.preventDefault(); const b = document.querySelector('[data-g="ndiv"]'); b && b.click(); }
   if(e.key==="Enter" && e.target && e.target.id==="g-free"){ e.preventDefault(); const b = document.querySelector('[data-g="free"]'); b && b.click(); }
 });

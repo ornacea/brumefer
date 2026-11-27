@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.143.0 — 2026-11-27
+- Améliorations : carnet, prise de notes sur les personnages rencontrés.
+
 ## 0.142.1 — 2026-11-27
 - Corrections et améliorations : les personnes prises par la brume se comportent de façon plus cohérente, où qu'on les croise.
 
