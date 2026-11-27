@@ -493,7 +493,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.4</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.5</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -909,6 +909,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.140.5","d":"2026-11-27","items":["Corrections et améliorations : le maître du jeu ne se trompe plus d'heure après un repos, la nuit finit bien par se lever."]},
 {"v":"0.140.4","d":"2026-11-27","items":["Corrections et améliorations : le récit suit mieux l'heure du jour, une attente jusqu'à l'aube ne s'éternise plus."]},
 {"v":"0.140.3","d":"2026-11-27","items":["Corrections et améliorations : après une poursuite perdue, le maître du jeu et les actions proposées ne relancent plus la recherche sur place."]},
 {"v":"0.140.2","d":"2026-11-27","items":["Corrections et améliorations : un refus d'un personnage ne bloque plus une demande faite pour quelqu'un d'autre, les actions proposées ne gaspillent plus une potion pour une égratignure."]},
@@ -5557,8 +5558,8 @@ function genreRule(short){ const g = heroGenre(); if(!g) return "";
   if(!R) return "";
   return short ? `Rappel : accords au ${R[1]} pour le héros.` : `GENRE DU HÉROS (impératif) : ${R[0]} Si la mémoire ou les échanges précédents emploient un autre genre, c'est une erreur : ne la reproduis pas.`; }
 function tempsTxt(){ if(!G.temps) return "à fixer"; calInit(); const t = G.temps, sa = calSaison(), age = t.metAt!=null && G.clock!=null ? G.clock - t.metAt : 0;
-  const mo = moment(hourOf(t.heure||"")), lum = ({nuit:"il fait nuit", aube:"le jour se lève", matin:"il fait jour : la nuit est finie, une attente « jusqu'à l'aube » est terminée et le récit montre la lumière du matin", midi:"il fait grand jour", aprem:"il fait jour", soir:"le jour baisse"})[mo.k];
-  return `${t.date||"date ?"}${sa ? " ("+sa+")" : ""}, vers ${t.heure||"?"}${lum ? " (" + mo.t.toLowerCase() + " : " + lum + ")" : ""}, météo : ${t.meteo||"à fixer"}${age >= 360 ? ` (inchangée depuis ${durTxt(age)} : fais-la évoluer de façon plausible)` : ""}`; }
+  const hh = G.clock!=null ? hm(G.clock) : t.heure, mo = moment(hourOf(hh||"")), lum = ({nuit:"il fait nuit", aube:"le jour se lève", matin:"il fait jour : la nuit est finie, une attente « jusqu'à l'aube » est terminée et le récit montre la lumière du matin", midi:"il fait grand jour", aprem:"il fait jour", soir:"le jour baisse"})[mo.k];
+  return `${t.date||"date ?"}${sa ? " ("+sa+")" : ""}, vers ${hh||"?"}${lum ? " (" + mo.t.toLowerCase() + " : " + lum + ")" : ""}, météo : ${t.meteo||"à fixer"}${age >= 360 ? ` (inchangée depuis ${durTxt(age)} : fais-la évoluer de façon plausible)` : ""}`; }
 function buildLean(action, extra){ const h = G.hero, last = lastMJ().slice(-700), F = faitsSel(action, 4, 4, [action, G.lieu, G.combat ? G.combat.ennemis.map(e=>e.nom).join(" ") : "", last.slice(-400)].join(" "));
   return `Tu es le maître du jeu d'une partie de jeu de rôle en solo (5e édition), dark fantasy${audKey()==="adulte" ? " pour adultes" : audKey()==="ado" ? " pour adolescents" : ", version pour enfants"}, en français, au présent, à la 2e personne (tu). La page lance tous les dés et applique toutes les règles : raconte fidèlement les résultats mécaniques fournis, sans en inventer ni en modifier aucun. Violence âpre et concrète, sans complaisance gore. Ne décide pas à la place du héros au-delà de son action.
 ${genreRule()}
@@ -6089,7 +6090,9 @@ function clockSet(h, said, narr){ const m = String(h||"").match(/(\d{1,2})\s*[:h
   if(t < G.clock - 180) t += 1440;
   /* Un bond de plus de 8 h sans voyage ni attente annoncés est une heure périmée : la page garde son horloge */
   if(t - G.clock > 480 && !/voyag|march|route|chemin|attend|dor[ms]|sommeil|nuit|journee|jours?\b|heures|camp|repos/.test(norm(said||"")) && !TIME_CUE.test(norm(narr||""))){ if(G.temps) G.temps.heure = hm(G.clock); return false; }
-  G.clock = Math.max(G.clock, t); }
+  G.clock = Math.max(G.clock, t);
+  /* l'heure rendue au MJ est toujours celle de l'horloge de la page (jamais une heure antérieure qu'il aurait donnée) */
+  if(G.temps) G.temps.heure = hm(G.clock); }
 /* ===== Calendrier : 12 mois de 30 jours, la date suit l'horloge de la page ===== */
 /* Calendrier : 13 mois de 28 jours, puis la Fête du Seuil (1 jour ; 2 les années multiples de 4) avant le 1er des Givres */
 const CAL_MJ = 28, CAL_NM = 13, CAL_FETE = "Fête du Seuil";
