@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.8 — 2026-11-27
+- Corrections et améliorations : après l'annulation d'une action, les personnages n'oublient plus ce qu'ils ont vécu avec le héros ; les actions bonnes ne proposent plus d'enfoncer une porte.
+
 ## 0.140.7 — 2026-11-27
 - Corrections et améliorations : une blessure ancienne ne gêne plus tous les jets, les actions proposées ne répètent plus ce que le héros vient de faire.
 

@@ -493,7 +493,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.7</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.8</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -909,6 +909,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.140.8","d":"2026-11-27","items":["Corrections et améliorations : après l'annulation d'une action, les personnages n'oublient plus ce qu'ils ont vécu avec le héros ; les actions bonnes ne proposent plus d'enfoncer une porte."]},
 {"v":"0.140.7","d":"2026-11-27","items":["Corrections et améliorations : une blessure ancienne ne gêne plus tous les jets, les actions proposées ne répètent plus ce que le héros vient de faire."]},
 {"v":"0.140.6","d":"2026-11-27","items":["Corrections et améliorations : le récit accorde toujours le héros selon le genre choisi."]},
 {"v":"0.140.5","d":"2026-11-27","items":["Corrections et améliorations : le maître du jeu ne se trompe plus d'heure après un repos, la nuit finit bien par se lever."]},
@@ -5528,6 +5529,8 @@ ${alBanned() ? `ALIGNEMENT ÉCARTÉ PAR LE JOUEUR : ${alBanned().al}. Ne propose
 ` : ""}CHOIX PROPOSÉS (impératif) : exactement ${L.length} actions dans "choix", une pour chacun de ces alignements, chacune avec son "alignement" : ${L.map((x,i)=>i===0 && x===a ? `${x} (celui du héros, décrit plus haut)` : `${x} (${alDesc(x)})`).join(" ; ")}. Chaque action incarne fidèlement son alignement dans la situation présente, sans l'adoucir ni le noircir ; jamais d'autre alignement, même si la mémoire ou les échanges précédents suggèrent un autre tempérament. Une action « bonne » reste honnête et bienveillante envers les innocents : jamais de menace, de violence ni d'effraction contre eux. Ne repropose pas, en d'autres mots, l'action que le joueur vient de jouer ; quand une même scène dure depuis plusieurs échanges, au moins une action la mène à son terme ou en sort (finir le geste, renoncer, se mettre à l'abri, aller chercher de l'aide). Après l'échec d'une péripétie (cible emportée, enfuie, perdue), aucune action ne propose de la poursuivre, de la rattraper ou de la chercher sur place, ni dans cette scène ni dans les suivantes : les choix passent à la suite (soigner, prévenir, chercher une nouvelle piste plus tard, ailleurs). Une action n'utilise que ce que le héros porte (voir son inventaire) ou ce que la scène montre à sa portée. Pas d'action qui dépense une ressource rare (potion, sort, objet magique) pour un mal bénin, surtout quand le héros en a lui-même besoin.${ar ? "\n"+ar : ""}`; }
 /* Normalise les choix : objets {a, al}, alignements autorisés seulement, un par alignement, 5 au plus */
 /* Un choix qui redit l'une des 8 dernières actions jouées (mêmes mots, à 60 %) est retiré */
+/* Effraction : jamais dans une action « bonne » (porte enfoncée, serrure forcée, fenêtre brisée) */
+const EFFR_RE = /(coup d'epaule|coup de pied dans la porte|enfonc\w* (la|sa|leur|une) porte|defonc|forc\w* (la|sa|leur|une) (porte|serrure|fenetre|volet)|fractur|briser? (la|sa|une) (vitre|fenetre))/;
 function choixStems(a){ return [...new Set(norm(a).replace(/[^a-z0-9 ]+/g," ").split(/\s+/).filter(w=>w.length>3).map(w=>w.slice(0,5)))]; }
 function choixRedit(a){ const A = choixStems(a); if(A.length<3) return false;
   return (G.hist||[]).slice(-8).some(h=>{ const B = choixStems(h && h.j); if(B.length<3) return false; const n = A.filter(w=>B.includes(w)).length; return n / Math.min(A.length, B.length) >= 0.6; }); }
@@ -5535,7 +5538,7 @@ function choixNorm(list, keep){ const L = alNear(), out = (keep||[]).slice(), se
   (asArr(list)).forEach(x=>{ let a = "", al = "";
     if(typeof x==="string") a = x; else if(x && typeof x==="object"){ a = String(x.action||x.texte||x.a||""); al = alCanon(x.alignement||x.al||""); }
     a = a.trim(); if(!a || seen.has(norm(a))) return;
-    try{ if(perdusChase(a) || choixRedit(a)) return; }catch(e){}
+    try{ if(perdusChase(a) || choixRedit(a) || (/\bbon\b/.test(norm(al)) && EFFR_RE.test(norm(a)))) return; }catch(e){}
     if(al && (!L.includes(al) || used.has(al))) return;
     out.push({a, al}); seen.add(norm(a)); if(al) used.add(al); });
   return out.sort((x,y)=>(L.indexOf(x.al)<0?9:L.indexOf(x.al)) - (L.indexOf(y.al)<0?9:L.indexOf(y.al))).slice(0,5); }
@@ -5820,10 +5823,13 @@ CARNET : ${notesBrief()}
 ÉCHANGES CONSERVÉS (le dernier est la fin de l'histoire valide) :
 ${hist||"(aucun)"}
 Réponds UNIQUEMENT avec un objet JSON décrivant l'état à la fin du dernier échange conservé :
-{"lieu":"…","quete":"…","faits":["liste complète des faits durables de l'intrigue"],"objectifs":[{"titre":"objectif ou sous-objectif encore actif","parent":null}],"pnj":[{"nom":"nom exact du carnet","statut":"où il est, dans quel état ; s'il est mort, commence par Mort"}]}`;
+{"lieu":"…","quete":"…","faits_retirer":["faits de la liste FAITS qui ne viennent QUE de l'échange annulé (recopiés mot pour mot) ; tous les autres sont conservés tels quels"],"faits_ajouter":["fait durable des échanges conservés absent de FAITS"],"objectifs":[{"titre":"objectif ou sous-objectif encore actif","parent":null}],"pnj":[{"nom":"nom exact du carnet","statut":"où il est, dans quel état ; s'il est mort, commence par Mort"}]}`;
   try{ const o = await sample.json(p, {cache:false, modelTier:"quick"});
     if(o){ if(o.lieu) G.lieu = String(o.lieu); if(o.quete) G.quete = String(o.quete); if(o.memoire) G.memoire = String(o.memoire).slice(0,2200);
-      if(Array.isArray(o.faits)) G.faits = o.faits.map(x=>String(x).slice(0,220)).filter(Boolean).slice(0,25);
+      /* les faits ne sont jamais réécrits en bloc (un modèle rapide en perdrait) : on retire ceux de l'échange annulé, on ajoute les manquants */
+      { const ret = asArr(o.faits_retirer).map(x=>nk(x)).filter(Boolean), add = asArr(o.faits_ajouter).map(x=>String(x).slice(0,220)).filter(Boolean);
+        const keep = (G.faits||[]).filter(y=>!ret.some(r=>r===nk(y) || (r.length>12 && nk(y).includes(r))));
+        G.faits = keep.concat(add.filter(a=>!keep.some(y=>nk(y)===nk(a)))).slice(-25); }
       if(Array.isArray(o.objectifs)) objSetActive(o.objectifs);
       const N = notesG(); (asArr(o.pnj)).forEach(p=>{ const k = nk(p&&p.nom); if(N.pnj[k] && p.statut) N.pnj[k].statut = String(p.statut).slice(0,80); });
       logJ("sys","Continuité rétablie : quête, mémoire, faits et statuts recalés sur les échanges conservés."); } }
