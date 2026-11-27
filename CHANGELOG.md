@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.142.0 — 2026-11-27
+- Améliorations : les personnages non joueurs ont désormais un alignement qui guide leur conduite, et une nouvelle habitante tient les quais de la ville.
+
 ## 0.141.1 — 2026-11-27
 - Corrections et améliorations : un titre infamant ne rapporte plus de prestige.
 
