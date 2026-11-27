@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.149.2 — 2026-11-27
+- Corrections et améliorations : un proche qui appelle un pris par son prénom suffit à le délivrer.
+
 ## 0.149.1 — 2026-11-27
 - Corrections et améliorations : le récit ne commente plus les règles du jeu.
 
