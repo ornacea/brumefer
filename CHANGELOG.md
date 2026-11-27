@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.139.1 — 2026-11-27
+- Corrections et améliorations : les poursuites ratées ne tournent plus en boucle, narration sans paragraphes répétés.
+
 ## 0.139.0 — 2026-11-27
 - Corrections et améliorations : les scènes à tests répétés se concluent, suggestions d'actions plus variées et plus fidèles aux alignements, initiative corrigée dans le résumé de la forge.
 
