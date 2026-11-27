@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.6 — 2026-11-27
+- Corrections et améliorations : le récit accorde toujours le héros selon le genre choisi.
+
 ## 0.140.5 — 2026-11-27
 - Corrections et améliorations : le maître du jeu ne se trompe plus d'heure après un repos, la nuit finit bien par se lever.
 

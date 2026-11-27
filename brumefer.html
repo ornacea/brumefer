@@ -493,7 +493,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.5</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.6</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -909,6 +909,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.140.6","d":"2026-11-27","items":["Corrections et améliorations : le récit accorde toujours le héros selon le genre choisi."]},
 {"v":"0.140.5","d":"2026-11-27","items":["Corrections et améliorations : le maître du jeu ne se trompe plus d'heure après un repos, la nuit finit bien par se lever."]},
 {"v":"0.140.4","d":"2026-11-27","items":["Corrections et améliorations : le récit suit mieux l'heure du jour, une attente jusqu'à l'aube ne s'éternise plus."]},
 {"v":"0.140.3","d":"2026-11-27","items":["Corrections et améliorations : après une poursuite perdue, le maître du jeu et les actions proposées ne relancent plus la recherche sur place."]},
@@ -6004,7 +6005,7 @@ async function mj(action, shown, o={}){
       if(gh){ const fx = await fixNarr(sample, action, narr, `${gh.nom} (${String(gh.esp).toLowerCase()}) n'accompagne plus le héros : ${gh.why}${gh.d ? " le " + gh.d : ""}. Retire-le entièrement du récit : aucune présence, aucune action, aucun regard, aucune mention dans une liste ou un registre ; tout au plus un souvenir du héros.`, ctl.signal);
         if(fx && fx.narration && String(fx.narration).trim().length>40){ narr = String(fx.narration).trim(); logJ("sys", `Récit corrigé : ${esc(gh.nom)} n'est plus avec toi.`); } } }
     done = true;
-    narr = dedupNarr(narr);
+    narr = dedupNarr(narr); try{ narr = genreFix(narr); }catch(e){}
     if(narr){ logJ("mj", fmtNarr(narr)); if(G.qaFix && G.qaFix.length && (G.qaN = (G.qaN||0)+1) >= 3){ G.qaFix = []; G.qaN = 0; } }
     G.hist.push({j: shown || clipTxt(String(action).replace(/\s+/g," "), 400), m: narr}); if(G.hist.length>12) G.hist.splice(0, G.hist.length-12);
     { const mm = meta||{}; mm._narr = narr; if(renc){ delete mm.test; delete mm.combat; mm.choix = []; } const c0 = G.clock, l0 = G.lieu; try{ applyMeta(mm, shown||action); }catch(e){ console.error(e); } if(shown){ G.testRun = G.combat ? [] : (Array.isArray(G.testRun) ? G.testRun : []).concat(G.test ? 1 : 0).slice(-5); } try{ memTick(); }catch(e){ console.error(e); } try{ prisCourFlush(); }catch(e){ console.error(e); } justTested = null; try{ compTick(c0, l0, shown||action); }catch(e){ console.error(e); } if(renc && G.statut==="ok" && !G.fin && !G.combat) rencCommit(renc); }
@@ -6043,6 +6044,13 @@ async function mj(action, shown, o={}){
   }finally{ busy = false; liveText = ""; saveRender(); }
 }
 /* Le MJ recopie parfois un bloc de paragraphes dans la même réponse : on ne garde que la première occurrence */
+/* Écriture inclusive (« seul·e », « étranger·ère ») accordée au genre du héros quand il est masculin ou féminin */
+function genreFix(t){ const g = heroGenre(); if(!t || !/^(Masculin|Féminin)$/.test(g)) return t; const f = g==="Féminin";
+  return String(t).replace(/([A-Za-zÀ-ÿ]+)[·•.]([a-zà-ÿ]{1,5})\b(?:[·•.](s))?/g, (all, st, sf, pl)=>{
+    if(!/^(e|es|ne|nes|le|les|ère|ères|euse|euses|rice|rices|se|ses|te|tes)$/.test(sf)) return all; const P = pl || (/s$/.test(sf) ? "s" : "");
+    if(!f) return st + P; const b = sf.replace(/s$/,"");
+    const w = b==="ère" ? st.replace(/er$/,"ère") : b==="euse" ? st.replace(/eur$/,"euse") : b==="rice" ? st.replace(/teur$/,"trice") : st + b;
+    return w + P; }); }
 /* Paragraphes répétés, à l'identique ou à peine reformulés (80 % des mots en commun) : on garde le dernier écrit */
 function dedupNarr(t){ if(!t) return t; const P = String(t).split(/\n+/), W = P.map(p=>{ const k = norm(p).replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim(); return k.length<40 ? null : new Set(k.split(" ").filter(w=>w.length>2)); });
   const sim = (a,b) => { let n = 0; a.forEach(w=>{ if(b.has(w)) n++; }); return n / Math.max(a.size, b.size, 1); };
