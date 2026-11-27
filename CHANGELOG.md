@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.146.0 — 2026-11-27
+- Améliorations : carnet, prise de notes à Haut-Givre.
+
 ## 0.145.0 — 2026-11-27
 - Améliorations : le registre des disparus se divise en chapitres, un par village, dès que le héros commence à libérer les disparus d'un second village.
 

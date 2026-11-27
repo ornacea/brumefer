@@ -498,7 +498,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.145.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.146.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -914,6 +914,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.146.0","d":"2026-11-27","items":["Améliorations : carnet, prise de notes à Haut-Givre."]},
 {"v":"0.145.0","d":"2026-11-27","items":["Améliorations : le registre des disparus se divise en chapitres, un par village, dès que le héros commence à libérer les disparus d'un second village."]},
 {"v":"0.144.0","d":"2026-11-27","items":["Améliorations : les habitants d'un village du col disparus dans la brume ont désormais une identité fixe, et tous les personnages ont un alignement."]},
 {"v":"0.143.0","d":"2026-11-27","items":["Améliorations : carnet, prise de notes sur les personnages rencontrés."]},
@@ -4286,7 +4287,7 @@ function regSrcInit(){ if(!G || !regHas()) return null; if(G.regSrc && G.regSrc.
 function regMeta(v){ if(!G) return; const S = regSrcInit(); if(!S || !v) return; const o = typeof v==="object" ? v : {de:v};
   const R = q => { const t = norm(String(q||"")); if(!t) return ""; if(/greffier|odilon|\bmarc\b/.test(t)) return REG_GREFFIER; const r = PNJR.find(r=>r && r[0] && (norm(r[0])===t || (r[1] && r[1].split("|").some(a=>norm(a)===t)))); return r ? r[0] : ""; };
   if(o.de && !S.fixe){ const d = R(o.de); if(d){ S.de = d; S.fixe = 1; } }
-  if(o.complete || o.complet || o.complete_par){ const c = R(o.complete_par || o.complete || o.complet) || (o.complete===true || o.complet===true ? REG_GREFFIER : ""); if(c===REG_GREFFIER && !S.complet){ S.complet = gDate(); logJ("sys", "📜 Le greffier Odilon Marc a complété le registre des pleurés : toute la ville y est désormais recensée."); } } }
+  if(o.complete || o.complet || o.complete_par){ if(regHGCompleter(o.complete_par || o.complete || o.complet)) return; const c = R(o.complete_par || o.complete || o.complet) || (o.complete===true || o.complet===true ? REG_GREFFIER : ""); if(c===REG_GREFFIER && !S.complet){ S.complet = gDate(); logJ("sys", "📜 Le greffier Odilon Marc a complété le registre des pleurés : toute la ville y est désormais recensée."); } } }
 const regComplet = () => { const S = regSrcInit(); return !!S && (S.de===REG_GREFFIER || !!S.complet); };
 /* ce que connaît celui qui remet le registre : sa famille, sa demeure, ceux qu'il nomme ou qui le nomment ; Mirelle tient le registre des pleurés : elle connaît tous les pris */
 function regConnusDe(nom){ const r0 = PNJR.find(r=>r && r[0]===nom); if(!r0) return new Set(); const fam = norm(r0[3]||""), lieu = norm(r0[5]||""), out = new Set([nk(nom)]);
@@ -4356,10 +4357,40 @@ function regHGEtat(o){ const x = o.x;
 function regChapTabs(){ if(!regHGOuvert()) return ""; const c = regChapCur(), nb = prisCount(), nh = prisCountHG();
   const T = [["bf", "Brumefer", nb.zz], ["hg", "Haut-Givre", nh.pris - nh.hag]];
   return `<nav class="tabs regchap" aria-label="Chapitres du registre" style="margin:6px 0 2px">${T.map(([k, t, z])=>`<button type="button" class="chip${c===k ? " sel" : ""}" data-g="regchap" data-v="${k}" aria-pressed="${c===k}">Chapitre ${k==="bf" ? "I" : "II"} · ${t}${z ? ` <small>${z} sous l'emprise</small>` : ""}</button>`).join("")}</nav>`; }
+/* ===== Chapitre Haut-Givre complété : à la Chapelle des Cendres ou à la Maison du doyen, le frère Gildas ou le doyen (ou leur parent rendu à son nom)
+   recense tout le village, sur le modèle du registre du greffier : noms, familles, demeures ; noms de Brume des seuls rendus à leur nom. G.regHGc = {par, d} ===== */
+const REG_HG_LIEUX = ["Chapelle des Cendres", "Maison du doyen"];
+const REG_HG_PAR = [["Gildas Morel", /gildas|\bfrere\b|chapelle/], ["Aleaume Brisval", /aleaume|doyen/], ["Jehan Morel", /jehan/], ["Gaubert Brisval", /gaubert/]];
+const regHGLieux = () => { const m = ATLAS.find(m=>m.id==="hautgivre"); return m ? m.L.map(l=>l[0]) : []; };
+const regHGComplet = () => !!(G && G.regHGc);
+const regHGSurPlace = () => REG_HG_LIEUX.some(l=>nk(l)===nk(G.lieu||""));
+function regHGCompleter(q){ if(!G || !regHas()) return false; const t = norm(String(q||"")); if(!t) return false;
+  const par = (REG_HG_PAR.find(([n, re])=>nk(n)===nk(t) || re.test(t))||[])[0]; if(!par) return false;
+  if(regHGComplet()) return true;
+  /* sur place seulement, et jamais par un pris encore sous l'emprise */
+  const x = prisHGG()[nk(par)]; if(!regHGSurPlace() || (x && x.e!=="sauve")) return true;
+  G.regHGc = {par, d:gDate()}; G.regHG = 1; G.regMaj = gDate(); regChap = "hg";
+  logJ("sys", `📜 ${esc(par)} a complété ton registre des pleurés : tout Haut-Givre y est désormais recensé.`); return true; }
+/* habitants de Haut-Givre : la table des PNJ (les dix pris) et les notables du village */
+function regHGHabitants(){ const L = new Set(regHGLieux().map(nk)), out = [], seen = {};
+  PNJR.forEach(r=>{ if(!r || !r[0] || (REG_HORS.includes(r[0]) && !prisIsHG(r[0])) || !(prisIsHG(r[0]) || L.has(nk(r[5]||"")))) return; const k = nk(r[0]); if(seen[k]) return; seen[k] = 1; out.push({nom:r[0], fam:r[3]||"", rel:r[4]||"", lieu:r[5]||""}); });
+  NOTABLES.forEach(r=>{ if(!r || !r[0] || nk((r[13]||{}).v||"")!==nk("Haut-Givre") || !L.has(nk(r[2]||""))) return; const k = nk(r[0]); if(seen[k]) return; seen[k] = 1;
+    out.push({nom:r[0], fam:r[0].split(" ").slice(-1)[0], rel:r[1]||"", lieu:r[2]||""}); });
+  return out; }
+const regIsHGHab = nom => regHGHabitants().some(o=>nk(o.nom)===nk(nom));
+function regHGEtatC(x){ if(!x) return ""; if(x.e==="sauve") return `rendu à son nom${x.b ? ` — fut « ${esc(x.b)} » sous la Brume` : ""}`;
+  if(x.e==="perdu") return pnjIdent(pnjReg(x.nom)) ? "mort sous l'emprise de la Brume" : "pleuré, mort";
+  return x.hag ? "pleuré — libéré du fil, nom à retrouver" : "pleuré"; }
+function regHGRowsC(){ const P = prisHGG(), fk = o => norm(o.fam || o.nom.split(" ").slice(-1)[0]);
+  const grp = o => !o.x || o.x.e==="sauve" ? 2 : o.x.e==="perdu" ? 1 : 0;
+  return regHGHabitants().map(o=>Object.assign(o, {x:P[nk(o.nom)]})).sort((a,b)=>(grp(a)-grp(b)) || fk(a).localeCompare(fk(b)) || norm(a.nom).localeCompare(norm(b.nom))); }
+function regHGTableC(){ const U = regHGRows().filter(o=>!o.nm && o.x.e==="pris");
+  return `${U.map(o=>`<tr class="regpl"><td>« ${esc(o.b)} »</td><td><i>à retrouver</i></td><td>${(()=>{ const hl = regPersoDe(o.nom).map(h=>h.lieu).filter(Boolean); return hl.length ? `<i>noté : ${esc(hl.join(" ; "))}</i>` : "<i>Haut-Givre ?</i>"; })()}</td><td>${regHGEtat(o)} <small class="lede">(croisé par toi)</small></td></tr>`).join("")}${regHGRowsC().map(o=>{ const H = regPersoDe(o.nom).filter(h=>!U.some(u=>nk(u.nom)===nk(o.nom))), hl = H.map(h=>h.lieu).filter(l=>l && nk(l)!==nk(o.lieu)), hn = H.map(h=>h.note).filter(Boolean), mort = o.x && o.x.e==="perdu";
+      return `<tr${regCls(o.x)}><td>${mort ? `† ${esc(o.nom)} †` : esc(o.nom)}</td><td>${esc([o.fam, o.rel].filter(Boolean).join(" — "))}</td><td>${esc(o.lieu)}${hl.length ? `${o.lieu ? " · " : ""}<i>noté : ${esc(hl.join(" ; "))}</i>` : ""}</td><td>${regHGEtatC(o.x)}${H.length && !(o.x && o.x.e==="sauve") ? ` — inscrit par toi sous « ${esc(H[0].b)} »` : ""}${hn.length ? ` · ${esc(hn.join(" ; "))}` : ""}</td></tr>`; }).join("")}`; }
 function regHGChap(){ const n = prisCountHG(), R = regHGRows(), RP = regPersoOuverts().filter(regPersoHG);
-  return `<small class="lede">Haut-Givre, village de bergers au pied du col des Cendres : les pris croisés dans la Gorge des Loups, au col et à Kar-Durim. Encore sous l'emprise : <b>${n.pris - n.hag}</b>${n.hag ? ` · libérés du fil, sans nom : <b>${n.hag}</b>` : ""} · rendus à leur nom : <b>${n.sauve}</b>${n.perdu ? ` · morts sous son emprise : <b>${n.perdu}</b>` : ""}${RP.length ? ` · tes inscriptions à nommer : <b>${RP.length}</b>` : ""}</small>
+  return `<small class="lede">Haut-Givre, village de bergers au pied du col des Cendres : ${regHGComplet() ? `tout le village, recensé par ${esc(G.regHGc.par)}${G.regHGc.d ? ` (${esc(G.regHGc.d)})` : ""}` : "les pris croisés dans la Gorge des Loups, au col et à Kar-Durim"}. Encore sous l'emprise : <b>${n.pris - n.hag}</b>${n.hag ? ` · libérés du fil, sans nom : <b>${n.hag}</b>` : ""} · rendus à leur nom : <b>${n.sauve}</b>${n.perdu ? ` · morts sous son emprise : <b>${n.perdu}</b>` : ""}${RP.length ? ` · tes inscriptions à nommer : <b>${RP.length}</b>` : ""}</small>
     ${regPersoForm()}
-    <table class="regtab"><thead><tr><th>Nom</th><th>Famille</th><th>Demeure</th><th>Mention</th></tr></thead><tbody>${RP.map(regPersoRow).join("")}${R.map(o=>{ const H = regPersoDe(o.nom), hn = H.map(h=>h.note).filter(Boolean), hl = H.map(h=>h.lieu).filter(Boolean);
+    <table class="regtab"><thead><tr><th>Nom</th><th>Famille</th><th>Demeure</th><th>Mention</th></tr></thead><tbody>${RP.map(regPersoRow).join("")}${regHGComplet() ? regHGTableC() : R.map(o=>{ const H = regPersoDe(o.nom), hn = H.map(h=>h.note).filter(Boolean), hl = H.map(h=>h.lieu).filter(Boolean);
       return `<tr${regCls(o.x)}><td>${o.x.e==="perdu" ? `† ${esc(o.nm ? o.nom : "« " + o.b + " »")} †` : o.nm ? esc(o.nom) : `« ${esc(o.b)} »`}</td><td>${o.nm ? esc([o.fam, o.rel].filter(Boolean).join(" — ")) : "<i>à retrouver</i>"}</td><td>${o.nm ? esc(o.lieu) : hl.length ? `<i>noté : ${esc(hl.join(" ; "))}</i>` : "<i>Haut-Givre ?</i>"}</td><td>${regHGEtat(o)}${hn.length ? ` · ${esc(hn.join(" ; "))}` : ""}</td></tr>`; }).join("") || `<tr><td colspan="4"><i>Aucun pris de Haut-Givre consigné.</i></td></tr>`}</tbody></table>`; }
 function regModal(){ if(!regOpen) return ""; if(!regHas()){ regOpen = false; return ""; } const n = prisCount(), R = regRows(); const RP = regPersoOuverts().filter(o=>!regPersoHG(o));
   return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="Registre des pleurés" data-close="reg"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">Registre des pleurés <small class="lede">${regComplet() ? "toute la ville, recensée par le greffier" : `noms connus de toi et de ${esc(((regSrcInit()||{}).de)||"Mirelle Aubrac")}`}</small></h3><button type="button" class="btn sm" data-g="registre">Fermer</button></div>
@@ -4368,7 +4399,10 @@ function regModal(){ if(!regOpen) return ""; if(!regHas()){ regOpen = false; ret
     <table class="regtab"><thead><tr><th>Nom</th><th>Famille</th><th>Demeure</th><th>Mention</th></tr></thead><tbody>${RP.map(regPersoRow).join("")}${R.map(o=>{ const H = regPersoDe(o.nom), hl = H.map(h=>h.lieu).filter(l=>l && nk(l)!==nk(o.lieu)), hn = H.map(h=>h.note).filter(Boolean);
       return `<tr${regCls(o.x)}><td>${o.x && (o.x.m || o.x.e==="perdu" || o.x.e==="libere") ? `† ${esc(o.nom)} †` : esc(o.nom)}</td><td>${esc([o.fam, o.rel].filter(Boolean).join(" — "))}</td><td>${esc(o.lieu)}${hl.length ? `${o.lieu ? " · " : ""}<i>noté : ${esc(hl.join(" ; "))}</i>` : ""}</td><td>${regEtat(o.x)}${H.length && !(o.x && o.x.e==="sauve") ? ` — inscrit par toi sous « ${esc(H[0].b)} »` : ""}${hn.length ? ` · ${esc(hn.join(" ; "))}` : ""}</td></tr>`; }).join("")}</tbody></table></div></div>`}`; }
 function regPersoBrief(){ const L = regPersoOuverts(); return L.length ? ` Le héros y a inscrit lui-même, sous leur nom de Brume, des pris qu'il n'a pas encore nommés : ${L.map(o=>`« ${o.b} »${o.lieu ? ` (demeure notée : ${o.lieu})` : ""}${o.note ? ` [${o.note}]` : ""}`).join(", ")}. Ce sont ses notes, non des preuves : elles ne valent pas rapprochement et peuvent être fausses ; ne les corrige pas dans le récit.` : ""; }
-function regBrief(){ if(regHas()) return ` Le héros détient le REGISTRE DES PLEURÉS (la page lui en montre le contenu : nom, famille et demeure ; noms de Brume des seuls sauvés).${regHGOuvert() ? " Il y tient aussi un second chapitre, Haut-Givre, où il consigne les pris de Haut-Givre qu'il a croisés (sous leur nom de Brume tant qu'il ne leur a pas rendu le leur) ; ce chapitre ne lui révèle aucun vrai nom." : ""} ${regComplet() ? "Il recense toute la ville (registre du greffier)." : `Il ne porte que les habitants que connaissent le héros et ${(regSrcInit()||{}).de||"Mirelle Aubrac"}, qui le lui a remis ; si le héros le fait compléter par le greffier Odilon Marc, mets "registre":{"complete_par":"Odilon Marc"} : il recensera alors toute la ville.`}${regPersoBrief()}`;
+function regHGCBrief(){ if(partCur()<2 && !regHGOuvert()) return "";
+  if(regHGComplet()) return ` Le chapitre Haut-Givre du registre recense tout le village (complété par ${G.regHGc.par}) : noms, familles et demeures ; il ne dit pas quel nom de Brume porte chaque pris encore sous l'emprise.`;
+  return ` À Haut-Givre, si le héros, à la Chapelle des Cendres (frère Gildas Morel) ou à la Maison du doyen (Aleaume Brisval), demande à l'un d'eux de compléter son registre des pleurés, il le fait de bonne grâce${regHGSurPlace() ? " (le héros y est en ce moment)" : ""} : mets "registre":{"complete_par":"Gildas Morel"} ou {"complete_par":"Aleaume Brisval"} ; la page y recensera alors tout le village, sans dire quel nom de Brume porte chaque pris. Ailleurs qu'en ces deux lieux, ne le fais pas.`; }
+function regBrief(){ if(regHas()) return ` Le héros détient le REGISTRE DES PLEURÉS (la page lui en montre le contenu : nom, famille et demeure ; noms de Brume des seuls sauvés).${regHGOuvert() ? " Il y tient aussi un second chapitre, Haut-Givre, où il consigne les pris de Haut-Givre qu'il a croisés (sous leur nom de Brume tant qu'il ne leur a pas rendu le leur) ; ce chapitre ne lui révèle aucun vrai nom." : ""} ${regComplet() ? "Il recense toute la ville (registre du greffier)." : `Il ne porte que les habitants que connaissent le héros et ${(regSrcInit()||{}).de||"Mirelle Aubrac"}, qui le lui a remis ; si le héros le fait compléter par le greffier Odilon Marc, mets "registre":{"complete_par":"Odilon Marc"} : il recensera alors toute la ville.`}${regPersoBrief()}${regHGCBrief()}`;
   return " OBJET SECRET « Registre des pleurés » : Mirelle le tient au Temple et le greffier Odilon Marc en garde la copie. Ne le remets au héros que si l'histoire le permet : Mirelle ou Marc le lui confie de son plein gré, parce que le héros a gagné sa confiance et a une vraie raison de le consulter ; alors note-le dans effets.ajouter : [\"Registre des pleurés\"] et mets \"registre\":{\"de\":\"nom complet de qui le remet\"}. Ne le propose jamais, ne le suggère dans aucun choix, ne laisse entendre à personne qu'il peut être obtenu."; }
 /* Combat : un mort revenu mis hors de combat meurt une seconde fois, ce qui le libère ; un pris vivant abattu au combat est mort sous l'emprise, compté dès sa chute */
 function prisCombat(L){ (L||[]).filter(e=>e && e.etat==="mort").forEach(e=>{ const x = prisFind(e.nom); if(!x) return;
