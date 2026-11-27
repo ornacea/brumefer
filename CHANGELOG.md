@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.144.0 — 2026-11-27
+- Améliorations : les habitants d'un village du col disparus dans la brume ont désormais une identité fixe, et tous les personnages ont un alignement.
+
 ## 0.143.0 — 2026-11-27
 - Améliorations : carnet, prise de notes sur les personnages rencontrés.
 
