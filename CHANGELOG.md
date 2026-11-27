@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.141.1 — 2026-11-27
+- Corrections et améliorations : un titre infamant ne rapporte plus de prestige.
+
 ## 0.141.0 — 2026-11-27
 - Améliorations : nouvelle fenêtre Réputation qui montre ton prestige et ton infamie à Brumefer, avec les malus en cours.
 
