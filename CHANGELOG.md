@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.9 — 2026-11-27
+- Améliorations : au campement, le compagnon animal doit connaître « Garde ! » pour veiller, et chaque nuit de garde le fatigue.
+
 ## 0.140.8 — 2026-11-27
 - Corrections et améliorations : après l'annulation d'une action, les personnages n'oublient plus ce qu'ils ont vécu avec le héros ; les actions bonnes ne proposent plus d'enfoncer une porte.
 

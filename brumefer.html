@@ -493,7 +493,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.8</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.9</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -909,6 +909,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.140.9","d":"2026-11-27","items":["Améliorations : au campement, le compagnon animal doit connaître « Garde ! » pour veiller, et chaque nuit de garde le fatigue."]},
 {"v":"0.140.8","d":"2026-11-27","items":["Corrections et améliorations : après l'annulation d'une action, les personnages n'oublient plus ce qu'ils ont vécu avec le héros ; les actions bonnes ne proposent plus d'enfoncer une porte."]},
 {"v":"0.140.7","d":"2026-11-27","items":["Corrections et améliorations : une blessure ancienne ne gêne plus tous les jets, les actions proposées ne répètent plus ce que le héros vient de faire."]},
 {"v":"0.140.6","d":"2026-11-27","items":["Corrections et améliorations : le récit accorde toujours le héros selon le genre choisi."]},
@@ -5370,11 +5371,11 @@ function invView(){
   return t; }
 function acInfoSafe(){ try { return G.hero.ca || null; } catch(e){ return null; } }
 function recoverSlots(budget){ let t = ""; for(const k of slotLevels().reverse()){ if(k>=6 || G.slots[k].arc) continue; while(budget>=k && G.slots[k].val<G.slots[k].max){ G.slots[k].val++; budget -= k; t += ` +1 emplacement niv. ${k}`; } } return t; }
-function rest(kind){ compRest(kind); try{ allyRest(kind); }catch(e){}
+function rest(kind){ const camp = kind==="long" && campOk() ? {f:campFeu(), g:campGarde(), c:compGuard()} : null;
+  if(camp) logJ("sys", `🔥 Tu allumes un feu de camp (${esc(camp.f)}) ; ${esc(camp.g==="ton familier" ? "ton familier" : camp.g)} monte la garde pendant ton sommeil.`);
+  compRest(kind, !!(camp && camp.c)); try{ allyRest(kind); }catch(e){}
   const c = cls(), L = G.niveau; G.repas = false; clockAdd(kind==="long" ? 480 : 60); if(kind==="long") G.lastLong = G.clock; G._restAt = G.clock; G._restMin = kind==="long" ? 480 : 60; compLeave();
-  const camp = kind==="long" && campOk() ? {f:campFeu(), g:campGarde()} : null;
   if(kind==="long"){
-    if(camp) logJ("sys", `🔥 Tu allumes un feu de camp (${esc(camp.f)}) ; ${esc(camp.g==="ton familier" ? "ton familier" : camp.g)} monte la garde pendant ton sommeil.`);
     if(G.aide){ G.pvmax -= G.aide; G.aide = 0; }
     G.pv = G.pvmax; G.pvtemp = 0; G.dv = Math.min(L, (G.dv||0) + Math.max(1, Math.floor(L/2))); G.conc = null;
     for(const k in G.res) G.res[k].val = G.res[k].max; for(const k in G.slots){ G.slots[k].val = G.slots[k].max; if(G.slots[k].pmax!=null) G.slots[k].p = G.slots[k].pmax; }
@@ -6234,7 +6235,9 @@ function enVoyage(){ return !!G.terrain && G.terrain!=="ville"; }
 function campFeu(){ const it = (G.inv||[]).find(x=>/amadou|briquet|silex|pierre a feu|allume.feu/.test(norm(x))); if(it) return String(it).replace(/^\d+\s+/,"");
   let sp = []; try{ sp = allSpells(); }catch(e){} const s = CAMP_FEU_SP.find(n=>sp.includes(n)); return s ? "sort " + s : ""; }
 function campFam(){ let sp = []; try{ sp = allSpells(); }catch(e){} return sp.includes("Appel de familier") || ((G.build||{}).pacte==="Chaîne"); }
-function campGarde(){ try{ if(compAble()) return G.compagnon.nom; }catch(e){} try{ const a = allyList().find(a=>allySt(a) && a.pv>0); if(a) return a.nom; }catch(e){} return campFam() ? "ton familier" : ""; }
+/* le compagnon animal ne monte la garde qu'une fois « Garde ! » appris (dressage 2) */
+function compGuard(){ try{ return compAble() && (G.compagnon.dress||0)>=2; }catch(e){ return false; } }
+function campGarde(){ if(compGuard()) return G.compagnon.nom; try{ const a = allyList().find(a=>allySt(a) && a.pv>0); if(a) return a.nom; }catch(e){} return campFam() ? "ton familier" : ""; }
 function campOk(){ return !!G && !G.combat && enVoyage() && !!campFeu() && !!campGarde(); }
 function reposCamp(){ if(!campOk() || !(G.reposOk||[]).includes("court") || G.reposOk.includes("long")) return false; G.reposOk = ["court","long"]; return true; }
 function campBrief(){ if(!enVoyage()) return ""; const f = campFeu(), g = campGarde(); return f && g ? `CAMP : en voyage, le héros peut faire un feu (${f}) et ${g==="ton familier" ? "son familier" : g} peut monter la garde ; un lieu seulement exposé (["court"]) permet alors le repos long, que la page accorde.` : ""; }
@@ -6672,7 +6675,7 @@ const ATT_TXT = {affame:["La bête a faim et te voit comme une proie","Les bête
   craintif:["La bête a peur, prête à détaler","Les bêtes ont peur, prêtes à détaler"],
   curieux:["La bête est curieuse et s'approche prudemment","Les bêtes sont curieuses et s'approchent prudemment"]};
 const ATT_N = {affame:"faim", territorial:"territoire", mefiant:"méfiance", craintif:"peur", curieux:"curiosité"};
-const TRICKS = [{n:"Attaque !", d:"il combat à tes côtés."}, {n:"Garde !", d:"il veille : aucune bête ne te surprend plus, même au repos."}, {n:"Cherche !", d:"il chasse : une ration de plus à chaque repos long hors des villes."}];
+const TRICKS = [{n:"Attaque !", d:"il combat à tes côtés."}, {n:"Garde !", d:"il veille : aucune bête ne te surprend plus, même au repos, et il peut monter la garde au campement (chaque nuit de garde le fatigue)."}, {n:"Cherche !", d:"il chasse : une ration de plus à chaque repos long hors des villes."}];
 const TRAVEL_RE = /\b(march\w*|voyag\w*|explor\w*|chass\w*|travers\w*|pist\w*|avanc\w*|suis|suit|suivre|descend\w*|grimp\w*|cherch\w*|fouill\w*|cueill\w*|foret|bois|sentier|montagne|marais|camp\w*|bivouac\w*|coupe[rz]? a travers)\b/;
 let compRelArmed = false;
 const rUc = s => String(s).charAt(0).toUpperCase() + String(s).slice(1);
@@ -6865,9 +6868,13 @@ function compHit(e){ const p = G.compagnon, r = 1+rand(20), tot = r + e.att, cri
   clog(t); }
 function compCombatCard(){ const p = G.compagnon; if(!p) return "";
   return `<div class="comp-c">🐾 <b>${esc(p.nom)}</b> ${p.pv}/${p.pvmax} PV · <small>${p.pv<=0 ? "hors de combat" : (p.dress||0)>=1 ? "attaque ta cible à la fin de ton tour" : "reste à l'écart (pas encore dressé au combat)"}</small></div>`; }
-function compRest(kind){ const p = G.compagnon; if(!p) return;
+function compRest(kind, garde){ const p = G.compagnon; if(!p) return;
   if(p.monte){ p.monte = false; }
-  if(kind==="long"){ p.pv = p.pvmax; p.train = true; p.fat = 0; if((p.dress||0)>=3 && G.terrain!=="ville"){ addRation(); logJ("sys", `${esc(p.nom)} revient de la chasse avec de quoi manger : +1 ration.`); }
+  if(kind==="long"){ p.pv = p.pvmax; p.train = true;
+    /* une nuit de garde au campement : il ne récupère que la moitié de sa fatigue, et veiller lui en coûte 2 */
+    if(garde){ const was = compState(p).fat; p.fat = Math.round(((p.fat||0)/2 + 2)*10)/10; const st = compState(p).fat;
+      logJ("sys", `🐾 ${esc(p.nom)} a veillé toute la nuit : fatigue ${Math.round(p.fat)}/10${st>=2 ? " — épuisé, il ne pourra plus monter la garde ni combattre avant une vraie nuit de repos" : st>=1 ? " — fatigué (−2 à l'attaque), une nuit sans garde lui ferait du bien" : was ? " — il est de nouveau reposé" : ""}.`); }
+    else p.fat = 0; if((p.dress||0)>=3 && G.terrain!=="ville"){ addRation(); logJ("sys", `${esc(p.nom)} revient de la chasse avec de quoi manger : +1 ration.`); }
     if(G.clock!=null && compHours(p) >= 8) compFeed(true); compLeave(); }
   else { p.pv = Math.min(p.pvmax, Math.max(0, p.pv) + Math.ceil(p.pvmax/4)); p.fat = Math.max(0, (p.fat||0) - 3); } }
 function compTrain(){ const p = G.compagnon; if(!p || !p.train || (p.dress||0)>=3 || busy || G.combat || p.pv<=0 || G.statut!=="ok" || compState(p).faim>=1 || compState(p).fat>=2) return;
