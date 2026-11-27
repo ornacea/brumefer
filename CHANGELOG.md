@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.1 — 2026-11-27
+- Corrections et améliorations : le maître du jeu ne relance plus une poursuite déjà perdue, les actions proposées n'utilisent plus d'objet que le héros n'a pas, moins de paragraphes répétés dans le récit.
+
 ## 0.140.0 — 2026-11-27
 - Corrections et améliorations : armure affichée portée dès le début, rencontres avec un choix recommandé selon l'alignement, plus de repos court proposé en pleine tension, personnalité tirée au sort cohérente avec l'alignement, annonces d'enlèvement plus plausibles, plus de rencontre en pleine scène critique.
 
