@@ -498,7 +498,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.147.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.148.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -914,6 +914,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.148.0","d":"2026-11-27","items":["Améliorations : carnet, registre des personnages."]},
 {"v":"0.147.0","d":"2026-11-27","items":["Améliorations : carnet, fiches de personnages fusionnées."]},
 {"v":"0.146.1","d":"2026-11-27","items":["Corrections et améliorations : une menace ne compte plus comme un coup fatal, et les actions proposées après un combat sont écrites à la première personne."]},
 {"v":"0.146.0","d":"2026-11-27","items":["Améliorations : carnet, prise de notes à Haut-Givre."]},
@@ -4309,14 +4310,17 @@ function regRows(){ const P = prisG(), seen = {}, out = [], K = regInscrits(), N
   /* en tête les pleurés vivants, puis les morts, puis les autres ; par famille dans chaque groupe */
   const grp = o => !o.x || o.x.e==="sauve" ? 2 : (o.x.m || o.x.e==="perdu" || o.x.e==="libere") ? 1 : 0;
   return out.sort((a,b)=>(grp(a)-grp(b)) || fk(a).localeCompare(fk(b)) || norm(a.nom).localeCompare(norm(b.nom))); }
+/* Nom de Brume que le héros connaît pour ce pris : dès qu'il l'a identifié (rendu à son nom, rapprochement fait), quel que soit son sort */
+function regBrumeNom(x){ if(!x || !x.b) return ""; return x.e==="sauve" || prisDn(x)!==x.b ? x.b : ""; }
+const regFut = x => { const b = regBrumeNom(x); return b ? ` — fut « ${esc(b)} » sous la Brume` : ""; };
 function regEtat(x){ if(!x) return "";
-  const idf = prisDn(x)!==(x.b||x.nom) || x.e==="sauve";
-  if(x.e==="sauve") return `rendu à son nom${x.b ? ` — fut « ${esc(x.b)} » sous la Brume` : ""}`;
-  if(x.e==="perdu") return idf ? "mort sous l'emprise de la Brume" : "pleuré, mort";
-  if(x.e==="libere") return idf ? "mort, libéré de la Brume" : "pleuré, mort";
-  if(x.e==="lie") return idf || (G.notes && G.notes.pnj && G.notes.pnj[nk(x.nom)]) ? "mort revenu, encore lié à la Brume : seule une seconde mort le délivrera" : "pleuré, mort";
+  const idf = prisDn(x)!==(x.b||x.nom) || x.e==="sauve", fut = regFut(x);
+  if(x.e==="sauve") return `rendu à son nom${fut}`;
+  if(x.e==="perdu") return idf ? `mort sous l'emprise de la Brume${fut}` : "pleuré, mort";
+  if(x.e==="libere") return idf ? `mort, libéré de la Brume${fut}` : "pleuré, mort";
+  if(x.e==="lie") return idf || (G.notes && G.notes.pnj && G.notes.pnj[nk(x.nom)]) ? `mort revenu, encore lié à la Brume : seule une seconde mort le délivrera${fut}` : "pleuré, mort";
   if(prisRepB(x)) return `pleuré — repris par la Brume, de nouveau « ${esc(x.b)} »`;
-  return "pleuré"; }
+  return idf && fut ? `pleuré — encore sous l'emprise de la Brume, sous le nom de « ${esc(x.b)} »` : "pleuré"; }
 /* morts (morts revenus, morts sous l'emprise, libérés) : obèles et italique ; pleurés vivants : gras italique ; rendus à leur nom : écriture normale */
 function regCls(x){ if(!x || x.e==="sauve") return ""; return x.m || x.e==="perdu" || x.e==="libere" ? ' class="regmort"' : ' class="regpl"'; }
 /* Inscriptions du héros : un pris croisé sous son nom de Brume, avec ce qu'il sait de sa demeure, en attendant son vrai nom et sa famille.
@@ -4355,8 +4359,8 @@ function regHGRows(){ const N = (G.notes||{}).pnj||{}, out = [];
   const grp = o => o.x.e==="sauve" ? 2 : o.x.e==="perdu" ? 1 : 0;
   return out.sort((a,b)=>(grp(a)-grp(b)) || norm(a.nm ? a.nom : a.b).localeCompare(norm(b.nm ? b.nom : b.b))); }
 function regHGEtat(o){ const x = o.x;
-  if(x.e==="sauve") return `rendu à son nom${x.b ? ` — fut « ${esc(x.b)} » sous la Brume` : ""}`;
-  if(x.e==="perdu") return "mort sous l'emprise de la Brume";
+  if(x.e==="sauve") return `rendu à son nom${regFut(x)}`;
+  if(x.e==="perdu") return `mort sous l'emprise de la Brume${o.nm ? regFut(x) : ""}`;
   return x.hag ? "libéré du fil, nom à retrouver" : "pleuré — encore sous l'emprise de la Brume"; }
 function regChapTabs(){ if(!regHGOuvert()) return ""; const c = regChapCur(), nb = prisCount(), nh = prisCountHG();
   const T = [["bf", "Brumefer", nb.zz], ["hg", "Haut-Givre", nh.pris - nh.hag]];
@@ -4368,11 +4372,11 @@ const REG_HG_PAR = [["Gildas Morel", /gildas|\bfrere\b|chapelle/], ["Aleaume Bri
 const regHGLieux = () => { const m = ATLAS.find(m=>m.id==="hautgivre"); return m ? m.L.map(l=>l[0]) : []; };
 const regHGComplet = () => !!(G && G.regHGc);
 const regHGSurPlace = () => REG_HG_LIEUX.some(l=>nk(l)===nk(G.lieu||""));
-function regHGCompleter(q){ if(!G || !regHas()) return false; const t = norm(String(q||"")); if(!t) return false;
+function regHGCompleter(q, vu){ if(!G || !regHas()) return false; const t = norm(String(q||"")); if(!t) return false;
   const par = (REG_HG_PAR.find(([n, re])=>nk(n)===nk(t) || re.test(t))||[])[0]; if(!par) return false;
   if(regHGComplet()) return true;
   /* sur place seulement, et jamais par un pris encore sous l'emprise */
-  const x = prisHGG()[nk(par)]; if(!regHGSurPlace() || (x && x.e!=="sauve")) return true;
+  const x = prisHGG()[nk(par)]; if(!(vu || regHGSurPlace() || regHGLieux().some(l=>nk(l)===nk(G.lieu||""))) || (x && x.e!=="sauve")) return true;
   G.regHGc = {par, d:gDate()}; G.regHG = 1; G.regMaj = gDate(); regChap = "hg";
   logJ("sys", `📜 ${esc(par)} a complété ton registre des pleurés : tout Haut-Givre y est désormais recensé.`); return true; }
 /* habitants de Haut-Givre : la table des PNJ (les dix pris) et les notables du village */
@@ -4382,12 +4386,21 @@ function regHGHabitants(){ const L = new Set(regHGLieux().map(nk)), out = [], se
     out.push({nom:r[0], fam:r[0].split(" ").slice(-1)[0], rel:r[1]||"", lieu:r[2]||""}); });
   return out; }
 const regIsHGHab = nom => regHGHabitants().some(o=>nk(o.nom)===nk(nom));
-function regHGEtatC(x){ if(!x) return ""; if(x.e==="sauve") return `rendu à son nom${x.b ? ` — fut « ${esc(x.b)} » sous la Brume` : ""}`;
-  if(x.e==="perdu") return pnjIdent(pnjReg(x.nom)) ? "mort sous l'emprise de la Brume" : "pleuré, mort";
+function regHGEtatC(x){ if(!x) return ""; if(x.e==="sauve") return `rendu à son nom${regFut(x)}`;
+  if(x.e==="perdu") return pnjIdent(pnjReg(x.nom)) ? `mort sous l'emprise de la Brume${regFut(x)}` : "pleuré, mort";
   return x.hag ? "pleuré — libéré du fil, nom à retrouver" : "pleuré"; }
 function regHGRowsC(){ const P = prisHGG(), fk = o => norm(o.fam || o.nom.split(" ").slice(-1)[0]);
   const grp = o => !o.x || o.x.e==="sauve" ? 2 : o.x.e==="perdu" ? 1 : 0;
   return regHGHabitants().map(o=>Object.assign(o, {x:P[nk(o.nom)]})).sort((a,b)=>(grp(a)-grp(b)) || fk(a).localeCompare(fk(b)) || norm(a.nom).localeCompare(norm(b.nom))); }
+/* Le récit montre frère Gildas (ou le doyen) recopier la liste de Haut-Givre au registre ou au carnet du héros : la page complète le chapitre d'elle-même */
+const REG_HG_COPIE = /\b(re)?copi|\btranscri|\breport|\binscri|\bdress\w* la liste|\bcomplet|\bajout\w* (les|tous les|la liste)/;
+const REG_HG_OBJ = /\bliste\b|\bregistre\b|\bcarnet\b|\bnoms\b|\bhabitants\b|\bpleur/;
+function regHGScan(narr){ if(!G || !narr || regHGComplet() || !regHas()) return false;
+  const P = String(narr).split(/(?<=[.!?…»])\s+|\n+/);
+  for(const ph of P){ const t = norm(ph); if(!REG_HG_COPIE.test(t) || !REG_HG_OBJ.test(t) || !/haut givre|haut-givre|village|du col|\bgildas|\bdoyen|\baleaume/.test(t)) continue;
+    const par = /\bgildas\b|\bfrere morel\b/.test(t) ? "Gildas Morel" : /\baleaume\b|\bdoyen\b/.test(t) ? "Aleaume Brisval" : /\bjehan\b/.test(t) ? "Jehan Morel" : /\bgaubert\b/.test(t) ? "Gaubert Brisval" : "";
+    if(par && regHGCompleter(par, true) && regHGComplet()) return true; }
+  return false; }
 function regHGTableC(){ const U = regHGRows().filter(o=>!o.nm && o.x.e==="pris");
   return `${U.map(o=>`<tr class="regpl"><td>« ${esc(o.b)} »</td><td><i>à retrouver</i></td><td>${(()=>{ const hl = regPersoDe(o.nom).map(h=>h.lieu).filter(Boolean); return hl.length ? `<i>noté : ${esc(hl.join(" ; "))}</i>` : "<i>Haut-Givre ?</i>"; })()}</td><td>${regHGEtat(o)} <small class="lede">(croisé par toi)</small></td></tr>`).join("")}${regHGRowsC().map(o=>{ const H = regPersoDe(o.nom).filter(h=>!U.some(u=>nk(u.nom)===nk(o.nom))), hl = H.map(h=>h.lieu).filter(l=>l && nk(l)!==nk(o.lieu)), hn = H.map(h=>h.note).filter(Boolean), mort = o.x && o.x.e==="perdu";
       return `<tr${regCls(o.x)}><td>${mort ? `† ${esc(o.nom)} †` : esc(o.nom)}</td><td>${esc([o.fam, o.rel].filter(Boolean).join(" — "))}</td><td>${esc(o.lieu)}${hl.length ? `${o.lieu ? " · " : ""}<i>noté : ${esc(hl.join(" ; "))}</i>` : ""}</td><td>${regHGEtatC(o.x)}${H.length && !(o.x && o.x.e==="sauve") ? ` — inscrit par toi sous « ${esc(H[0].b)} »` : ""}${hn.length ? ` · ${esc(hn.join(" ; "))}` : ""}</td></tr>`; }).join("")}`; }
@@ -4405,7 +4418,7 @@ function regModal(){ if(!regOpen) return ""; if(!regHas()){ regOpen = false; ret
 function regPersoBrief(){ const L = regPersoOuverts(); return L.length ? ` Le héros y a inscrit lui-même, sous leur nom de Brume, des pris qu'il n'a pas encore nommés : ${L.map(o=>`« ${o.b} »${o.lieu ? ` (demeure notée : ${o.lieu})` : ""}${o.note ? ` [${o.note}]` : ""}`).join(", ")}. Ce sont ses notes, non des preuves : elles ne valent pas rapprochement et peuvent être fausses ; ne les corrige pas dans le récit.` : ""; }
 function regHGCBrief(){ if(partCur()<2 && !regHGOuvert()) return "";
   if(regHGComplet()) return ` Le chapitre Haut-Givre du registre recense tout le village (complété par ${G.regHGc.par}) : noms, familles et demeures ; il ne dit pas quel nom de Brume porte chaque pris encore sous l'emprise.`;
-  return ` À Haut-Givre, si le héros, à la Chapelle des Cendres (frère Gildas Morel) ou à la Maison du doyen (Aleaume Brisval), demande à l'un d'eux de compléter son registre des pleurés, il le fait de bonne grâce${regHGSurPlace() ? " (le héros y est en ce moment)" : ""} : mets "registre":{"complete_par":"Gildas Morel"} ou {"complete_par":"Aleaume Brisval"} ; la page y recensera alors tout le village, sans dire quel nom de Brume porte chaque pris. Ailleurs qu'en ces deux lieux, ne le fais pas.`; }
+  return ` À Haut-Givre, si le héros, à la Chapelle des Cendres (frère Gildas Morel) ou à la Maison du doyen (Aleaume Brisval), demande à l'un d'eux de compléter son registre des pleurés, il le fait de bonne grâce${regHGSurPlace() ? " (le héros y est en ce moment)" : ""} : mets "registre":{"complete_par":"Gildas Morel"} ou {"complete_par":"Aleaume Brisval"} ; la page y recensera alors tout le village, sans dire quel nom de Brume porte chaque pris (elle le fait aussi d'elle-même si ton récit montre l'un d'eux recopier la liste). Hors de Haut-Givre, ne le fais pas.`; }
 function regBrief(){ if(regHas()) return ` Le héros détient le REGISTRE DES PLEURÉS (la page lui en montre le contenu : nom, famille et demeure ; noms de Brume des seuls sauvés).${regHGOuvert() ? " Il y tient aussi un second chapitre, Haut-Givre, où il consigne les pris de Haut-Givre qu'il a croisés (sous leur nom de Brume tant qu'il ne leur a pas rendu le leur) ; ce chapitre ne lui révèle aucun vrai nom." : ""} ${regComplet() ? "Il recense toute la ville (registre du greffier)." : `Il ne porte que les habitants que connaissent le héros et ${(regSrcInit()||{}).de||"Mirelle Aubrac"}, qui le lui a remis ; si le héros le fait compléter par le greffier Odilon Marc, mets "registre":{"complete_par":"Odilon Marc"} : il recensera alors toute la ville.`}${regPersoBrief()}${regHGCBrief()}`;
   return " OBJET SECRET « Registre des pleurés » : Mirelle le tient au Temple et le greffier Odilon Marc en garde la copie. Ne le remets au héros que si l'histoire le permet : Mirelle ou Marc le lui confie de son plein gré, parce que le héros a gagné sa confiance et a une vraie raison de le consulter ; alors note-le dans effets.ajouter : [\"Registre des pleurés\"] et mets \"registre\":{\"de\":\"nom complet de qui le remet\"}. Ne le propose jamais, ne le suggère dans aucun choix, ne laisse entendre à personne qu'il peut être obtenu."; }
 /* Combat : un mort revenu mis hors de combat meurt une seconde fois, ce qui le libère ; un pris vivant abattu au combat est mort sous l'emprise, compté dès sa chute */
@@ -4622,7 +4635,9 @@ function prisBUnique(b, self){ b = String(b||"").trim() || "Le Pris sans nom"; i
   const R = ["II","III","IV","V","VI","VII","VIII","IX","X"]; for(const s of R){ if(prisBLibre(b + " " + s, self)) return b + " " + s; } return b + " " + Date.now().toString(36); }
 /* fiche cible d'un pris : son vrai nom s'il est identifié (ou si le texte d'une fiche le relie à sa fiche civile) ; sinon la fiche la plus récente
    tenue sous l'un de ses noms de Brume, à défaut son nom de Brume principal */
-function prisCarnetFuse(){ if(!G || !G.notes || !G.notes.pnj) return 0; const P = G.notes.pnj, grp = {}; let n = 0;
+function prisBIdent(){ const I = (G.notes||{}).ident||{}; prisTous().forEach(x=>{ const id = I[nk(x.nom)]; if(!id || nk(id)===nk(x.b)) return; const r = pnjMask(id); if(!r || nk(r[0])!==nk(x.nom)) return;
+    const b = pnjMasks(r).find(m=>nk(m)===nk(id)) || pnjMaskNew(id) || String(id); if(nk(b)!==nk(x.b) && prisBLibre(b, x)) x.b = b; }); }
+function prisCarnetFuse(){ if(!G || !G.notes || !G.notes.pnj) return 0; try{ prisBIdent(); }catch(e){} const P = G.notes.pnj, grp = {}; let n = 0;
   Object.keys(P).forEach(k=>{ const o = P[k]; if(!o) return; const x = prisDeFiche(o); if(!x) return; const g = grp[nk(x.nom)] = grp[nk(x.nom)] || {x, ks:[], lien:0}; g.ks.push(k); if(x.lien) g.lien = 1; });
   Object.values(grp).forEach(({x, ks, lien})=>{ const dn = prisDn(x), M = pnjMasks(pnjReg(x.nom)).concat([x.b]).map(nk);
     let cible = dn!==x.b ? dn : lien && P[nk(x.nom)] ? x.nom : null;
@@ -6709,6 +6724,7 @@ function applyMeta(m, said){
   if(m.partie_terminee===true && !G.campFin){ const r = ACT_P[partCur()-1]; if(r){ G.actes = G.actes || {}; if(!(G.actes[r[1]] && G.actes[r[1]].e==="fait")){ G.actes[r[1]] = {e:"fait", d:actDate()}; logJ("sys", `📖 Acte ${r[1]} achevé : ${esc(actLbl(r[1]))}.`); } } partNext(); }
   try{ if(m.lanterne_soeur) lant2Meta(m.lanterne_soeur); }catch(e){ console.error(e); }
   try{ regMeta(m.registre); }catch(e){ console.error(e); }
+  try{ regHGScan(m._narr); }catch(e){ console.error(e); }
   try{ if(m.lanterne_brisee===true){ if(lantLieu()) lanterneBrisee(""); else lantRefus(); } }catch(e){ console.error(e); }
   try{ prisMeta(m); prisKill(m, said); notMeta(m); allyMeta(m); notAgrSaid(said); notKillSaid(m, said); }catch(e){ console.error(e); }
   try{ tcMeta(m); }catch(e){ console.error(e); }

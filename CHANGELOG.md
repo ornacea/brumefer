@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.148.0 — 2026-11-27
+- Améliorations : carnet, registre des personnages.
+
 ## 0.147.0 — 2026-11-27
 - Améliorations : carnet, fiches de personnages fusionnées.
 
