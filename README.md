@@ -1,6 +1,6 @@
 # Ironhaze's Curse
 
-A **solo** tabletop role-playing game set in a dark fantasy world, using the 5th edition rules (SRD 5.1, with firearms and crafting from the SRD 5.2.1). The player creates a hero, then **Claude acts as the game master**: it tells the story, plays the characters and rules on the player's actions. The page itself keeps the rules: dice rolls, combat, inventory, money, the passage of time and maps.
+A **solo** tabletop role-playing game set in a dark fantasy world, using the 5th edition rules (SRD 5.2.1, with some SRD 5.1 material). The player creates a hero, then **Claude acts as the game master**: it tells the story, plays the characters and rules on the player's actions. The page itself keeps the rules: dice rolls, combat, inventory, money, the passage of time and maps.
 
 The whole game is a single file, `brumefer.html`, published as a Claude artifact.
 
@@ -14,7 +14,7 @@ A long campaign takes the hero from level 1 to level 40. The player makes their 
 
 ## What the game does
 
-- **Hero creation**: peoples, classes, backgrounds, ability scores, multiclassing, spells, and starting or purchased equipment, following the SRD 5.1.
+- **Hero creation**: peoples, classes, backgrounds, ability scores, multiclassing, spells, and starting or purchased equipment, following the SRD 5.2.1.
 - **Claude as game master**: narration, dialogue, checks asked for at the right moment. Each turn, it receives the exact state of the game and must respect it:
   - the hero (HP, AC, load, companion) and the quests, with their completion conditions;
   - the current part and acts of the campaign;

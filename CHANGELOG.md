@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.139.3 — 2026-11-27
+- Corrections et améliorations : les règles de référence affichées passent à la SRD 5.2
+
 ## 0.139.2 — 2026-11-27
 - Corrections et améliorations : texte d'introduction de l'écran du peuple mis à jour pour la règle 5.2
 
