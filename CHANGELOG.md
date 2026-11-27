@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.138.0 — 2026-11-27
+- Améliorations : en voyage, un feu de camp et un compagnon qui monte la garde (compagnon animal, allié ou familier) permettent le repos long.
+
 ## 0.137.0 — 2026-11-27
 - Améliorations : faveurs épiques de la règle 5.2 au niveau 19, avec sept pouvoirs et une caractéristique pouvant monter jusqu'à 30.
 

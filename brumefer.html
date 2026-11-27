@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.137.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.138.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.138.0","d":"2026-11-27","items":["Améliorations : en voyage, un feu de camp et un compagnon qui monte la garde (compagnon animal, allié ou familier) permettent le repos long."]},
 {"v":"0.137.0","d":"2026-11-27","items":["Améliorations : faveurs épiques de la règle 5.2 au niveau 19, avec sept pouvoirs et une caractéristique pouvant monter jusqu'à 30."]},
 {"v":"0.136.0","d":"2026-11-26","items":["Améliorations : action Influencer de la règle 5.2 (Persuasion, Tromperie, Intimidation, Représentation, Dressage), avec DD selon l'intelligence de la cible, attitude et refus de 24 h après un échec."]},
 {"v":"0.135.0","d":"2026-11-26","items":["Améliorations : maîtrise des armes de la règle 5.2 pour tous les héros, avec huit propriétés d'arme en combat, choisies à la forge et modifiables après un repos long."]},
@@ -5346,7 +5347,9 @@ function acInfoSafe(){ try { return G.hero.ca || null; } catch(e){ return null; 
 function recoverSlots(budget){ let t = ""; for(const k of slotLevels().reverse()){ if(k>=6 || G.slots[k].arc) continue; while(budget>=k && G.slots[k].val<G.slots[k].max){ G.slots[k].val++; budget -= k; t += ` +1 emplacement niv. ${k}`; } } return t; }
 function rest(kind){ compRest(kind); try{ allyRest(kind); }catch(e){}
   const c = cls(), L = G.niveau; G.repas = false; clockAdd(kind==="long" ? 480 : 60); if(kind==="long") G.lastLong = G.clock; G._restAt = G.clock; G._restMin = kind==="long" ? 480 : 60; compLeave();
+  const camp = kind==="long" && campOk() ? {f:campFeu(), g:campGarde()} : null;
   if(kind==="long"){
+    if(camp) logJ("sys", `🔥 Tu allumes un feu de camp (${esc(camp.f)}) ; ${esc(camp.g==="ton familier" ? "ton familier" : camp.g)} monte la garde pendant ton sommeil.`);
     if(G.aide){ G.pvmax -= G.aide; G.aide = 0; }
     G.pv = G.pvmax; G.pvtemp = 0; G.dv = Math.min(L, (G.dv||0) + Math.max(1, Math.floor(L/2))); G.conc = null;
     for(const k in G.res) G.res[k].val = G.res[k].max; for(const k in G.slots){ G.slots[k].val = G.slots[k].max; if(G.slots[k].pmax!=null) G.slots[k].p = G.slots[k].pmax; }
@@ -5391,7 +5394,7 @@ DÉS. Tu ne lances JAMAIS de dés et n'inventes aucun résultat : la page lance 
 ⟦COMBAT⟧COMBAT. Quand un combat éclate, décris l'ouverture et mets les adversaires dans "combat" : la page gère initiative, attaques, sorts, capacités et dégâts, prend les statistiques du BESTIAIRE pour les créatures connues et applique le budget de rencontre. Laisse toujours une issue autre que le combat (parler, fuir, ruser).⟦/COMBAT⟧
 EFFETS. Piège, chute ou poison hors combat : formule de dés dans "effets.degats" (ex. "1d6"), idem "soins" ; la page lance. XP pour les étapes importantes et les problèmes résolus sans combat : 25 à 100 × niveau du héros (la page compte l'XP des combats). MONNAIE : 1 po = 100 pa = 10 000 pc ; l'or est rare. Gains et dépenses dans "effets.monnaie" ({"po","pa","pc"}, négatifs pour payer), jamais dans "ajouter" ; achat hors boutique : monnaie négative et "ajouter" l'objet ; bourse insuffisante : refus. Prix : chope 5 pc, repas 30 pc, nuit à l'auberge 2 pa, torche 10 pc, corde 50 pc, ration 50 pc, dague 20 pa, épée longue 1 po 50 pa, potion de soins 50 po. La page plafonne l'XP, l'argent et les objets magiques selon le niveau.
 INVENTAIRE. La page recalcule CA et attaques depuis l'inventaire : toute arme, armure, bouclier ou munition gagnée, perdue, vendue, cassée, donnée ou confiée à quelqu'un (même pour la garder, l'exposer ou la bénir) va TOUJOURS dans "effets.ajouter" / "effets.retirer" avec son nom usuel ("Épée longue", "Cotte de mailles", "Bouclier", "20 flèches"). Potions et rations utilisées via les boutons de la page : ne les retire pas ; ration mangée dans le récit : retire "1 ration". ARGENT : une somme déjà versée (voir l'échange précédent) ne se verse jamais une seconde fois quand le héros prend la bourse ou remercie : "monnaie" à 0. POIDS : un objet lourd hors du commun (coffre, corps, butin, statue) se note avec son poids dans "ajouter" : « Coffre de fer (40 kg) » ; la page refuse ce que le héros ne peut pas porter. QUANTITÉS : quand le héros donne, rend, vend ou perd plusieurs exemplaires, retire-les TOUS, avec leur nombre (« 3 Lanterne consacrée ») ou en répétant l'objet ; jamais un seul pour plusieurs. Si le héros dépose, remet ou se fait confisquer ses armes, mets "armes":"deposer" (et "armes_lieu" : où elles sont gardées) ; s'il les perd pour de bon, "armes":"perdre" ; quand il les récupère, "armes":"reprendre". La page retire ou rend alors TOUTES ses armes et munitions, javelines et dagues comprises : ne les liste pas dans "ajouter"/"retirer". Désarmé, il se bat à mains nues.
-REPOS. Repos voulu et possible ici : "repos":"court" (1 h) ou "long" (8 h, un seul par 24 h), sinon interromps-le ; la page avance l'heure. Hors combat, "repos_ok" : ["court","long"] en lieu sûr, ["court"] au calme mais exposé, [] en cas de danger ou d'urgence. À Brumefer, le repos long n'est possible qu'à la Lanterne Sourde (la taverne), dans un sanctuaire de la Dame des Cendres ou chez la Bourgmestre : ailleurs dans la ville, au plus ["court"].
+REPOS. Repos voulu et possible ici : "repos":"court" (1 h) ou "long" (8 h, un seul par 24 h), sinon interromps-le ; la page avance l'heure. Hors combat, "repos_ok" : ["court","long"] en lieu sûr, ["court"] au calme mais exposé, [] en cas de danger ou d'urgence. À Brumefer, le repos long n'est possible qu'à la Lanterne Sourde (la taverne), dans un sanctuaire de la Dame des Cendres ou chez la Bourgmestre : ailleurs dans la ville, au plus ["court"]. En voyage (hors ville), un feu de camp et un compagnon qui monte la garde (compagnon animal, allié ou familier) suffisent au repos long dans un lieu seulement exposé.
 TEMPS. "temps" à chaque réponse : {"date":"ex. 14 des Brumes","heure":"HH:MM","meteo":"quelques mots"}. Pars de l'heure et de la date données dans TEMPS et fais-les avancer selon ce que tu racontes (conversation : quelques minutes ; traverser la ville : 1 h ; voyage : des heures ou des jours), jamais reculer ; date suivante après minuit. Calendrier : 12 mois de 30 jours, dans l'ordre ${MOIS.join(", ")} (hiver : Longues Nuits à Neiges ; printemps : Dégels à Floraisons ; été : Verdures à Moissons ; automne : Vendanges à Feuilles mortes) ; écris la date sous la forme « 14 des Brumes ». La page tient le calendrier : si ton récit fait passer plusieurs jours, donne la nouvelle date ou "ellipse_jours". "meteo" décrit le temps qu'il fait À CET INSTANT, tel que ton récit le montre : si la narration fait tomber la pluie, se lever le vent ou se dissiper la brume, "meteo" le dit dans la même réponse ; elle reste plausible pour la saison et le lieu, et évolue au fil des heures (la brume monte chaque soir).
 TERRAIN. "terrain" à chaque réponse : "ville" (agglomération, bâtiment, donjon, souterrain), "route" (route, chemin ou sentier fréquenté), "sauvage" (hors des sentiers battus : forêt, lande, montagne, marais), "profond" (cœur des terres sauvages, loin de tout chemin). La page tire elle-même les rencontres de bêtes sauvages hors des sentiers : n'en invente pas d'autres sans raison. Un compagnon animal (voir HÉROS) existe dans le récit (flair, réactions), mais la page gère ses actes en combat, sa faim et sa fatigue ; si le héros est en selle, donne la durée des trajets à pied : la page la raccourcit elle-même.
 LOCALITÉ. "localite" à chaque réponse : {"nom":"Brumefer","taille":"hameau|village|bourg|ville|cite"} dans une agglomération ou à ses portes (tailles fixes : Brumefer bourg, Haut-Givre village, Ostelande ville, Vaelmont et Port-Argence cités ; même taille pour un même lieu), sinon null. La page y ouvre les commerces selon la taille (bazar et forgeron partout ; écurie, herboriste dès le village ; armurier, alchimiste, luthier dès le bourg ; libraire, boutique d'arcanes en ville ; maison des merveilles en cité) : décris-les sans fixer de prix. Quand le héros en découvre un (vu, entendu, chemin indiqué), ajoute "commerces":["forge"] (parmi bazar, forge, ecurie, herbo, armurier, alchimiste, luthier, libraire, arcanes, merveilles ; seulement les nouveaux, jamais tous ceux de la localité d'un coup).
@@ -5437,6 +5440,7 @@ function heroBrief(short, invQ){
     !G.inv.some(isWeaponItem) ? `Le héros n'a aucune arme sur lui : il se bat à mains nues (${((G.hero.attaques||[]).find(a=>/mains nues/i.test(a.n))||{dmg:"1"}).dmg} contondant).` : "",
     domBrief(),
     (()=>{ try{ return compPastBrief(); }catch(e){ return ""; } })(),
+    (()=>{ try{ return campBrief(); }catch(e){ return ""; } })(),
     G.compagnon ? `Compagnon animal : ${G.compagnon.nom} (${G.compagnon.esp.toLowerCase()}), ${G.compagnon.pv}/${G.compagnon.pvmax} PV, ${compTricks()}. Il suit le héros partout.${G.compagnon.nom===G.compagnon.esp ? ` Il n'a PAS de nom : seul le joueur le nomme ; appelle-le « ${rencName({nom:G.compagnon.esp, n:1}, "def")} » et ne lui invente jamais de nom, même si tu lui en as donné un plus tôt.` : ` Son nom est « ${G.compagnon.nom} », choisi par le joueur : n'en utilise jamais d'autre.`}` : "",
     `Langues : ${h.langues}.`,
     `Personnalité : ${[h.perso.trait,h.perso.ideal,h.perso.lien,h.perso.defaut].filter(Boolean).join(" / ")||"à découvrir"}.`
@@ -6168,6 +6172,16 @@ function auPeage(){ const A = (G.atlas||{}), t = norm((G.lieu||"") + " " + ((G.l
 function nuitAuPont(){ if(G.clock==null) return true; const hh = Math.floor((((G.clock%1440)+1440)%1440)/60); return hh >= 18 || hh < 6; }
 function reposPeager(){ if(!G || G.combat || !tcOwn("4C") || !auPeage() || !nuitAuPont()) return false; const p = ogreNote(); if(p && pnjMort(p)) return false;
   if(!(G.reposOk||[]).includes("court") || G.reposOk.includes("long")) return false; G.reposOk = ["court","long"]; return true; }
+/* En voyage (hors ville) : un feu de camp et un compagnon qui monte la garde (bête, allié ou familier) permettent le repos long */
+const CAMP_FEU_SP = ["Produire une flamme","Prestidigitation","Contrôle des flammes","Druidisme"];
+function enVoyage(){ return !!G.terrain && G.terrain!=="ville"; }
+function campFeu(){ const it = (G.inv||[]).find(x=>/amadou|briquet|silex|pierre a feu|allume.feu/.test(norm(x))); if(it) return String(it).replace(/^\d+\s+/,"");
+  let sp = []; try{ sp = allSpells(); }catch(e){} const s = CAMP_FEU_SP.find(n=>sp.includes(n)); return s ? "sort " + s : ""; }
+function campFam(){ let sp = []; try{ sp = allSpells(); }catch(e){} return sp.includes("Appel de familier") || ((G.build||{}).pacte==="Chaîne"); }
+function campGarde(){ try{ if(compAble()) return G.compagnon.nom; }catch(e){} try{ const a = allyList().find(a=>allySt(a) && a.pv>0); if(a) return a.nom; }catch(e){} return campFam() ? "ton familier" : ""; }
+function campOk(){ return !!G && !G.combat && enVoyage() && !!campFeu() && !!campGarde(); }
+function reposCamp(){ if(!campOk() || !(G.reposOk||[]).includes("court") || G.reposOk.includes("long")) return false; G.reposOk = ["court","long"]; return true; }
+function campBrief(){ if(!enVoyage()) return ""; const f = campFeu(), g = campGarde(); return f && g ? `CAMP : en voyage, le héros peut faire un feu (${f}) et ${g==="ton familier" ? "son familier" : g} peut monter la garde ; un lieu seulement exposé (["court"]) permet alors le repos long, que la page accorde.` : ""; }
 const TC_AUTO = {
     /* 4C « Ami du Péager » : Grondin, délivré de la voix, est « ami » au carnet (payer le péage ne change pas la relation) */
     "4C": () => ogreAmi(),
@@ -6405,7 +6419,7 @@ function applyMeta(m, said){
   if(!G.marchand && !shopGuess()) G.haggle = null;
   if(Array.isArray(m.choix)) G.choix = choixNorm(m.choix.concat(typeof m.choix_alignement==="string" ? [{action:m.choix_alignement, alignement:heroAlign()}] : []));
   G.choixAl = "";
-  const reposOk0 = (G.reposOk||[]).slice(); G.reposOk = Array.isArray(m.repos_ok) ? m.repos_ok.filter(x=>x==="court"||x==="long") : []; try{ reposPeager(); }catch(e){ console.error(e); } try{ krakenMeta(m); }catch(e){ console.error(e); }
+  const reposOk0 = (G.reposOk||[]).slice(); G.reposOk = Array.isArray(m.repos_ok) ? m.repos_ok.filter(x=>x==="court"||x==="long") : []; try{ reposPeager(); }catch(e){ console.error(e); } try{ reposCamp(); }catch(e){ console.error(e); } try{ krakenMeta(m); }catch(e){ console.error(e); }
   if(m.lieu && String(m.lieu)!==G.lieu) G.moved = G.nAct||0;
   if(m.lieu) G.lieu = String(m.lieu);
   if(m.quete) G.quete = String(m.quete);
@@ -7570,7 +7584,7 @@ function dock(){
     return `<div class="testbox"><p><b>Jet de ${esc(label)} (${sg(b)})</b> contre DD ${t.dd}${t.mode==="avantage"?", avec avantage":t.mode==="desavantage"?", avec désavantage":""}${t.cause?` (${esc(t.cause)})`:""}<br><span class="lede">${esc(t.raison)}${t.inf ? ` · Influencer ${esc(t.inf.cible)} : DD ${t.dd} (${t.inf.int>15 ? "Intelligence "+t.inf.int : "15 de base"}), attitude ${({amicale:"amicale", indifferente:"indifférente", hostile:"hostile"})[t.inf.att]}` : ""} · chances de réussite : ${Math.round(100*testChance(b, t.dd, t.mode))} %</span></p><button type="button" class="btn primary" data-g="test">Lancer le d20</button></div>`; }
   if(c) return combatDock();
   if(G.rencontre) return rencDock();
-  const restLbl = {court:"Prendre un repos court (1 h)", long:"Prendre un repos long (8 h)"};
+  const restLbl = {court:"Prendre un repos court (1 h)", long:"Prendre un repos long (8 h)"}; try{ if(campOk()) restLbl.long = `Camper : feu et tour de garde, repos long (8 h)`; }catch(e){}
   const al = heroAlign();
   const ch = choixList().map((c,i)=>c.al ? `<button type="button" class="chip chip-al ${c.al===alCanon(al)?"al-mine":""}" style="${alStyle(alCanon(c.al))}" data-g="choix" data-v="${i}" title="${c.al===alCanon(al)?"Action fidèle à ton alignement":"Action d'alignement "+esc(c.al)+", voisin du tien"}"><small>${esc(c.al)}${c.al===alCanon(al)?" · le tien":""}</small>${esc(c.a)}</button>`
       : `<button type="button" class="chip" data-g="choix" data-v="${i}">${esc(c.a)}</button>`).join("")
