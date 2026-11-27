@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.141.0 — 2026-11-27
+- Améliorations : nouvelle fenêtre Réputation qui montre ton prestige et ton infamie à Brumefer, avec les malus en cours.
+
 ## 0.140.12 — 2026-11-27
 - Corrections et améliorations : le Second souffle du guerrier suit la règle SRD 5.2 (deux utilisations dès le niveau 1, une rendue par repos court, toutes par repos long).
 

@@ -419,6 +419,11 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .stat.xp b span{font-size:.8rem;color:var(--muted);font-family:var(--f-body);font-weight:500}
 .xpbar{display:block;width:84px;height:5px;border-radius:999px;background:var(--sunk);overflow:hidden;margin:2px auto 0}
 .xpbar i{display:block;height:100%;background:var(--brass)}
+.xpbar.infbar i{background:var(--accent)}
+.repgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.repgrid .xpbar{width:100%;height:7px}
+.repgrid>section+section{border-left:1px solid var(--line);padding-left:16px}
+@media (max-width:640px){.repgrid{grid-template-columns:1fr}.repgrid>section+section{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px}}
 .inv-it{font-size:.88rem;padding:1px 0}
 .inv-it small{color:var(--muted,inherit);white-space:nowrap}
 .inv-it .inv-sub{display:block;white-space:normal;font-size:.78rem;line-height:1.3;margin-top:1px}
@@ -493,7 +498,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.12</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.141.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -909,6 +914,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.141.0","d":"2026-11-27","items":["Améliorations : nouvelle fenêtre Réputation qui montre ton prestige et ton infamie à Brumefer, avec les malus en cours."]},
 {"v":"0.140.12","d":"2026-11-27","items":["Corrections et améliorations : le Second souffle du guerrier suit la règle SRD 5.2 (deux utilisations dès le niveau 1, une rendue par repos court, toutes par repos long)."]},
 {"v":"0.140.11","d":"2026-11-27","items":["Corrections et améliorations : les actions proposées suivent la situation à la fin du récit, et un séparateur parasite n'apparaît plus dans la narration."]},
 {"v":"0.140.10","d":"2026-11-27","items":["Corrections et améliorations : le don Vigilant compte bien à l'initiative en combat, les titres gagnés par une héroïne sont accordés au féminin."]},
@@ -5304,7 +5310,7 @@ function notesView(){ const N = notesG(), isNew = isNewNote;
   else { const mp = N.cartes[cur];
     h += `<div class="maptabs">${mapSelect(M, cur, N.cur)}${mp.atlas?"":`<button type="button" class="ndel" data-g="ndel" data-v="c:${esc(cur)}" title="Supprimer la carte ${esc(mp.nom)}" aria-label="Supprimer la carte ${esc(mp.nom)}">×</button>`}</div>`;
     h += `<div class="mapbox"><button type="button" class="btn sm mapbig" data-g="mapbig">Agrandir</button>${mapBody(mp)}`; }
-  { let dv = ""; try{ dv = domView(); }catch(e){} if(dv) h += `<div class="row" style="gap:6px;flex-wrap:wrap"><button type="button" class="btn sm ghost" data-g="domwin" data-v="titres" title="Tes titres et ton prestige">👑 Titres <small>${titres().length}</small></button><button type="button" class="btn sm ghost" data-g="domwin" data-v="domaines" title="Tes domaines, les biens à vendre et le travail sur place">🏰 Domaines <small>${doms().length}</small></button></div>`; }
+  { let dv = ""; try{ dv = domView(); }catch(e){} if(dv || (G && G.hero)) h += `<div class="row" style="gap:6px;flex-wrap:wrap"><button type="button" class="btn sm ghost" data-g="domwin" data-v="reputation" title="Ton prestige et ton infamie à Brumefer">⚖️ Réputation</button>${dv ? `<button type="button" class="btn sm ghost" data-g="domwin" data-v="titres" title="Tes titres et leurs avantages">👑 Titres <small>${titres().length}</small></button>` : ""}</div>${dv ? `<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px"><button type="button" class="btn sm ghost" data-g="domwin" data-v="domaines" title="Tes domaines, les biens à vendre et le travail sur place">🏰 Domaines <small>${doms().length}</small></button></div>` : ""}`; }
   h += `</details>`;
   SEC.map = h; h = h0; }
   SEC.lieux = `<details class="nsec" open><summary>Lieux <small>${Lx.length}</small></summary>${Lx.length?Lx.map(([k,l])=>`<div class="nent"><button type="button" class="ndel" data-g="ndel" data-v="l:${esc(k)}" title="Retirer ${esc(l.nom)} du carnet et des cartes" aria-label="Retirer ${esc(l.nom)}">×</button><b>${esc(l.nom)}</b>${l.etat?` <small class="ltag">${ATL_LBL[l.etat]}</small>`:""}${isNew("l:"+k)||(l.nw&&isNew(l.nw))?` <span class="badge-new">nouveau</span>`:""}${l.info||l.carte?`<small>${esc(l.info||"")}${l.carte?`${l.info?" · ":""}carte : ${esc(l.carte)}`:""}</small>`:""}</div>`).join(""):`<p class="lede">Aucun lieu noté.</p>`}</details>`;
@@ -6304,6 +6310,28 @@ function prestSrc(){ const T = titres().length, TP = titres().reduce((a,x)=>a+ti
   return [["titres (1 point, 2 ou 3 pour les hauts faits majeurs)", TP, T], ["niveaux de tes domaines", dn, D.length], ["domaines prospères", dp, dp], ["habitants de Brumefer arrachés à la Brume", 5*pr, pr], ["quêtes mortelles ou très difficiles accomplies", q, q]]; }
 function prestPts(){ return prestSrc().reduce((a,x)=>a+x[1],0); }
 function prestige(){ const p = prestPts(); let r = 0; PREST_R.forEach((x,i)=>{ if(p >= x[0]) r = i; }); return r; }
+/* Infamie : les points de pénalité envers les habitants de Brumefer, en paliers ; la barre avance comme celle du prestige */
+const INF_R = [[0,"Irréprochable"],[NOT_SEUIL.suspect,"Suspect"],[NOT_SEUIL.fleau,"Fléau de Brumefer"],[NOT_SEUIL.banni,"Banni"]];
+function infRang(){ return notBanni() ? 3 : notFleau() ? 2 : notPts() >= NOT_SEUIL.suspect ? 1 : 0; }
+/* Malus en cours, dits pour Brumefer même quand le héros est ailleurs */
+function infMalus(){ const P = G.pen || {}, B = notBanni(), F = notFleau(), L = [];
+  if(B) L.push("🚫 Banni : la milice t'attaque à vue et les marchands de Brumefer refusent de te servir.");
+  else if(notRech()) L.push("🔎 Avis de recherche : à ta vue, la milice tente de t'arrêter (amende de 50 po ou trois jours de geôle) ; si tu résistes, elle t'affronte.");
+  else if(notPts() >= NOT_SEUIL.suspect) L.push("👁️ La milice te tient à l'œil et te le fait sentir, sans t'arrêter.");
+  if(B || (F && !P.am)) L.push("🗣️ Ta parole ne vaut rien à Brumefer : tes tests de Persuasion s'y font avec désavantage.");
+  if(B || (F && !P.pe)) L.push("💰 Les marchands de Brumefer te vendent 50 % plus cher et te rachètent 30 % moins cher.");
+  if(notTempleClos()) L.push("🕯️ Le Temple te ferme ses portes : ni soins, ni bénédiction, ni potion ; il faut d'abord faire pénitence (offrande ou service rendu).");
+  return L; }
+function infView(){ const p = notPts(), r = infRang(), nx = INF_R[r+1], cur = INF_R[r][0], P = G.pen || {};
+  const pct = nx ? Math.max(0, Math.min(100, Math.round(100*(p-cur)/(nx[0]-cur)))) : 100, M = infMalus();
+  const A = Object.values(G.agr||{}).filter(x=>x && typeof x==="object" && x.nom);
+  let t = `<div class="kv"><span>Infamie : <b>${INF_R[r][1]}</b> <small>palier ${r}/${INF_R.length-1} · ${p} pts</small></span></div>`;
+  t += `<i class="xpbar infbar" style="display:block;margin:2px 0 4px"><i style="width:${pct}%"></i></i>`;
+  t += `<small style="display:block">${nx ? `Prochain palier : ${nx[1]} à ${nx[0]} pts (encore ${Math.max(0, nx[0]-p)})` : "Palier maximal atteint"}</small>`;
+  t += `<div style="margin:6px 0 2px;font-size:.88rem"><b>Malus en cours</b>${M.length ? M.map(x=>`<div style="margin:2px 0">${esc(x)}</div>`).join("") : `<small class="lede" style="display:block">Aucun : les habitants de Brumefer n'ont rien contre toi.</small>`}</div>`;
+  t += `<details><summary><small>Fautes et réparations</small></summary><small class="lede" style="display:block">Agresser, plonger dans le coma ou tuer un habitant paisible de Brumefer coûte des points, selon sa notoriété (seule la faute la plus grave compte par personne). À ${NOT_SEUIL.suspect} pts, la milice te tient à l'œil ; à ${NOT_SEUIL.fleau}, tu deviens le Fléau de Brumefer (avis de recherche, Temple fermé, prix majorés, Persuasion en désavantage) ; à ${NOT_SEUIL.banni}, tu es banni. Payer l'amende à la milice retire 3 pts, faire pénitence au Temple 3 autres ; un meurtre ne descend jamais sous la moitié de ses points.<br>${A.length ? A.map(x=>`· ${esc(x.nom)} : ${NOT_FAUTE[(x.l||1)-1]} <b>${x.p||0}</b> pts`).join("<br>") : "· aucune faute"}${A.length ? `<br>· amende ${P.am ? "payée (−3)" : "non payée"} · pénitence ${P.pe ? "faite (−3)" : "non faite"}` : ""}</small></details>`;
+  return t; }
+function repView(){ return `<div class="repgrid"><section><h4 style="margin:0 0 4px">✨ Prestige</h4>${prestView()}</section><section><h4 style="margin:0 0 4px">⚠️ Infamie à Brumefer</h4>${infView()}</section></div>`; }
 /* Domaine : cinq niveaux ; agrandir demande un état stable et un rang de prestige suffisant */
 const DOM_NOM = ["modeste","établi","florissant","renommé","insigne"], DOM_REQ = {2:0, 3:1, 4:2, 5:3};
 function prestView(){ const p = prestPts(), r = prestige(), nx = PREST_R[r+1], cur = PREST_R[r][0];
@@ -6432,8 +6460,7 @@ function domView(tab){ const D = doms(), T = titres(), ok = shopCanGo(); let t =
   if(!D.length && !T.length && !G.offre && !G.localite) return "";
   tab = tab || domTab; tab = tab === "domaines" ? "domaines" : "titres";
   if(tab==="titres"){
-  t += prestView();
-  t += T.length ? `<div style="margin-top:8px">${titActs(T)}</div>` : `<small class="lede" style="display:block;margin:6px 0">Aucun titre : seule une autorité peut t'en conférer un, au fil de l'histoire.</small>`;
+  t += T.length ? `<div>${titActs(T)}</div>` : `<small class="lede" style="display:block;margin:6px 0">Aucun titre : seule une autorité peut t'en conférer un, au fil de l'histoire.</small>`;
   return t; }
   if(!D.length && !G.offre) t += `<small class="lede" style="display:block">Aucun domaine pour l'instant : achète un bien là où il s'en vend, ou reçois-en un en récompense.</small>`;
   if(G.offre){ const o = G.offre, T2 = DOM_T[o.type], can = ok && G.cu >= o.prix*CU_PO;
@@ -6455,14 +6482,14 @@ function domView(tab){ const D = doms(), T = titres(), ok = shopCanGo(); let t =
   return t; }
 var domTab = "titres", domWin = null;
 /* Fenêtre Titres ou Domaines : chacune ne montre que ce qui la concerne */
-function domModal(){ if(!domWin) return ""; const tt = domWin==="domaines" ? "🏰 Domaines" : "👑 Titres"; let dv = ""; try{ dv = domView(domWin); }catch(e){}
+function domModal(){ if(!domWin) return ""; const R = domWin==="reputation", tt = R ? "⚖️ Réputation" : domWin==="domaines" ? "🏰 Domaines" : "👑 Titres"; let dv = ""; try{ dv = R ? (G && G.hero ? repView() : "") : domView(domWin); }catch(e){ console.error(e); }
   if(!dv){ domWin = null; return ""; }
-  return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="${domWin==="domaines" ? "Domaines" : "Titres"}" data-close="dom"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">${tt}</h3><button type="button" class="btn sm" data-g="domwin" data-v="">Fermer</button></div><div class="mapdom">${dv}</div></div></div>`; }
+  return `<div class="mapmodal" role="dialog" aria-modal="true" aria-label="${R ? "Réputation" : domWin==="domaines" ? "Domaines" : "Titres"}" data-close="dom"><div class="mapmodal-box"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">${tt}</h3><button type="button" class="btn sm" data-g="domwin" data-v="">Fermer</button></div><div class="mapdom">${dv}</div></div></div>`; }
 /* Fermer une fenêtre : bouton Fermer, touche Échap ou clic en dehors */
 function modalClose(k){ if(k==="dom") domWin = null; else if(k==="reg") regOpen = false; else if(k==="big" && G && G.notes) G.notes.big = false; else return false; grender(); return true; }
 function modalTop(){ return domWin ? "dom" : regOpen ? "reg" : G && G.notes && G.notes.big ? "big" : ""; }
 function domClick(a, v, el){ if(a==="domtab"){ domTab = v==="domaines" ? "domaines" : "titres"; grender(); return true; }
-  if(a==="domwin"){ domWin = v==="titres" || v==="domaines" ? v : null; if(domWin) domTab = domWin; grender(); return true; }
+  if(a==="domwin"){ domWin = v==="titres" || v==="domaines" || v==="reputation" ? v : null; if(domWin && domWin!=="reputation") domTab = domWin; grender(); return true; }
   const d = doms().find(x=>x.id===v);
   if(a==="act"){ actRun(v, +el.dataset.l); return true; }
   if(!shopCanGo()) return true;
