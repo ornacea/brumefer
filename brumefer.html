@@ -493,7 +493,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.11</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.12</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -909,6 +909,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.140.12","d":"2026-11-27","items":["Corrections et améliorations : le Second souffle du guerrier suit la règle SRD 5.2 (deux utilisations dès le niveau 1, une rendue par repos court, toutes par repos long)."]},
 {"v":"0.140.11","d":"2026-11-27","items":["Corrections et améliorations : les actions proposées suivent la situation à la fin du récit, et un séparateur parasite n'apparaît plus dans la narration."]},
 {"v":"0.140.10","d":"2026-11-27","items":["Corrections et améliorations : le don Vigilant compte bien à l'initiative en combat, les titres gagnés par une héroïne sont accordés au féminin."]},
 {"v":"0.140.9","d":"2026-11-27","items":["Améliorations : au campement, le compagnon animal doit connaître « Garde ! » pour veiller, et chaque nuit de garde le fatigue."]},
@@ -1512,7 +1513,7 @@ const CLASSES = [
   packs:[{l:"Cimeterre et bouclier de bois",armor:"cuir",shield:1,w:["cimeterre"],it:["Sac d'explorateur","Focaliseur druidique","Bouclier de bois"]},{l:"Bâton",armor:"cuir",w:["baton"],it:["Sac d'explorateur","Focaliseur druidique"]}]},
  {id:"guerrier",nom:"Guerrier",role:"Maître des armes et des armures",hd:10,prime:["for","dex"],saves:["for","con"],pick:2,list:["Acrobaties","Athlétisme","Dressage","Histoire","Intimidation","Perception","Perspicacité","Survie"],
   armes:"Armes courantes et de guerre",armures:"Toutes, boucliers",prio:["for","con","dex","sag","cha","int"],
-  feats:[["Style de combat","Une spécialité martiale au choix."],["Second souffle","Une fois par repos court, en action bonus, regagne 1d10 + niveau PV."]],
+  feats:[["Style de combat","Une spécialité martiale au choix."],["Second souffle","En action bonus, regagne 1d10 + niveau PV. 2 utilisations (3 au niveau 4, 4 au niveau 10) ; un repos court en rend une, un repos long toutes."]],
   packs:[{l:"Cotte, épée longue et bouclier",armor:"cotte",shield:1,w:["epee-longue","hachette"],it:["Sac d'explorateur","Bouclier","2 hachettes"]},{l:"Cuir, arc long et deux épées courtes",armor:"cuir",w:["arc-long","epee-courte"],it:["Sac d'explorateur","20 flèches","2 épées courtes"]}]},
  {id:"moine",nom:"Moine",role:"Arts martiaux et discipline",hd:8,prime:["dex","sag"],saves:["for","dex"],pick:2,list:["Acrobaties","Athlétisme","Discrétion","Histoire","Perspicacité","Religion"],
   armes:"Armes courantes, épée courte",armures:"Aucune",prio:["dex","sag","con","for","int","cha"],unarmored:"sag",monk:true,
@@ -2808,7 +2809,7 @@ function resources(c,sc){
 function resOf(cid, L, o, cha){ const c = {id:cid};
   if(c.id==="barbare") o.push({nom:"Rage",max:L>=20?99:L>=17?6:L>=12?5:L>=6?4:L>=3?3:2,recup:"long"});
   if(c.id==="barde") o.push({nom:"Inspiration bardique",max:Math.max(1,cha),recup:L>=5?"court":"long"});
-  if(c.id==="guerrier"){ o.push({nom:"Second souffle",max:1,recup:"court"}); if(L>=2) o.push({nom:"Fougue",max:L>=17?2:1,recup:"court"}); if(L>=9) o.push({nom:"Indomptable",max:L>=17?3:L>=13?2:1,recup:"long"}); }
+  if(c.id==="guerrier"){ o.push({nom:"Second souffle",max:L>=10?4:L>=4?3:2,recup:"court1"}); if(L>=2) o.push({nom:"Fougue",max:L>=17?2:1,recup:"court"}); if(L>=9) o.push({nom:"Indomptable",max:L>=17?3:L>=13?2:1,recup:"long"}); }
   if(c.id==="moine" && L>=2) o.push({nom:"Ki",max:L,recup:"court"});
   if(c.id==="moine" && L>=6) o.push({nom:"Plénitude du corps",max:1,recup:"long"});
   if(c.id==="clerc" && L>=2) o.push({nom:"Conduit divin",max:L>=18?3:L>=6?2:1,recup:"court"});
@@ -3328,7 +3329,7 @@ function migrate0(){
     const k = e.t.search(re); if(k<0) return;
     let v = e.t.slice(0,k).replace(/\s+$/,"");
     if(v.lastIndexOf("<p>") > v.lastIndexOf("</p>")) v = /<p>\s*$/.test(v) ? v.replace(/<p>\s*$/,"") : v + "</p>";
-    v = v.replace(/(<p>\s*(-{3,}|[*_]*\s*META\s*:?\s*[*_]*:?)\s*<\/p>\s*)+$/,"");
+    v = v.replace(/(<p>\s*([-=*_~]{3,}|[*_]*\s*META\s*:?\s*[*_]*:?)\s*<\/p>\s*)+$/,"");
     e.t = v.trim(); });
   if(!G.build) G.build = Object.assign({}, G.hero._creation||{}, {lvl:G.niveau||1});
   G.build.lvl = G.build.lvl || G.niveau || 1; G.niveau = G.build.lvl;
@@ -3341,6 +3342,8 @@ function migrate0(){
     h.ressources.forEach(r=>{ if(!G.res[r.nom]) G.res[r.nom] = {max:r.max, val:r.max, recup:r.recup}; });
   }
   G.used = G.used || {}; G.buffs = G.buffs || {}; G.reposOk = G.reposOk || [];
+  { const ss = G.res && G.res["Second souffle"]; if(ss && ss.recup==="court"){ const L = gclv("guerrier") || 1, m = L>=10 ? 4 : L>=4 ? 3 : 2;   /* Second souffle passé à la règle SRD 5.2 (0.140.12) */
+      ss.val = Math.max(0, Math.min(m, ss.val + m - ss.max)); ss.max = m; ss.recup = "court1"; } }
   if(G.niveau<MAXLVL && G.xp>=XP_LVL[G.niveau]) G.lvlPending = true;
 }
 function checkBonus(type,nom){
@@ -5387,7 +5390,7 @@ function rest(kind){ const camp = kind==="long" && campOk() ? {f:campFeu(), g:ca
   let t = "Repos court.", spent = 0, gained = 0;
   while(G.dv>0 && G.pv<G.pvmax){ const r = roll("1d"+Math.max(c.hd,(mcCls()||c).hd)); gained += heal(Math.max(1, r.total+G.hero.mods.con)); G.dv--; spent++; }
   if(spent){ t += ` ${spent} dé${spent>1?"s":""} de vie : +${gained} PV.`; if(hasC("barde",2)){ const bl = gclv("barde"), s = roll("1d"+(bl>=17?12:bl>=13?10:bl>=9?8:6)); t += ` Chant reposant : +${heal(s.total)} PV.`; } }
-  for(const k in G.res) if(G.res[k].recup==="court") G.res[k].val = G.res[k].max; G.rimpl = 0;
+  for(const k in G.res){ const r = G.res[k]; if(r.recup==="court") r.val = r.max; else if(r.recup==="court1") r.val = Math.min(r.max, r.val + 1); } G.rimpl = 0;
   if(hasC("ensorceleur",20) && G.res["Points de sorcellerie"]){ const p = G.res["Points de sorcellerie"], g = Math.min(4, p.max-p.val); if(g>0){ p.val += g; t += ` Restauration ensorcelée : +${g} points de sorcellerie.`; } }
   if(hasC("occultiste")){ const pk = PACTS[gclv("occultiste")]||{}; const solo = !mcCls() || !SAB[G.cls==="occultiste" ? mcCls().id : G.cls];
     for(const k in G.slots){ const o = G.slots[k]; if(o.pmax==null){ o.val = solo ? o.max : Math.min(o.max, o.val + (pk[k]||0)); continue; } const back = o.pmax - (o.p||0); o.p = o.pmax; o.val = Math.min(o.max, o.val + back); } G.used = {}; t += " Emplacements de pacte récupérés."; }

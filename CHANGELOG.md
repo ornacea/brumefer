@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.12 — 2026-11-27
+- Corrections et améliorations : le Second souffle du guerrier suit la règle SRD 5.2 (deux utilisations dès le niveau 1, une rendue par repos court, toutes par repos long).
+
 ## 0.140.11 — 2026-11-27
 - Corrections et améliorations : les actions proposées suivent la situation à la fin du récit, et un séparateur parasite n'apparaît plus dans la narration.
 
