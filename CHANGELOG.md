@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.4 — 2026-11-27
+- Corrections et améliorations : le récit suit mieux l'heure du jour, une attente jusqu'à l'aube ne s'éternise plus.
+
 ## 0.140.3 — 2026-11-27
 - Corrections et améliorations : après une poursuite perdue, le maître du jeu et les actions proposées ne relancent plus la recherche sur place.
 
