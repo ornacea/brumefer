@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.136.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.137.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.1). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.137.0","d":"2026-11-27","items":["Améliorations : faveurs épiques de la règle 5.2 au niveau 19, avec sept pouvoirs et une caractéristique pouvant monter jusqu'à 30."]},
 {"v":"0.136.0","d":"2026-11-26","items":["Améliorations : action Influencer de la règle 5.2 (Persuasion, Tromperie, Intimidation, Représentation, Dressage), avec DD selon l'intelligence de la cible, attitude et refus de 24 h après un échec."]},
 {"v":"0.135.0","d":"2026-11-26","items":["Améliorations : maîtrise des armes de la règle 5.2 pour tous les héros, avec huit propriétés d'arme en combat, choisies à la forge et modifiables après un repos long."]},
 {"v":"0.134.1","d":"2026-11-26","items":["Corrections et améliorations : fiche du personnage."]},
@@ -1942,6 +1943,18 @@ function hp(){ const c=C(), r=R(); if(!c) return null; const L=S.lvl||1, con=M("
 /* Combat à deux armes : arme principale et arme secondaire, toutes deux légères, de corps à corps, tenues chacune à une main */
 const FEATS = {"Ambidextre":"Tu peux combattre avec deux armes de corps à corps à une main même si elles ne sont pas légères, et tu gagnes +1 à la CA quand tu tiens une arme de corps à corps dans chaque main."};
 function hasFeat(n){ return (S.feats||[]).includes(n); }
+/* Faveurs épiques (SRD 5.2) : au niveau 19 d'une classe, à la place de l'amélioration de caractéristique ; +1 dans une caractéristique, jusqu'à 30 */
+const EPIC = {
+ "Faveur de prouesse au combat":{ab:AB, t:"Une fois par tour, quand tu rates une attaque avec une arme, tu touches à la place (appliqué automatiquement)."},
+ "Faveur de voyage dimensionnel":{ab:AB, t:"Après ton action (attaque ou sort), tu te téléportes jusqu'à 9 m dans un espace libre que tu vois : en combat, tu quittes le contact des ennemis sans dépenser d'action."},
+ "Faveur du destin":{ab:AB, t:"Une fois, puis de nouveau à chaque combat ou repos : quand un jet de d20 rate de peu, 2d4 s'ajoutent à ton jet, ou se retranchent de l'attaque d'un ennemi qui te touche (appliqué automatiquement)."},
+ "Faveur d'attaque irrésistible":{ab:["for","dex"], t:"Tes dégâts contondants, perforants et tranchants ignorent la résistance. Sur un 20 naturel avec une arme, tu ajoutes des dégâts égaux à la caractéristique augmentée par cette faveur."},
+ "Faveur de rappel de sort":{ab:["int","sag","cha"], t:"Une fois par repos long, tu lances un sort de niveau 1 à 4 sans dépenser d'emplacement."},
+ "Faveur de l'esprit de la nuit":{ab:AB, t:"Dans la pénombre ou l'obscurité : action bonus pour devenir invisible, jusqu'à ta prochaine attaque ; résistance à tous les dégâts, sauf psychiques et radiants."},
+ "Faveur de vision véritable":{ab:AB, t:"Vision véritable à 18 m : tu vois dans les ténèbres magiques, les créatures et objets invisibles, à travers les illusions, et la forme véritable des métamorphes."}};
+function hasBoon(n){ return !!(typeof G!=="undefined" && G && G.build && (G.build.feats||[]).includes(n)); }
+function boonAb(n){ return ((G && G.build && G.build.epAb) || {})[n] || null; }
+function recallOk(lv){ const r = G.res && G.res["Rappel de sort"]; return lv>=1 && lv<=4 && !!(r && r.val>0); }
 function twfStyle(){ return [S.style, S.style2, S.mc&&S.mc.style].includes("Combat à deux armes"); }
 function twfOn(){ return twfStyle() || hasFeat("Ambidextre"); }
 function twfOk(w){ return !!w && !w.rng && !w.two && (/légère/.test(w.p||"") || hasFeat("Ambidextre")); }
@@ -2727,7 +2740,7 @@ function character(){
   (S.invoc||[]).forEach(i=>feats.push({nom:"Manifestation : "+i,texte:INVOC[i]||"",source:c.nom}));
   if(S.pacte) feats.push({nom:"Pacte "+(S.pacte==="Lame"?"de la lame":S.pacte==="Chaîne"?"de la chaîne":"du grimoire"),texte:PACTES[S.pacte],source:c.nom});
   (S.meta||[]).forEach(m=>feats.push({nom:"Métamagie : "+m,texte:METAM[m]||"",source:c.nom}));
-  (S.feats||[]).forEach(n=>{ if(FEATS[n]) feats.push({nom:"Don : "+n, texte:FEATS[n], source:"Don"}); });
+  (S.feats||[]).forEach(n=>{ if(FEATS[n]) feats.push({nom:"Don : "+n, texte:FEATS[n], source:"Don"}); else if(EPIC[n]){ const a = (S.epAb||{})[n]; feats.push({nom:n, texte:EPIC[n].t + (a ? " +1 en "+ABN[a]+"." : ""), source:"Faveur épique"}); } });
   if(S.asi && Object.keys(S.asi).length) feats.push({nom:"Amélioration de caractéristique",texte:Object.entries(S.asi).filter(x=>x[1]).map(([k,v])=>ABN[k]+" +"+v).join(", "),source:c.nom});
   feats.push({nom:"Historique : "+b.nom,texte:b.desc+" Maîtrises : "+bgSkills().concat(bgTools()).join(", ")+"."+(S.bg52 && bgSplit() ? " Bonus de caractéristiques : "+bgBonusTxt()+"." : bgAbil(bgSkills()) ? " Caractéristiques d'historique (règle 5.2) : "+bgAbilTxt(bgSkills())+"." : ""),source:b.nom});
   origFeats().forEach(f=>{ const l = featList(f), m = l && miOf(l); feats.push({nom:"Don d'origine : "+f, texte:ORIG_FEATS[featBase(f)] + (m ? ` Sorts mineurs : ${m.c.join(", ")} ; sort de niveau 1 : ${m.s} (${ABN[m.ab].toLowerCase()}).` : ""), source:b.nom}); });
@@ -2763,6 +2776,8 @@ function resources(c,sc){
   const o=[], cha=mod(sc.cha); const cl = [c.id]; if(MC()) cl.push(S.mc.cls);
   cl.forEach(id=>resOf(id, clv(id), o, cha));
   origFeats().forEach(f=>{ const l = featList(f); if(l) o.push({nom:"Initié à la magie ("+l+")",max:1,recup:"long"}); });
+  if((S.feats||[]).includes("Faveur du destin")) o.push({nom:"Faveur du destin",max:1,recup:"court"});
+  if((S.feats||[]).includes("Faveur de rappel de sort")) o.push({nom:"Rappel de sort",max:1,recup:"long"});
   if(S.bg52) raceRes52(o);
   if(S.dragon && !S.bg52) o.push({nom:"Souffle",max:1,recup:"court"});
   if(S.race==="demi-orc") o.push({nom:"Endurance implacable",max:1,recup:"long"});
@@ -3021,7 +3036,7 @@ window.claude?.hot?.snapshot?.(()=>({S, G, SLOT}));
 let VIEW = G ? "jeu" : "forge";
 let SAMPLE = null, sampleState = "attente";
 let busy = false, ctl = null, liveText = "", sel = [], advMode = "normal", newArmed = false, castLvl = 0;
-const OPT0 = {sneak:false, smite:false, stun:false, accel:false, intens:false, reckless:false, cing:false};
+const OPT0 = {sneak:false, smite:false, stun:false, accel:false, intens:false, reckless:false, cing:false, recall:false};
 let opt = {...OPT0};
 /* Niveaux épiques : deux classes au plus, 20 niveaux chacune, niveau global 40. XP_LVL[n-1] = XP du niveau n :
    SRD jusqu'au 20 (355 000), puis +50 000 par niveau jusqu'au 30 (855 000), puis +75 000 jusqu'au 40 (1 605 000) */
@@ -3374,6 +3389,7 @@ function hurt(n,type,crit){
   let note = "";
   if(G.buffs.rage && /contondant|perforant|tranchant/i.test(type||"")){ n = Math.floor(n/2); note = " (rage : moitié)"; }
   { const ty = norm(type||""), hitR = raceResist().find(x=>ty.includes(norm(x))); if(hitR && n>0 && !note){ n = Math.floor(n/2); note = ` (résistance ${hitR} : moitié)`; } }
+  { const ty = norm(type||""); if(n>0 && !note && G.combat && G.combat.dark && hasBoon("Faveur de l'esprit de la nuit") && !/psychique|radiant/.test(ty)){ n = Math.floor(n/2); note = " (esprit de la nuit : moitié)"; } }
   { const se = G.res["Endurance de la pierre"]; if(se && se.val>0 && n>0 && G.statut!=="a_terre" && (n >= G.pv || n >= Math.max(6, Math.ceil(G.pvmax/4)))){ const d = roll("1d12"), m = Math.min(n, Math.max(0, d.total + G.hero.mods.con)); se.val--; n -= m; note += ` Endurance de la pierre : ${d.detail} ${sg(G.hero.mods.con)} = −${m} dégâts.`; } }
   const n0 = n;
   if(G.statut==="a_terre"){ if(n >= G.pvmax){ G.statut = "mort"; return note + " Les dégâts massifs t'achèvent."; } G.mort.f += crit?2:1; return note + deathNote(); }
@@ -6505,8 +6521,9 @@ function doTest(){
   if(G.buffs.beni && t.type==="sauvegarde"){ const r = roll("1d4"); extra = r.total; xtxt = ` + ${r.total} (bénédiction)`; }
   { const sk = /^comp/.test(norm(t.type)) && G.hero.competences.find(c=>norm(c.nom)===norm(t.nom)); if(sk && sk.maitrise && hasC("roublard",11) && d.r<10){ d = Object.assign({}, d, {txt:d.txt+" → 10, talent fiable", r:10}); } }
   { const ind = G.res["Indomptable"]; if(t.type==="sauvegarde" && ind && ind.val>0 && d.r + b + extra < t.dd){ ind.val--; const d2 = d20(mode); logJ("de", `Indomptable : la sauvegarde ratée (${d.r}) est relancée.`); d = d2; } }
-  const tot = d.r + b + extra, ok = tot >= t.dd;
-  logJ("de", `${esc(label)} : d20 (${d.txt}) ${sg(b)}${xtxt} = <b>${tot}</b> contre DD ${t.dd} → <b>${ok?"réussite":"échec"}</b>${d.r===20?" (20 naturel)":d.r===1?" (1 naturel)":""}`);
+  let tot = d.r + b + extra, ok = tot >= t.dd, fate = "";
+  { const fr = G.res["Faveur du destin"]; if(!ok && fr && fr.val>0 && tot + 8 >= t.dd){ fr.val--; const dv = roll("2d4").total; tot += dv; ok = tot >= t.dd; fate = ` + ${dv} (faveur du destin)`; } }
+  logJ("de", `${esc(label)} : d20 (${d.txt}) ${sg(b)}${xtxt}${fate} = <b>${tot}</b> contre DD ${t.dd} → <b>${ok?"réussite":"échec"}</b>${d.r===20?" (20 naturel)":d.r===1?" (1 naturel)":""}`);
   G.test = null; justTested = t.nom;
   if(t.inf && !ok){ infRefus().push({cible:t.inf.cible, demande:t.inf.demande, at:G.clock||0}); logJ("sys", `${esc(t.inf.cible)} refuse : pas de nouvel essai de cette demande avant 24 h.`); }
   mj(`Résultat du test de ${label} (${t.raison||"action en cours"}) : ${tot} contre DD ${t.dd}, ${ok?"RÉUSSITE":"ÉCHEC"}${d.r===20?" éclatante":d.r===1?" cuisante":""}.${t.inf && !ok ? ` Influencer raté : ${t.inf.cible} refuse ; la même demande lui est impossible pendant 24 h.` : ""} Raconte la conséquence.`, null);
@@ -6874,7 +6891,7 @@ function foeSanitize(list){ const L = Math.max(1, Math.min(20, G.niveau||1)), bu
 function startCombat(list, so={}){ try{ refreshGear(); }catch(e){}
   const ennemis = foeSanitize(list).map((e,i)=>({id:"e"+i, nom:String(e.nom||"Adversaire"), pv:Math.max(1,+e.pv||7), pvmax:Math.max(1,+e.pv||7), ca:+e.ca||12, att:+e.att||3, deg:String(e.deg||"1d6"), type:String(e.type||"contondant"), init:+e.init||0, sauv:+e.sauv||0, xp:Math.max(0, e.xp===0 || e.xp==="0" ? 0 : (+e.xp||25)), etat:"ok", portee:e.portee==="distance"?"distance":"contact", contact:(+e.distance>0 && +e.distance<=1.5), dist:Math.max(1.5, Math.min(120, +e.distance || (e.portee==="distance"?18:9)))}));
   const hi = d20("normal"); const iniB = checkBonus("competence","initiative").b, hInit = hi.r + iniB;
-  G.wmChg = false;
+  G.wmChg = false; { const fr = G.res && G.res["Faveur du destin"]; if(fr) fr.val = fr.max; }
   G.combat = {ennemis, round:1, log:[], act:false, bon:false, hit:false, snk:false, colos:false, atkLeft:0, flurry:false};
   G.combat.amical = so.amical ? 1 : 0;
   try{ ennemis.forEach(e=>{ const r = notFind(e.nom), nom = notNom(e.nom); if(r && /s/.test(r[12])){ e.sanct = notCombatAt(r).dd; e.soin = 3; }
@@ -6984,9 +7001,13 @@ function weaponAttack(i, kind){
   const reck = opt.reckless && melee && str && hasC("barbare",2) && !beast; if(reck) G.buffs.temer = true;
   const r = attackRoll(e, bonus, a.n, {melee, enc:!beast, reckless:reck, critMin:beast ? 20 : hasC("guerrier",15) ? 18 : hasC("guerrier",3) ? 19 : 20});
   let t = r.txt;
+  if(!r.hit && !beast && r.d.txt!=="—"){
+    if(hasBoon("Faveur de prouesse au combat") && c.prowR!==c.round){ c.prowR = c.round; r.hit = true; t += " → <b>faveur de prouesse au combat : touché</b>"; }
+    else { const fr = G.res["Faveur du destin"]; if(fr && fr.val>0 && r.d.r!==1 && r.tot + 8 >= e.ca){ fr.val--; const dv = roll("2d4").total; r.tot += dv; r.hit = r.tot >= e.ca; t += ` ; faveur du destin : + ${dv} = <b>${r.tot}</b> → <b>${r.hit ? "touché" : "raté"}</b>`; } } }
   if(r.hit){
     const base = a.dmg + (G.buffs.armeMag&&!beast?" +1":"");
     const extras = [];
+    if(!beast && r.d.r===20 && hasBoon("Faveur d'attaque irrésistible")){ const ab = boonAb("Faveur d'attaque irrésistible") || atkAb(a); extras.push([String(G.hero.carac[ab]||0), "attaque irrésistible"]); }
     if(G.buffs.rage && melee && !beast && str) extras.push([String(rageB()),"rage"]);
     if(hasC("clerc",8) && !beast && !c.fdiv){ extras.push([hasC("clerc",14)?"2d8":"1d8","frappe divine, radiant"]); c.fdiv = true; }
     if(hasC("paladin",11) && melee && !beast) extras.push(["1d8","châtiment divin amélioré, radiant"]);
@@ -7051,7 +7072,9 @@ function castSpell(name, free){
   let sp = CSP[name]; if(sp && !inC && COMBAT_ONLY.includes(sp.k)) sp = null;
   const lv = spLvl(name);
   let slot = 0;
-  if(lv>=1 && !free){ slot = pickSlot(lv); if(!slot){ toast("Plus d'emplacement de sort de niveau suffisant."); return; } }
+  const rcl = G.res["Rappel de sort"], recall = lv>=1 && lv<=4 && !free && !!(rcl && rcl.val>0) && (opt.recall || !pickSlot(lv));
+  if(lv>=1 && !free && !recall){ slot = pickSlot(lv); if(!slot){ toast("Plus d'emplacement de sort de niveau suffisant."); return; } }
+  if(recall) slot = lv;
   const meta = hasC("ensorceleur",3) ? (G.build.meta||[]) : [];
   const pts = G.res["Points de sorcellerie"];
   const accel = inC && opt.accel && meta.includes("Sort accéléré") && !(sp&&sp.bonus);
@@ -7064,13 +7087,13 @@ function castSpell(name, free){
   if(accel){ if(!pts || pts.val<2){ toast("Pas assez de points de sorcellerie."); return; } pts.val -= 2; }
   let intens = false; if(inC && opt.intens && meta.includes("Sort intensifié") && sp && (sp.k==="sv"||sp.k==="etat")){ if(pts && pts.val>=3){ pts.val -= 3; intens = true; } }
   opt.accel = false; opt.intens = false;
-  if(slot) useSlot(slot);
+  if(slot && !recall) useSlot(slot); if(recall){ rcl.val--; opt.recall = false; }
   markUsed(name);
-  const slotTxt = slot ? ` (emplacement niv. ${slot}${accel?", accéléré":""})` : (accel?" (accéléré)":"");
+  const slotTxt = recall ? " (faveur de rappel de sort, sans emplacement)" : slot ? ` (emplacement niv. ${slot}${accel?", accéléré":""})` : (accel?" (accéléré)":"");
   const useAction = () => { if(inC){ if(isBonus) c.bon = true; else c.act = true; } };
   if(!sp){
     useAction();
-    const what = `Je lance le sort ${name}${slot>lv?` avec un emplacement de niveau ${slot}`:""}.`;
+    const what = `Je lance le sort ${name}${recall ? " grâce à ma faveur de rappel de sort, sans emplacement" : slot>lv?` avec un emplacement de niveau ${slot}`:""}.`;
     if(name==="Armure de mage"||free) G.buffs.mage = name==="Armure de mage" ? true : G.buffs.mage;
     gsave(); mj(what+(inC?" (pendant le combat, à la place de mon action)":"")+" Décris l'effet selon les règles du sort.", what); return;
   }
@@ -7153,6 +7176,9 @@ function classAct(k){
     case "malef": { if(!c||c.bon||!G.buffs.malef) return; const e = targets(1)[0]; if(!e) return; G.buffs.malef = e.id; c.bon = true; lg(`Tu transfères <b>Maléfice</b> sur ${esc(e.nom)}.`); break; }
     case "cacher": { if(!c||c.bon) return; c.bon = true; const b = h.competences.find(s=>s.nom==="Discrétion").bonus; const d = d20("normal"); const tot = d.r+b; if(tot>=13){ G.buffs.cache = true; lg(`Ruse, se cacher : Discrétion ${d.txt} ${sg(b)} = <b>${tot}</b> → caché, avantage à ta prochaine attaque.`); } else lg(`Ruse, se cacher : Discrétion ${d.txt} ${sg(b)} = <b>${tot}</b> → repéré.`); break; }
     case "desengager": { if(!c||c.bon) return; c.bon = true; c.ennemis.forEach(x=>{ if(x.contact) x.dist = 9; x.contact=false; }); lg("Ruse : tu te désengages et prends tes distances, sans provoquer d'attaque."); break; }
+    case "dimtp": { if(!c || !c.act || c.dimR===c.round || !hasBoon("Faveur de voyage dimensionnel")) return; c.dimR = c.round; c.ennemis.forEach(x=>{ if(x.contact) x.dist = 9; x.contact = false; }); lg("Voyage dimensionnel : tu disparais et réapparais à 9 m, hors de portée des lames."); break; }
+    case "nuit": { if(!c || !hasBoon("Faveur de l'esprit de la nuit")) return; c.dark = !c.dark; lg(c.dark ? "Pénombre ou obscurité : l'esprit de la nuit t'enveloppe (résistance aux dégâts, sauf psychiques et radiants)." : "Tu quittes l'ombre : l'esprit de la nuit se retire."); break; }
+    case "ombre": { if(!c || c.bon || !c.dark || !hasBoon("Faveur de l'esprit de la nuit")) return; c.bon = true; G.buffs.cache = true; lg("Tu te fonds dans l'ombre : <b>invisible</b> jusqu'à ta prochaine attaque."); break; }
     case "recul": { if(!c||c.act) return; c.act = true; c.atkLeft = 0; c.ennemis.forEach(x=>{ if(x.contact) x.dist = 9; x.contact=false; }); lg("Tu te désengages et prends tes distances : plus d'ennemi à ton contact pour l'instant."); break; }
     case "revert": { if(!G.forme) return; if(c){ if(c.bon) return; c.bon = true; } G.forme = null; lg("Tu reprends ta forme normale."); break; }
     case "ombres": { G.buffs.mage = true; lg("Armure des ombres : Armure de mage active (CA 13 + DEX)."); break; }
@@ -7214,8 +7240,9 @@ function enemyPhase(list){
     const a = 1+rand(20), b = mode==="normal" ? null : 1+rand(20); const r = b==null ? a : (mode==="avantage" ? Math.max(a,b) : Math.min(a,b));
     let tot = r + e.att, cut = "";
     if(opt.cing){ const ins = G.res["Inspiration bardique"]; if(ins && ins.val>0){ ins.val--; const dv = roll(bardDie()).total; tot -= dv; cut = ` − ${dv} (mots cinglants)`; } opt.cing = false; }
-    const crit = r===20 || (G.statut==="a_terre" && e.portee!=="distance" && r!==1 && tot>=ac), hit = crit || (r!==1 && tot>=ac);
-    let t = `${esc(e.nom)} attaque : d20 (${b==null?a:a+" / "+b}${mode!=="normal"?", "+(mode==="avantage"?"avantage":"désavantage"):""}${why}) ${sg(e.att)}${cut} = <b>${tot}</b> contre ta CA ${ac} → <b>${crit?"critique !":hit?"touché":"raté"}</b>`;
+    const crit = r===20 || (G.statut==="a_terre" && e.portee!=="distance" && r!==1 && tot>=ac); let hit = crit || (r!==1 && tot>=ac), fate = "";
+    if(hit && !crit && G.statut==="ok"){ const fr = G.res["Faveur du destin"]; if(fr && fr.val>0 && tot - 8 < ac){ fr.val--; const dv = roll("2d4").total; tot -= dv; hit = tot >= ac; fate = ` − ${dv} (faveur du destin)`; } }
+    let t = `${esc(e.nom)} attaque : d20 (${b==null?a:a+" / "+b}${mode!=="normal"?", "+(mode==="avantage"?"avantage":"désavantage"):""}${why}) ${sg(e.att)}${cut}${fate} = <b>${tot}</b> contre ta CA ${ac} → <b>${crit?"critique !":hit?"touché":"raté"}</b>`;
     if(hit){ const dm = roll(crit?critExpr(e.deg):e.deg); let n = dm.total, ud = ""; if(hasC("roublard",5) && !dodged && G.statut==="ok"){ dodged = true; n = Math.floor(n/2); ud = " (esquive instinctive : moitié)"; } t += `, ${dm.detail} = <b>${n}</b> ${esc(e.type)}${ud}.`; t += hurt(n, e.type, crit); { const tr = G.res["Tonnerre de la tempête"]; if(tr && tr.val>0 && n>0 && G.statut==="ok" && e.pv>0){ tr.val--; const d = roll("1d8"); t += ` Tonnerre de la tempête : ${d.detail} = <b>${d.total}</b> tonnerre à ${esc(e.nom)}.` + dmgToFoe(e, d.total); } } }
     else t += ".";
     clog(t);
@@ -7325,7 +7352,8 @@ function subEff(c, n, cl){ const k = norm(n.split(" : ")[0]), out = [];
 function subcls(){ const out = []; [cls(), mcCls()].forEach(c=>{ if(!c || !SUBCL[c.id]) return; const [lv, n] = SUBCL[c.id], cl = gclv(c.id); if(cl>=lv) out.push({cls:c.nom, nom:n, lv, ok:true, eff:subEff(c, n, cl)}); }); return out; }
 function hudLv(){ const mc = mcCls(), c = cls(); return `niv. ${G.niveau}/${MAXLVL} <small class="hudcl">${esc(c?c.nom:"")} ${gclv(G.cls)}/${CLSMAX}${mc ? ` · ${esc(mc.nom)} ${gclv(mc.id)}/${CLSMAX}` : ""}</small>`; }
 function luBuild(d){ const b = G.build, asi = {...(b.asi||{})}; for(const k in d.asi) asi[k] = (asi[k]||0) + d.asi[k];
-  const o = Object.assign({}, b, {lvl:d.to, asi}, d.feat ? {feats:[...new Set((b.feats||[]).concat([d.feat]))]} : {});
+  const ep = d.feat && EPIC[d.feat] && d.epAb; if(ep) asi[d.epAb] = (asi[d.epAb]||0) + 1;
+  const o = Object.assign({}, b, {lvl:d.to, asi}, d.feat ? {feats:[...new Set((b.feats||[]).concat([d.feat]))]} : {}, ep ? {epAb:Object.assign({}, b.epAb||{}, {[d.feat]:d.epAb})} : {});
   if(!d.mode && d.cls!==G.cls){ const m = Object.assign({cls:d.cls, lvl:0, cantrips:[], spells:[], prep:[], sk:[], ex:[], style:null}, b.mc && b.mc.cls===d.cls ? b.mc : {}); o.mc = Object.assign({}, m, {lvl:m.lvl+1}); o.lvlCls = Object.assign({}, b.lvlCls||{}, {[d.to]:d.cls}); }
   return o; }
 function luScores(d){ return withS(luBuild(d), ()=>scores()); }
@@ -7334,7 +7362,7 @@ function luNeeds(d){
   const b = G.build, exN = (b.ex3||[]).length + 2;
   return {style: lvl && (((id==="paladin"||id==="rodeur") && L===2) || (nw && id==="guerrier") || (id==="guerrier" && id===G.cls && L===10)), invoc: lvl && id==="occultiste" ? invocN(L) : 0, pacte: lvl && id==="occultiste" && L===3,
     arc: lvl && id==="occultiste" ? (ARCANUM[L]||0) : 0,
-    meta: lvl && id==="ensorceleur" ? (L===3 ? 2 : (L===10||L===17) ? Math.min(Object.keys(METAM).length, (b.meta||[]).length+1) : 0) : 0, sk3: lvl && id==="barde" && L===3 ? 3 : 0, ex3: lvl && ((id==="barde" && (L===3||L===10)) || (id==="roublard" && id===G.cls && L===6)) ? exN : 0, asi: lvl && asiAt(id, L),
+    meta: lvl && id==="ensorceleur" ? (L===3 ? 2 : (L===10||L===17) ? Math.min(Object.keys(METAM).length, (b.meta||[]).length+1) : 0) : 0, sk3: lvl && id==="barde" && L===3 ? 3 : 0, ex3: lvl && ((id==="barde" && (L===3||L===10)) || (id==="roublard" && id===G.cls && L===6)) ? exN : 0, asi: lvl && asiAt(id, L), epic: !!(lvl && L===19 && asiAt(id, L)),
     mcSk: nw && mp.sk ? 1 : 0, mcEx: nw && id==="roublard" ? 2 : 0, rgr: !!(lvl && nw && id==="rodeur" && G.cls!=="rodeur"), sp: SPROG(id, L, luScores(d))};
 }
 function luPool(d, P){ const id = d.cls || G.cls, lists = SPL(id), fixed = alwaysPrep(id, luClsLvl(d)); let out = []; for(let k=1;k<=P.maxLvl;k++) out = out.concat(lists[k]);
@@ -7348,6 +7376,7 @@ function luErrors(d, N){
   if(N.style && !d.style2) e.push("Choisis un style de combat.");
   if(N.rgr && (!d.enemy || !d.terrain)) e.push("Choisis ton ennemi juré et ton terrain de prédilection.");
   if(N.asi && !d.feat && Object.values(d.asi).reduce((a,b)=>a+b,0)<2) e.push("Répartis 2 points de caractéristique ou choisis un don.");
+  if(N.epic && d.feat && EPIC[d.feat] && !d.epAb) e.push("Choisis la caractéristique que ta faveur épique augmente de 1.");
   if(N.invoc && d.invoc.length<N.invoc) e.push(`Choisis ${N.invoc} manifestations.`);
   if(N.pacte && !d.pacte) e.push("Choisis un pacte.");
   if(N.meta && d.meta.length<N.meta) e.push(N.meta===2 ? "Choisis deux options de métamagie." : "Choisis une option de métamagie de plus.");
@@ -7368,7 +7397,7 @@ function luErrors(d, N){
   }
   return e;
 }
-function luTrim(d, N){ if(!N.asi){ d.asi = {}; d.feat = null; } if(d.feat) d.asi = {};
+function luTrim(d, N){ if(!N.asi){ d.asi = {}; d.feat = null; } if(d.feat) d.asi = {}; if(d.feat && EPIC[d.feat] && !N.epic) d.feat = null; if(!d.feat || !EPIC[d.feat] || (d.epAb && !EPIC[d.feat].ab.includes(d.epAb))) d.epAb = null;
   const P = N.sp; if(!P) return;
   d.cantrips = d.cantrips.slice(0, P.c); const pool = luPool(d, P);
   d.spells = d.spells.filter(n=>pool.includes(n)).slice(0, P.n);
@@ -7387,7 +7416,8 @@ function luClick(a, el){
     case "lu-mex": luToggle(d.mcEx, v, N.mcEx); break;
     case "lu-hp": { const hd = CLASSES.find(c=>c.id===d.cls).hd; d.hp = v==="avg" ? Math.floor(hd/2)+1 : roll("1d"+hd).total; break; }
     case "lu-style": d.style2 = v; break;
-    case "lu-feat": d.feat = v==="asi" ? null : (FEATS[v] && !(G.build.feats||[]).includes(v) ? v : null); if(d.feat) d.asi = {}; break;
+    case "lu-feat": d.feat = v==="asi" ? null : ((FEATS[v] || (N.epic && EPIC[v])) && !(G.build.feats||[]).includes(v) ? v : null); d.epAb = null; if(d.feat) d.asi = {}; break;
+    case "lu-epab": { if(!d.feat || !EPIC[d.feat] || !EPIC[d.feat].ab.includes(v)) return; if(luScores(Object.assign({}, d, {epAb:null}))[v] >= 30) return; d.epAb = v; break; }
     case "lu-asi": { if(d.feat) return; const dd = +el.dataset.d; const cur = d.asi[v]||0; const tot = Object.values(d.asi).reduce((x,y)=>x+y,0); const sc = luScores(d)[v];
       if(dd>0 && (tot>=2 || cur>=2 || sc>=20)) return; if(dd<0 && cur<=0) return; d.asi[v] = cur+dd; if(!d.asi[v]) delete d.asi[v]; break; }
     case "lu-inv": luToggle(d.invoc, v, N.invoc); break;
@@ -7413,6 +7443,7 @@ function luApply(){
     else { b.mc = nb.mc; b.lvlCls = nb.lvlCls; if(d.style2) b.mc.style = d.style2; if(d.mcSk.length) b.mc.sk = d.mcSk; if(d.mcEx.length) b.mc.ex = d.mcEx; if(d.enemy) b.mc.enemy = d.enemy; if(d.terrain) b.mc.terrain = d.terrain;
       if(!wasMc) logJ("sys", `<b>Multiclassage</b> : ${esc(G.hero.nom)} devient aussi ${esc(CLASSES.find(c=>c.id===d.cls).nom.toLowerCase())}.`); }
     const asi = {...(b.asi||{})}; for(const k in d.asi) asi[k] = (asi[k]||0) + d.asi[k]; b.asi = asi;
+    if(d.feat && EPIC[d.feat] && d.epAb){ b.asi[d.epAb] = (b.asi[d.epAb]||0) + 1; b.epAb = Object.assign({}, b.epAb||{}, {[d.feat]:d.epAb}); }
     if(d.feat){ b.feats = [...new Set((b.feats||[]).concat([d.feat]))]; logJ("sys", `Nouveau don : <b>${esc(d.feat)}</b>.`); }
     G.niveau = d.to; G.dv++;
   }
@@ -7450,7 +7481,8 @@ function luView(){
     if(N.rgr) x += `<div class="sub"><span class="lbl">Ennemi juré</span><div class="chips">${ENEMIES.map(v=>`<button type="button" class="chip ${d.enemy===v?"sel":""}" data-g="lu-enemy" data-v="${esc(v)}">${esc(v)}</button>`).join("")}</div></div><div class="sub"><span class="lbl">Terrain de prédilection</span><div class="chips">${TERRAINS.map(v=>`<button type="button" class="chip ${d.terrain===v?"sel":""}" data-g="lu-terrain" data-v="${esc(v)}">${esc(v)}</button>`).join("")}</div></div>`;
   if(N.style) x += `<div class="sub"><span class="lbl">Style de combat</span><div class="chips">${(PSTYLES[id]||STYLES.filter(SOLO_STYLES).map(y=>y[0])).filter(s=>s===d.style2 || ![G.build.style, G.cls===id ? null : G.build.style2, G.cls===id ? (G.build.mc&&G.build.mc.style) : null].includes(s)).map(s=>`<button type="button" class="chip ${d.style2===s?"sel":""}" data-g="lu-style" data-v="${s}" title="${esc(STYLES.find(y=>y[0]===s)[1])}">${s}</button>`).join("")}</div>${d.style2?`<small class="lede">${STYLES.find(y=>y[0]===d.style2)[1]}</small>`:""}</div>`;
     if(N.asi){ const sc = luScores(d); const tot = Object.values(d.asi).reduce((a,b)=>a+b,0), had = G.build.feats||[];
-      x += `<div class="sub"><span class="lbl">Amélioration ou don</span><p class="lede" style="margin:0">Au niveau ${L} de ${esc(c.nom.toLowerCase())}, tu choisis une amélioration de caractéristique ou un don.</p><div class="chips"><button type="button" class="chip ${!d.feat?"sel":""}" data-g="lu-feat" data-v="asi">Amélioration de caractéristique</button>${Object.keys(FEATS).filter(n=>!had.includes(n)).map(n=>`<button type="button" class="chip ${d.feat===n?"sel":""}" data-g="lu-feat" data-v="${esc(n)}" title="${esc(FEATS[n])}">Don : ${esc(n)}</button>`).join("")}</div>${d.feat?`<small class="lede">${esc(FEATS[d.feat])}${d.feat==="Ambidextre"?" La page prend tes meilleures armes de corps à corps à une main, ou celles choisies à la création si tu les portes encore.":""}</small>`:""}</div>`;
+      x += `<div class="sub"><span class="lbl">Amélioration ou don</span><p class="lede" style="margin:0">Au niveau ${L} de ${esc(c.nom.toLowerCase())}, tu choisis une amélioration de caractéristique ou un don.${N.epic ? " La règle 5.2 y ajoute les <b>faveurs épiques</b> : un pouvoir et +1 dans une caractéristique, jusqu'à 30." : ""}</p><div class="chips"><button type="button" class="chip ${!d.feat?"sel":""}" data-g="lu-feat" data-v="asi">Amélioration de caractéristique</button>${Object.keys(FEATS).filter(n=>!had.includes(n)).map(n=>`<button type="button" class="chip ${d.feat===n?"sel":""}" data-g="lu-feat" data-v="${esc(n)}" title="${esc(FEATS[n])}">Don : ${esc(n)}</button>`).join("")}${N.epic ? Object.keys(EPIC).filter(n=>!had.includes(n)).map(n=>`<button type="button" class="chip ${d.feat===n?"sel":""}" data-g="lu-feat" data-v="${esc(n)}" title="${esc(EPIC[n].t)}">${esc(n)}</button>`).join("") : ""}</div>${d.feat?`<small class="lede">${esc(FEATS[d.feat] || (EPIC[d.feat]||{}).t || "")}${d.feat==="Ambidextre"?" La page prend tes meilleures armes de corps à corps à une main, ou celles choisies à la création si tu les portes encore.":""}</small>`:""}</div>`;
+      if(d.feat && EPIC[d.feat]){ const s0 = luScores(Object.assign({}, d, {epAb:null})); x += `<div class="sub"><span class="lbl">Faveur épique : +1 <span class="counter ${d.epAb?"ok":""}">${d.epAb?1:0}/1</span></span><p class="lede" style="margin:0">Jusqu'à 30.</p><div class="chips">${EPIC[d.feat].ab.map(a=>`<button type="button" class="chip ${d.epAb===a?"sel":""}" data-g="lu-epab" data-v="${a}" ${s0[a]>=30?"disabled":""}>${ABN[a]} ${s0[a]} → ${s0[a]+1}</button>`).join("")}</div></div>`; }
       if(!d.feat) x += `<div class="sub"><span class="lbl">Amélioration de caractéristique <span class="counter ${tot===2?"ok":""}">${tot}/2</span></span><p class="lede" style="margin:0">+2 à une caractéristique ou +1 à deux (20 maximum).</p><div class="mini-ab">${AB.map(a=>`<div><small>${ABS[a]}</small><b>${sc[a]}</b><span class="pb" style="justify-content:center"><button type="button" data-g="lu-asi" data-v="${a}" data-d="-1" aria-label="Retirer">−</button><button type="button" data-g="lu-asi" data-v="${a}" data-d="1" aria-label="Ajouter">+</button></span></div>`).join("")}</div></div>`; }
     if(N.invoc) x += `<div class="sub"><span class="lbl">Manifestations occultes <span class="counter ${d.invoc.length===N.invoc?"ok":""}">${d.invoc.length}/${N.invoc}</span></span><div class="spells">${Object.entries(INVOC).filter(([k])=>invOk(k, L, d.pacte) || d.invoc.includes(k)).map(([k,t])=>`<button type="button" class="spell ${d.invoc.includes(k)?"sel":""}" data-g="lu-inv" data-v="${esc(k)}"><b>${k}</b><span>${t}</span></button>`).join("")}</div></div>`;
     if(N.pacte) x += `<div class="sub"><span class="lbl">Faveur de pacte</span><div class="spells">${Object.entries(PACTES).map(([k,t])=>`<button type="button" class="spell ${d.pacte===k?"sel":""}" data-g="lu-pacte" data-v="${k}"><b>Pacte ${k==="Lame"?"de la lame":k==="Chaîne"?"de la chaîne":"du grimoire"}</b><span>${t}</span></button>`).join("")}</div></div>`;
@@ -7737,7 +7769,7 @@ function combatDock(){
   const foes = c.ennemis.map(e=>`<button type="button" class="foe ${TG.includes(e.id)?"tgt":""} ${e.etat==="mort"||e.etat==="fui"?"mort":""}" data-g="foe" data-v="${e.id}" ${e.etat==="mort"||e.etat==="fui"?"disabled":""}><span class="foe-h"><b>${esc(e.nom)}</b>${TG.includes(e.id)?`<span class="tgt-l" role="img" aria-label="${TG[0]===e.id?"Cible":"Cible supplémentaire"}" title="${TG[0]===e.id?"Cible":"Cible supplémentaire"}">🎯</span>`:""} <small>${e.etat==="fui"?"en fuite":foeDist(e)}</small></span><span class="bar"><i style="width:${Math.round(100*e.pv/e.pvmax)}%"></i></span><span class="foe-s"><small>${e.pv}/${e.pvmax} PV · CA ${e.ca}</small><span class="ics">${e.etat==="mort"?"":foeIcons(e)}</span></span></button>`).join("");
   const list = beast ? G.forme.atk : h.attaques;
   const atk = list.map((a,i)=>a.offhand || !atkHeld(a) ? "" : `<button type="button" class="btn sm" data-g="atk" data-v="${i}" ${noAtk||(!beast&&!hasAmmo(a))?"disabled":""} ${!beast&&!hasAmmo(a)?'title="Plus de munitions"':""}>${esc(a.n)} <small>${sg(atkHit(a, beast))} · ${esc(G.buffs.armeMag&&!beast ? (/[+-]\s*\d+\s*$/.test(a.dmg) ? a.dmg.replace(/([+-])\s*(\d+)\s*$/, (m,sg0,n)=>{ const v = (sg0==="-"?-1:1)*(+n)+1; return (v<0?"−":"+")+Math.abs(v); }) : a.dmg+"+1") : a.dmg)}</small>${!beast&&!hasAmmo(a)?" <small>· sans munitions</small>":""}${!beast&&shieldBonus()&&atkTwoHanded(a)&&!c.noShield?` <small class="adv-d" title="Tu lâches ton bouclier pour ce tour">· CA −${shieldBonus()} ce tour</small>`:""}</button>`).join("");
-  const spells = beast && !hasC("druide",18) ? "" : allSpells().map(n=>{ const sp = CSP[n]; const lv = spLvl(n); const noSlot = lv>=1 && !pickSlot(lv); const used = sp&&sp.bonus ? B : AA; const dz = SPDIST[n] && SPDIST[n][0]==="ad" && engaged(); return `<button type="button" class="btn sm" data-g="cast" data-v="${esc(n)}" ${used||noSlot||LONG_CAST[n]?"disabled":""} title="${LONG_CAST[n]?`${LONG_CAST[n]} minutes d'incantation : impossible en combat`:esc(spTextPlain(n))}">${esc(n)}${lv?` <small>niv. ${lv}</small>`:""}${sp&&sp.bonus?" (bonus)":""}${dz?` <small class="adv-d">· désavantage</small>`:""}</button>`; }).join("");
+  const spells = beast && !hasC("druide",18) ? "" : allSpells().map(n=>{ const sp = CSP[n]; const lv = spLvl(n); const noSlot = lv>=1 && !pickSlot(lv) && !recallOk(lv); const used = sp&&sp.bonus ? B : AA; const dz = SPDIST[n] && SPDIST[n][0]==="ad" && engaged(); return `<button type="button" class="btn sm" data-g="cast" data-v="${esc(n)}" ${used||noSlot||LONG_CAST[n]?"disabled":""} title="${LONG_CAST[n]?`${LONG_CAST[n]} minutes d'incantation : impossible en combat`:esc(spTextPlain(n))}">${esc(n)}${lv?` <small>niv. ${lv}</small>`:""}${sp&&sp.bonus?" (bonus)":""}${dz?` <small class="adv-d">· désavantage</small>`:""}</button>`; }).join("");
   const bon = [], act = [], tog = [];
   if(hasC("moine")){ bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="ma" ${B||!c.hit?"disabled":""}>Mains nues</button>`); if(R["Ki"]){ bon.push(`<button type="button" class="btn sm" data-g="bon" data-v="deluge" ${B||!c.hit||R["Ki"].val<1?"disabled":""}>Déluge de coups (1 ki)</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="patiente" ${B||R["Ki"].val<1?"disabled":""}>Défense patiente (1 ki)</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="vent" ${B||R["Ki"].val<1?"disabled":""}>Pas du vent (1 ki)</button>`); } if(hasC("moine",5)&&R["Ki"]) tog.push(optChip("stun","Frappe étourdissante (1 ki)",R["Ki"].val<1)); }
   bon.push(...raceBtns(B));
@@ -7747,6 +7779,9 @@ function combatDock(){
   if(hasC("barbare",2)) tog.push(optChip("reckless","Attaque téméraire"));
   if(R["Second souffle"]) bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="souffle2" ${B||R["Second souffle"].val<1?"disabled":""}>Second souffle</button>`);
   if(R["Fougue"]) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="fougue" ${!c.act||R["Fougue"].val<1?"disabled":""}>Fougue (action en plus)</button>`);
+  if(hasBoon("Faveur de voyage dimensionnel")) act.push(`<button type="button" class="btn sm" data-g="ca" data-v="dimtp" ${!c.act||c.dimR===c.round?"disabled":""} title="Après ton action : téléportation à 9 m, hors du contact des ennemis">Voyage dimensionnel</button>`);
+  if(hasBoon("Faveur de l'esprit de la nuit")){ tog.push(`<button type="button" class="chip ${c.dark?"sel":""}" data-g="ca" data-v="nuit" title="La scène est dans la pénombre ou le noir">Pénombre ou obscurité</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="ombre" ${B||!c.dark||G.buffs.cache?"disabled":""}>Se fondre dans l'ombre</button>`); }
+  if(R["Rappel de sort"]) tog.push(optChip("recall", "Rappel de sort au prochain sort", R["Rappel de sort"].val<1));
   if(hasC("roublard")){ tog.push(optChip("sneak","Attaque sournoise possible",c.snk)); if(hasC("roublard",2)){ bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="cacher" ${B?"disabled":""}>Se cacher</button>`); bon.push(`<button type="button" class="btn sm" data-g="ca" data-v="desengager" ${B?"disabled":""}>Se désengager</button>`); } }
   if(hasC("paladin",2)) tog.push(optChip("smite","Châtiment divin au prochain coup",!pickSlot(1)));
   (G.hero.sorts_raciaux||[]).filter(x=>x.res && R[x.res]).forEach(x=>act.push(`<button type="button" class="btn sm" data-g="drowsp" data-v="${esc(x.nom)}" ${AA||R[x.res].val<1?"disabled":""}>${esc(x.nom)} (${R[x.res].val}/${R[x.res].max||1})</button>`));
@@ -7800,7 +7835,7 @@ function side(){
     const used = G.used || {};
     const cantr = [...(h.sorts?h.sorts.mineurs:[]), ...((h.sorts_raciaux||[]).filter(x=>!x.res).map(x=>x.nom))].filter((v,i,a)=>a.indexOf(v)===i);
     const lv = (h.sorts?h.sorts.prepares:[]).filter((v,i,a)=>a.indexOf(v)===i);
-    const row = n => { const l = spLvl(n), noSlot = l && !pickSlot(l), k = used[n]||0;
+    const row = n => { const l = spLvl(n), noSlot = l && !pickSlot(l) && !recallOk(l), k = used[n]||0;
       const st = l ? (noSlot ? `<span class="sp-no">plus d'emplacement</span>` : `<span class="sp-ok">disponible</span>`) : `<span class="sp-ok">à volonté</span>`;
       return `<div class="sp-row ${noSlot?"off":""}"><div class="kv"><span><b>${esc(n)}</b></span><button type="button" class="btn sm" data-g="cast" data-v="${esc(n)}" ${!ok||noSlot?"disabled":""}>Lancer</button></div><small>${st}${k?` · lancé ${k} fois depuis le dernier repos`:""}</small><small class="sp-desc">${spText(n)}</small></div>`; };
     t += `<h4>Sorts${h.sorts?` · DD ${h.sorts.dd}, att. ${sg(h.sorts.attaque)}`:""}</h4>`;

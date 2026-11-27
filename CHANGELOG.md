@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.137.0 — 2026-11-27
+- Améliorations : faveurs épiques de la règle 5.2 au niveau 19, avec sept pouvoirs et une caractéristique pouvant monter jusqu'à 30.
+
 ## 0.136.0 — 2026-11-26
 - Améliorations : action Influencer de la règle 5.2 (Persuasion, Tromperie, Intimidation, Représentation, Dressage), avec DD selon l'intelligence de la cible, attitude et refus de 24 h après un échec.
 
