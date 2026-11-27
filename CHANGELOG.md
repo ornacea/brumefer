@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.139.4 — 2026-11-27
+- Corrections et améliorations : cartes de l'écran du peuple allégées
+
 ## 0.139.3 — 2026-11-27
 - Corrections et améliorations : les règles de référence affichées passent à la SRD 5.2
 

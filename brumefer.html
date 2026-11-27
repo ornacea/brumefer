@@ -492,7 +492,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.139.3</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.139.4</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +908,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.139.4","d":"2026-11-27","items":["Corrections et améliorations : cartes de l'écran du peuple allégées"]},
 {"v":"0.139.3","d":"2026-11-27","items":["Corrections et améliorations : les règles de référence affichées passent à la SRD 5.2"]},
 {"v":"0.139.2","d":"2026-11-27","items":["Corrections et améliorations : texte d'introduction de l'écran du peuple mis à jour pour la règle 5.2"]},
 {"v":"0.139.1","d":"2026-11-27","items":["Corrections et améliorations : les poursuites ratées ne tournent plus en boucle, narration sans paragraphes répétés."]},
@@ -2211,7 +2212,7 @@ function bonusText(b){ if(Object.keys(b).length===6) return "+1 partout"; return
 function vRace(){
   const r=R();
   let h=`<h2>Ton peuple</h2><p class="lede">${S.bg52 ? "Ton peuple fixe ta vitesse, ta taille et quelques dons de naissance. Tes bonus de caractéristiques viennent de ton historique." : "Ton peuple fixe tes bonus de caractéristiques, ta vitesse et quelques dons de naissance."}</p><div class="cards races">`;
-  h+=raceList().map(x=>`<button type="button" class="card ${S.race===x.id?"sel":""}" data-act="race" data-v="${x.id}"><span class="tag">${S.bg52 ? "Bonus de caractéristiques : par l'historique" : bonusText(x.bonus)+(x.heChoice?", +1 ×2 au choix":"")}</span><h3>${x.nom}</h3><p>${x.desc}</p><span class="meta">${String(x.vit).replace(".",",")} m · taille ${x.taille}${x.vision?` · vision ${x.vision} m`:""}</span></button>`).join("");
+  h+=raceList().map(x=>`<button type="button" class="card ${S.race===x.id?"sel":""}" data-act="race" data-v="${x.id}">${S.bg52 ? "" : `<span class="tag">${bonusText(x.bonus)+(x.heChoice?", +1 ×2 au choix":"")}</span>`}<h3>${x.nom}</h3><p>${x.desc}</p><span class="meta">${String(x.vit).replace(".",",")} m · taille ${x.taille}${x.vision?` · vision ${x.vision} m`:""}</span></button>`).join("");
   h+=`</div>`;
   if(r){
     h+=`<div class="detail"><h3>${r.nom}</h3><ul class="traits">${raceTraits(r).map(t=>`<li><b>${t[0]}.</b> ${t[1]}</li>`).join("")}<li><b>Langues.</b> ${r.langues}</li></ul>`;
