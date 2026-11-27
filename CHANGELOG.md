@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.11 — 2026-11-27
+- Corrections et améliorations : les actions proposées suivent la situation à la fin du récit, et un séparateur parasite n'apparaît plus dans la narration.
+
 ## 0.140.10 — 2026-11-27
 - Corrections et améliorations : le don Vigilant compte bien à l'initiative en combat, les titres gagnés par une héroïne sont accordés au féminin.
 
