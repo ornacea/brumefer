@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.139.2 — 2026-11-27
+- Corrections et améliorations : texte d'introduction de l'écran du peuple mis à jour pour la règle 5.2
+
 ## 0.139.1 — 2026-11-27
 - Corrections et améliorations : les poursuites ratées ne tournent plus en boucle, narration sans paragraphes répétés.
 
