@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.149.1 — 2026-11-27
+- Corrections et améliorations : le récit ne commente plus les règles du jeu.
+
 ## 0.149.0 — 2026-11-27
 - Corrections et améliorations : délivrer un pris de la Brume demande désormais qu'un proche lui dise son nom, ou le rituel de cendre et de prière ; un récit ne s'affiche plus entre guillemets parasites.
 
