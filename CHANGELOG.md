@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.3 — 2026-11-27
+- Corrections et améliorations : après une poursuite perdue, le maître du jeu et les actions proposées ne relancent plus la recherche sur place.
+
 ## 0.140.2 — 2026-11-27
 - Corrections et améliorations : un refus d'un personnage ne bloque plus une demande faite pour quelqu'un d'autre, les actions proposées ne gaspillent plus une potion pour une égratignure.
 
