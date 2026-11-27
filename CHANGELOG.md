@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.145.0 — 2026-11-27
+- Améliorations : le registre des disparus se divise en chapitres, un par village, dès que le héros commence à libérer les disparus d'un second village.
+
 ## 0.144.0 — 2026-11-27
 - Améliorations : les habitants d'un village du col disparus dans la brume ont désormais une identité fixe, et tous les personnages ont un alignement.
 
