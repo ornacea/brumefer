@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.0 — 2026-11-27
+- Corrections et améliorations : armure affichée portée dès le début, rencontres avec un choix recommandé selon l'alignement, plus de repos court proposé en pleine tension, personnalité tirée au sort cohérente avec l'alignement, annonces d'enlèvement plus plausibles, plus de rencontre en pleine scène critique.
+
 ## 0.139.4 — 2026-11-27
 - Corrections et améliorations : cartes de l'écran du peuple allégées
 

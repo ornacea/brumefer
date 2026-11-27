@@ -367,6 +367,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 .renc-opts{display:flex;flex-wrap:wrap;gap:6px}
 .renc-b{display:inline-flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.25}
 .renc-b small{font-size:.72rem;opacity:.8;font-weight:400}
+.renc-b.al-pick{border:3px solid var(--al)}.renc-b .al-tag{font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;background:var(--al);color:var(--al-ink);font-weight:700;border-radius:4px;padding:0 5px;margin-bottom:2px}
 .terr{display:block;font-size:.75rem;color:var(--brass);font-weight:400}
 .comp-tr{font-size:.8rem;margin:4px 0 6px;line-height:1.35}.comp-tr .off{opacity:.5}
 .comp-c{margin-top:6px;font-size:.85rem}
@@ -492,7 +493,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.139.4</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.140.0</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -908,6 +909,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.140.0","d":"2026-11-27","items":["Corrections et améliorations : armure affichée portée dès le début, rencontres avec un choix recommandé selon l'alignement, plus de repos court proposé en pleine tension, personnalité tirée au sort cohérente avec l'alignement, annonces d'enlèvement plus plausibles, plus de rencontre en pleine scène critique."]},
 {"v":"0.139.4","d":"2026-11-27","items":["Corrections et améliorations : cartes de l'écran du peuple allégées"]},
 {"v":"0.139.3","d":"2026-11-27","items":["Corrections et améliorations : les règles de référence affichées passent à la SRD 5.2"]},
 {"v":"0.139.2","d":"2026-11-27","items":["Corrections et améliorations : texte d'introduction de l'écran du peuple mis à jour pour la règle 5.2"]},
@@ -2863,6 +2865,8 @@ function doRoll(){ S.rolls=[]; for(let k=0;k<6;k++){ const d=[1,2,3,4].map(()=>1
 NAMES.elfe = NAMES.elfe || NAMES["haut-elfe"]; NAMES.orc = NAMES.orc || NAMES["demi-orc"];
 function randName(){ const n=NAMES[S.race]||NAMES.humain; let s=pick(n[0])+pick(n[1]); if(["humain","demi-elfe"].includes(S.race)||Math.random()<.3) s+=" "+pick(SURN); return s; }
 const RF = {trait:TRAITS,ideal:IDEALS,bond:BONDS,flaw:FLAWS};
+/* Tirage d'un trait de personnalité compatible avec l'alignement (pas de parole reniée pour un héros bon ou loyal, pas de charité pour un héros mauvais) */
+function persoPick(k){ const al = S.align||"", L = RF[k].filter(x=>!(k==="flaw" && /promesse/i.test(x) && /bon|loyal/i.test(al)) && !(k==="ideal" && /^Charité/.test(x) && /mauvais/i.test(al))); return pick(L.length ? L : RF[k]); }
 const SUG_SK = DATA("sug-sk");
 const SUG_AL = {"Loyal bon":["Honneur : je tiens ma parole, coûte que coûte.","Devoir : protéger ceux qui ne le peuvent pas."],"Neutre bon":["Charité : j'aide qui en a besoin, sans rien attendre.","Bienveillance : le monde ira mieux si chacun y met du sien."],"Chaotique bon":["Liberté : les tyrans doivent tomber.","Partage : je prends aux puissants pour donner aux autres."],"Loyal neutre":["Tradition : les usages anciens ont leurs raisons.","Parole : un contrat est sacré, quel qu'il soit."],"Neutre":["Équilibre : rien de trop, dans un sens comme dans l'autre.","Vivre et laisser vivre : je ne me mêle pas des affaires des autres."],"Chaotique neutre":["Indépendance : je suis mon propre maître.","Changement : rien ne doit rester figé."],"Loyal mauvais":["Pouvoir : l'ordre profite à ceux qui le dirigent.","Hiérarchie : chacun à sa place, et la mienne en haut."],"Neutre mauvais":["Avidité : je prends ce que je veux.","Intérêt : je ne fais rien pour rien."],"Chaotique mauvais":["Cruauté : la souffrance des autres me rappelle ma force.","Chaos : je brûle ce qui m'ennuie."]};
 const SUG_ARCH = {"trait":["J'ai gardé les manières de mon ancienne vie {de}, et cela se voit."],"bond":["Mes compagnons du temps où j'étais {a} me croient {mort|morte}.","Je garde de ma vie {de} un souvenir que je ne vendrais pour rien au monde."],"flaw":["Mon passé {de} me rattrape toujours au mauvais moment."]};
@@ -2938,7 +2942,7 @@ function randomAll(){
   if(S.bg52 && S.race==="humain"){ const f = bgFeat(bgSkills()); S.hfeat = pick(["Vigilant","Attaquant sauvage","Doué","Initié à la magie (clerc)","Initié à la magie (druide)","Initié à la magie (magicien)"].filter(x=>x!==f)); }
   origFeats().forEach(f=>{ const l = featList(f); if(l) miAuto(l); });
   S.name=randName(); S.genre=pick(GENRES); S.align=pick(ALIGN); S.age=ageRandom(S.race);
-  S.trait=pick(TRAITS); S.ideal=pick(IDEALS); S.bond=pick(BONDS); S.flaw=pick(FLAWS);
+  S.trait=pick(TRAITS); S.ideal=persoPick("ideal"); S.bond=pick(BONDS); S.flaw=persoPick("flaw");
   S.step=8;
 }
 
@@ -2992,7 +2996,7 @@ document.addEventListener("click",e=>{
     case "rc": S.rc = S.rc===v?null:v; break;
     case "rname": S.name=randName(); break;
     case "rage": S.age=ageRandom(S.race); break;
-    case "rf": S[v]=pick(RF[v]); break;
+    case "rf": S[v]=persoPick(v); break;
     case "genperso": genPerso(); return;
     case "random": randomAll(); toast("Un héros se présente à la forge."); window.scrollTo({top:0}); break;
     case "reset-ask":
@@ -3870,10 +3874,18 @@ function prisCount(){ const V = Object.values(prisG()), c = e => V.filter(x=>x.e
 function prisCheck(){ const n = prisCount(); if(partCur()===5) return; if(!G.brumeRepos && !n.zz){ G.brumeRepos = true;
   logJ("sys", `🕯️ Plus personne de Brumefer n'est sous l'emprise de la Brume (${n.sauve} sauvé${n.sauve>1?"s":""}${n.perdu?`, ${n.perdu} mort${n.perdu>1?"s":""} sous son emprise`:""}${n.libere?`, ${n.libere} mort${n.libere>1?"s":""} revenu${n.libere>1?"s":""} libéré${n.libere>1?"s":""}`:""}) : elle renonce et ne prendra plus personne.`); } }
 /* Coursier : le héros apprend chaque enlèvement */
-function prisCourrier(x, why){ const from = (G.lieu && /temple/.test(norm(G.lieu))) ? "un gamin du quai" : pretresse() ? `un coursier de ${pretrP()}` : "un coursier du greffier";
-  logJ("sys", `📜 Un coursier hors d'haleine te rejoint : ${from} t'apporte un pli taché de cendre. « ${esc(x.nom)} a disparu dans la brume${why ? " (" + esc(why) + ")" : ""}. La Brume l'a ${x.r ? "repris" : "pris"}. »`);
-  try{ toast(`🌫️ ${x.nom} a été ${x.r ? "repris" : "pris"} par la Brume.`); }catch(e){}
-  (G.prisCour = G.prisCour || []).push(x.nom); G.brumeSu = 1; }
+/* En pleine nature, personne ne vient porter la nouvelle : elle attend que le héros regagne un lieu habité (prisCourFlush) */
+function prisCourrier(x, why){ const q = {nom:x.nom, why:why||"", r:x.r ? 1 : 0};
+  if(terrWild()){ (G.prisCourQ = G.prisCourQ || []).push(q); return; }
+  prisCourLog(q); }
+/* L'expéditeur n'est nommé que si le héros le connaît déjà (carnet) ; sinon c'est un crieur de nuit qui annonce la nouvelle */
+function pnjConnu(nom){ const k = nk(String(nom||"").split(" ")[0]); return !!k && Object.values(notesG().pnj||{}).some(p=>p && nk(p.nom||"").includes(k)); }
+function prisCourLog(q){ const temple = G.lieu && /temple/.test(norm(G.lieu)), pr = pretresse() && pnjConnu(pretresse());
+  const by = temple ? "un gamin du quai" : pr ? `un coursier de ${pretrP()}` : "un crieur de nuit";
+  logJ("sys", `📜 ${temple || pr ? `Un coursier hors d'haleine te rejoint : ${by} t'apporte un pli taché de cendre.` : "Un crieur de nuit passe en agitant sa clochette et lance la nouvelle à la ronde."} « ${esc(q.nom)} a disparu dans la brume${q.why ? " (" + esc(q.why) + ")" : ""}. La Brume l'a ${q.r ? "repris" : "pris"}. »`);
+  try{ toast(`🌫️ ${q.nom} a été ${q.r ? "repris" : "pris"} par la Brume.`); }catch(e){}
+  (G.prisCour = G.prisCour || []).push(q.nom); G.prisCourBy = by; G.brumeSu = 1; }
+function prisCourFlush(){ if(!G || !G.prisCourQ || !G.prisCourQ.length || terrWild()) return; const L = G.prisCourQ.splice(0); L.forEach(prisCourLog); }
 const prisToday = () => G._nuit!=null ? G._nuit : calDay();
 const prisMirelle = nom => PRIS_JAMAIS.concat(G && G.pretr && G.pretr.par ? [G.pretr.par] : []).some(n=>nk(n)===nk(nom) || nk(nom)===nk(n.split(" ")[0]));
 function prisSet(nom, to, why){ const x = typeof nom==="object" ? nom : prisFind(nom); if(!x) return false; const who = prisDn(x), w = why ? ` (${why})` : "";
@@ -4280,7 +4292,7 @@ function prisBrief(){ const P = Object.values(prisG()), n = prisCount(), L = e =
     + (G.prisMir ? (delete G.prisMir, ` ${(pretresse() ? pretrP() : "le greffier Odilon Marc").toUpperCase()} fait chercher le héros : des habitants errent encore sans nom dans la brume ; fais arriver son messager et qu'on lui demande de l'aide pour les leur rendre (ne lui parle pas du registre).`) : "")
     + (G.brumeRepos ? " LA BRUME A RENONCÉ : plus personne n'est sous son emprise ; ne fais plus disparaître aucun habitant de Brumefer." : prisActif() ? " Chaque nuit, la page tire en coulisse si la Brume reprend un sauvé resté seul ou prend un habitant (une personne au plus par nuit ; Mirelle jamais ; les notables en dernier : marchands, syndic, greffier, capitaine de la milice, bourgmestre) et l'annonce par un coursier : ne fais disparaître personne toi-même. Un habitant abrité dans un sanctuaire, auprès de Mirelle ou du héros, ou accompagné n'est pas seul." : " La Mère-Brume étant scellée, la Brume ne prend plus personne la nuit pour l'instant ; ceux qu'elle tient restent à sauver.")
     + (G.brumeAbandon ? " BRUMEFER EST ABANDONNÉE À LA BRUME : les notables et Mirelle se replient par le Relais du Halage vers Ostelande ; la mission est d'abattre ceux que la Brume tient (un pris vivant abattu meurt) et de protéger les notables. La ville sera à reprendre quand la Mère-Brume sera scellée." : "")
-    + (G.prisCour && G.prisCour.length ? ` COURSIER : la page vient d'annoncer au héros, par un coursier, que ${G.prisCour.splice(0).join(", ")} a été pris par la Brume ; fais arriver ce coursier dans le récit s'il n'y est pas déjà.` : "")
+    + (G.prisCour && G.prisCour.length ? ` COURSIER : la page vient d'annoncer au héros, par ${G.prisCourBy||"un coursier"}, que ${G.prisCour.splice(0).join(", ")} a été pris par la Brume ; fais arriver ce messager dans le récit s'il n'y est pas déjà, sans lui prêter un lien avec le héros qu'il n'a pas.` : "")
     + ` SANCTUAIRES DE LA DAME DES CENDRES (zones sûres, tracées sur la carte du héros) : ${sanctOn().map(x=>x.nom + (x.perm ? " (toujours, que Mirelle y soit ou non)" : " (feu béni de Mirelle, tant qu'il est entretenu)") + (()=>{ const Z = sanctLieux(x).filter(n=>nk(n)!==nk(x.nom)); return Z.length ? ", zone : " + Z.join(", ") : ""; })()).join(" ; ")}. Le pouvoir couvre tout le bâtiment et ses dépendances (pour un domaine du héros : ce que son bail, son contrat et ses extensions lui rattachent, c'est-à-dire exactement la « zone » donnée ci-dessus ; un bâtiment rattaché plus tard l'est par "domaine_extension") : la Brume n'y prend personne, même quelqu'un resté seul, et n'attaque JAMAIS un sanctuaire : aucun pris, aucune émanation ni aucun Veilleur lié n'y entre pour frapper ; un combat contre la Brume ne s'y déclenche jamais (seul un pris qui vient s'y faire libérer y entre). Un pris (vivant) qui s'y présente peut y être libéré par la prière et la litanie : signale-le dans "pris.sauve". Seule ${pretresse() || "la prêtresse du Temple, quand il en aura une,"} allume un feu béni ; s'il n'est plus entretenu, il s'éteint.`
     + ` Signale dans "pris" : {"feu":{"allume":[{"lieu":"lieu où Mirelle allume un feu béni","dependances":["dépendances du bâtiment"]}],"eteint":[lieu dont le feu béni n'est plus entretenu]},"sauve":[vrai nom du pris que le héros délivre et rend à son nom],"mort":[pris vivant qui meurt, ou que le héros achève : un pris vivant abattu dans un combat de la page est déjà compté mort par la page ; signale ici celui qui meurt ou que le héros achève hors d'un combat de la page],"libere":[mort revenu abattu hors du combat de la page],"garde":[habitant mis à l'abri ou sous bonne garde],"seul":[habitant laissé seul],"annonce":true (la première fois que le récit révèle au héros que la Brume a pris des habitants)}. L'objectif « ${PRIS_OBJ} » est tenu par la page : ne l'ajoute pas, ne l'accomplis pas, ne l'abandonne pas.`; }
 /* Corrections demandées par le joueur pour une partie précise (appliquées une seule fois, si le carnet contient le nom de Brume) */
@@ -5384,6 +5396,7 @@ window.enterGame = function(btn){
   G = {v:2, alignCM:true, payFix:true, lvl1Fixed:true, build, build0:JSON.parse(JSON.stringify(build)), hero:ch, cls:S.cls, race:S.race, niveau:1, xp:0, pv:ch.pv.max, pvmax:ch.pv.max, pvtemp:0, dv:1, ca:ch.ca,
        res, slots, inv:[...ch.equipement, "Potion de soins"], cu:ch.cu, buffs:{}, used:{}, mort:{s:0,f:0}, statut:"ok",
        lieu:"La route de Brumefer", quete:"Rejoindre Brumefer", memoire:"", journal:[], hist:[], test:null, combat:null, choix:[], reposOk:[], tier:"quick", fin:false};
+  try{ refreshGear(); }catch(e){ console.error(e); }   /* armure et bouclier marqués « portés » dès la première scène */
   logJ("sys", `${esc(ch.nom)} prend la route de Brumefer.`);
   gsave(); setView("jeu");
   mj("Commence l'aventure. Décris l'arrivée du héros dans la vallée de Brumefer au crépuscule, en t'appuyant sur son historique et son lien, et termine sur une première situation ouverte.", null);
@@ -5399,7 +5412,7 @@ DÉS. Tu ne lances JAMAIS de dés et n'inventes aucun résultat : la page lance 
 ⟦COMBAT⟧COMBAT. Quand un combat éclate, décris l'ouverture et mets les adversaires dans "combat" : la page gère initiative, attaques, sorts, capacités et dégâts, prend les statistiques du BESTIAIRE pour les créatures connues et applique le budget de rencontre. Laisse toujours une issue autre que le combat (parler, fuir, ruser).⟦/COMBAT⟧
 EFFETS. Piège, chute ou poison hors combat : formule de dés dans "effets.degats" (ex. "1d6"), idem "soins" ; la page lance. XP pour les étapes importantes et les problèmes résolus sans combat : 25 à 100 × niveau du héros (la page compte l'XP des combats). MONNAIE : 1 po = 100 pa = 10 000 pc ; l'or est rare. Gains et dépenses dans "effets.monnaie" ({"po","pa","pc"}, négatifs pour payer), jamais dans "ajouter" ; achat hors boutique : monnaie négative et "ajouter" l'objet ; bourse insuffisante : refus. Prix : chope 5 pc, repas 30 pc, nuit à l'auberge 2 pa, torche 10 pc, corde 50 pc, ration 50 pc, dague 20 pa, épée longue 1 po 50 pa, potion de soins 50 po. La page plafonne l'XP, l'argent et les objets magiques selon le niveau.
 INVENTAIRE. La page recalcule CA et attaques depuis l'inventaire : toute arme, armure, bouclier ou munition gagnée, perdue, vendue, cassée, donnée ou confiée à quelqu'un (même pour la garder, l'exposer ou la bénir) va TOUJOURS dans "effets.ajouter" / "effets.retirer" avec son nom usuel ("Épée longue", "Cotte de mailles", "Bouclier", "20 flèches"). Potions et rations utilisées via les boutons de la page : ne les retire pas ; ration mangée dans le récit : retire "1 ration". ARGENT : une somme déjà versée (voir l'échange précédent) ne se verse jamais une seconde fois quand le héros prend la bourse ou remercie : "monnaie" à 0. POIDS : un objet lourd hors du commun (coffre, corps, butin, statue) se note avec son poids dans "ajouter" : « Coffre de fer (40 kg) » ; la page refuse ce que le héros ne peut pas porter. QUANTITÉS : quand le héros donne, rend, vend ou perd plusieurs exemplaires, retire-les TOUS, avec leur nombre (« 3 Lanterne consacrée ») ou en répétant l'objet ; jamais un seul pour plusieurs. Si le héros dépose, remet ou se fait confisquer ses armes, mets "armes":"deposer" (et "armes_lieu" : où elles sont gardées) ; s'il les perd pour de bon, "armes":"perdre" ; quand il les récupère, "armes":"reprendre". La page retire ou rend alors TOUTES ses armes et munitions, javelines et dagues comprises : ne les liste pas dans "ajouter"/"retirer". Désarmé, il se bat à mains nues.
-REPOS. Repos voulu et possible ici : "repos":"court" (1 h) ou "long" (8 h, un seul par 24 h), sinon interromps-le ; la page avance l'heure. Hors combat, "repos_ok" : ["court","long"] en lieu sûr, ["court"] au calme mais exposé, [] en cas de danger ou d'urgence. À Brumefer, le repos long n'est possible qu'à la Lanterne Sourde (la taverne), dans un sanctuaire de la Dame des Cendres ou chez la Bourgmestre : ailleurs dans la ville, au plus ["court"]. En voyage (hors ville), un feu de camp et un compagnon qui monte la garde (compagnon animal, allié ou familier) suffisent au repos long dans un lieu seulement exposé.
+REPOS. Repos voulu et possible ici : "repos":"court" (1 h) ou "long" (8 h, un seul par 24 h), sinon interromps-le ; la page avance l'heure. Hors combat, "repos_ok" : ["court","long"] en lieu sûr, ["court"] au calme mais exposé, [] en cas de danger ou d'urgence : quelqu'un attend une réponse du héros, une présence inconnue rôde tout près, une vie est en jeu, une péripétie est en cours. À Brumefer, le repos long n'est possible qu'à la Lanterne Sourde (la taverne), dans un sanctuaire de la Dame des Cendres ou chez la Bourgmestre : ailleurs dans la ville, au plus ["court"]. En voyage (hors ville), un feu de camp et un compagnon qui monte la garde (compagnon animal, allié ou familier) suffisent au repos long dans un lieu seulement exposé.
 TEMPS. "temps" à chaque réponse : {"date":"ex. 14 des Brumes","heure":"HH:MM","meteo":"quelques mots"}. Pars de l'heure et de la date données dans TEMPS et fais-les avancer selon ce que tu racontes (conversation : quelques minutes ; traverser la ville : 1 h ; voyage : des heures ou des jours), jamais reculer ; date suivante après minuit. Calendrier : 12 mois de 30 jours, dans l'ordre ${MOIS.join(", ")} (hiver : Longues Nuits à Neiges ; printemps : Dégels à Floraisons ; été : Verdures à Moissons ; automne : Vendanges à Feuilles mortes) ; écris la date sous la forme « 14 des Brumes ». La page tient le calendrier : si ton récit fait passer plusieurs jours, donne la nouvelle date ou "ellipse_jours". "meteo" décrit le temps qu'il fait À CET INSTANT, tel que ton récit le montre : si la narration fait tomber la pluie, se lever le vent ou se dissiper la brume, "meteo" le dit dans la même réponse ; elle reste plausible pour la saison et le lieu, et évolue au fil des heures (la brume monte chaque soir).
 TERRAIN. "terrain" à chaque réponse : "ville" (agglomération, bâtiment, donjon, souterrain), "route" (route, chemin ou sentier fréquenté), "sauvage" (hors des sentiers battus : forêt, lande, montagne, marais), "profond" (cœur des terres sauvages, loin de tout chemin). La page tire elle-même les rencontres de bêtes sauvages hors des sentiers : n'en invente pas d'autres sans raison. Un compagnon animal (voir HÉROS) existe dans le récit (flair, réactions), mais la page gère ses actes en combat, sa faim et sa fatigue ; si le héros est en selle, donne la durée des trajets à pied : la page la raccourcit elle-même.
 LOCALITÉ. "localite" à chaque réponse : {"nom":"Brumefer","taille":"hameau|village|bourg|ville|cite"} dans une agglomération ou à ses portes (tailles fixes : Brumefer bourg, Haut-Givre village, Ostelande ville, Vaelmont et Port-Argence cités ; même taille pour un même lieu), sinon null. La page y ouvre les commerces selon la taille (bazar et forgeron partout ; écurie, herboriste dès le village ; armurier, alchimiste, luthier dès le bourg ; libraire, boutique d'arcanes en ville ; maison des merveilles en cité) : décris-les sans fixer de prix. Quand le héros en découvre un (vu, entendu, chemin indiqué), ajoute "commerces":["forge"] (parmi bazar, forge, ecurie, herbo, armurier, alchimiste, luthier, libraire, arcanes, merveilles ; seulement les nouveaux, jamais tous ceux de la localité d'un coup).
@@ -5987,7 +6000,7 @@ async function mj(action, shown, o={}){
     narr = dedupNarr(narr);
     if(narr){ logJ("mj", fmtNarr(narr)); if(G.qaFix && G.qaFix.length && (G.qaN = (G.qaN||0)+1) >= 3){ G.qaFix = []; G.qaN = 0; } }
     G.hist.push({j: shown || clipTxt(String(action).replace(/\s+/g," "), 400), m: narr}); if(G.hist.length>12) G.hist.splice(0, G.hist.length-12);
-    { const mm = meta||{}; mm._narr = narr; if(renc){ delete mm.test; delete mm.combat; mm.choix = []; } const c0 = G.clock, l0 = G.lieu; try{ applyMeta(mm, shown||action); }catch(e){ console.error(e); } if(shown){ G.testRun = G.combat ? [] : (Array.isArray(G.testRun) ? G.testRun : []).concat(G.test ? 1 : 0).slice(-5); } try{ memTick(); }catch(e){ console.error(e); } justTested = null; try{ compTick(c0, l0, shown||action); }catch(e){ console.error(e); } if(renc && G.statut==="ok" && !G.fin && !G.combat) rencCommit(renc); }
+    { const mm = meta||{}; mm._narr = narr; if(renc){ delete mm.test; delete mm.combat; mm.choix = []; } const c0 = G.clock, l0 = G.lieu; try{ applyMeta(mm, shown||action); }catch(e){ console.error(e); } if(shown){ G.testRun = G.combat ? [] : (Array.isArray(G.testRun) ? G.testRun : []).concat(G.test ? 1 : 0).slice(-5); } try{ memTick(); }catch(e){ console.error(e); } try{ prisCourFlush(); }catch(e){ console.error(e); } justTested = null; try{ compTick(c0, l0, shown||action); }catch(e){ console.error(e); } if(renc && G.statut==="ok" && !G.fin && !G.combat) rencCommit(renc); }
     if(trackFree && meta && meta.alignement_action) alRecord(alCanon(meta.alignement_action));
     if(narr) lakeEvent((meta && typeof meta.resume==="string" && meta.resume.trim()) || narr, shown);
     const mo = meta && meta.objectifs, handled = mo && ((mo.accomplir||[]).length || (mo.abandonner||[]).length);
@@ -6646,6 +6659,8 @@ function rencRoll(action){
   const n = norm(action), rk = (n.match(/^le heros prend un repos (long|court)/)||[])[1] || "", night = nightNow(), trav = !rk && TRAVEL_RE.test(n);
   /* au plus une rencontre toutes les 15 actions en déplacement, toutes les 20 à l'arrêt */
   if((G.nAct||0) - (G.rencAt==null ? -99 : G.rencAt) < (trav ? 15 : 20)) return null;
+  /* pas de bête qui surgit au milieu d'une péripétie (l'une des deux dernières actions a demandé un test) */
+  if(Array.isArray(G.testRun) && G.testRun.slice(-2).includes(1)) return null;
   let p = trav ? 0.2 : 0.1;
   if(rk==="long") p *= 2.5;
   if(G.terrain==="profond") p *= 1.5;
@@ -6694,8 +6709,12 @@ function rencOpts(R){
   O.apprivoiser = Object.assign({lbl:"🤝 L'apprivoiser", ok:!why, why, dd:base, adv:nat}, rencBest(["Dressage"]));
   O.nourrir = !why && rationIdx()>=0 ? Object.assign({lbl:"🍖 L'apprivoiser avec une ration", ok:true, dd:base - (R.att==="affame" ? 5 : 0), adv:true, food:true}, rencBest(["Dressage"])) : null;
   return O; }
-function rencDock(){ const R = G.rencontre, O = rencOpts(R), pl = R.n>1;
-  const btn = (k, o) => !o ? "" : `<button type="button" class="btn sm renc-b" data-g="renc" data-v="${k}" ${o.ok?"":"disabled"} title="${esc(o.ok ? (o.auto ? "Sans jet de dé" : `${o.label} ${sg(o.b)} contre DD ${o.dd}${o.adv?", avec avantage":""}`) : o.why||"")}">${o.lbl}<small>${o.ok ? (o.auto || !o.label ? esc(o.sub||"") : `${esc(o.label)} ${sg(o.b)} · DD ${o.dd}${o.adv?" · avantage":""}`) : esc(o.why||"")}</small></button>`;
+/* Rencontre : l'option la plus fidèle à l'alignement du héros (bon : épargner la bête ; neutre : l'éviter ; mauvais : l'abattre) */
+function rencReco(O){ const a = norm(alCanon(heroAlign())||""), ev = /mauvais/.test(a), gd = /\bbon\b/.test(a);
+  const L = ev ? ["combat","effrayer","fuir","ignorer"] : gd ? ["ignorer","effrayer","fuir","apprivoiser","nourrir","combat"] : ["ignorer","fuir","effrayer","combat"];
+  return L.find(k=>O[k] && O[k].ok) || ""; }
+function rencDock(){ const R = G.rencontre, O = rencOpts(R), pl = R.n>1, rec = rencReco(O), al = alCanon(heroAlign());
+  const btn = (k, o) => !o ? "" : `<button type="button" class="btn sm renc-b${k===rec?" al-pick":""}" ${k===rec?`style="${alStyle(al)}"`:""} data-g="renc" data-v="${k}" ${o.ok?"":"disabled"} title="${esc((k===rec?"Action fidèle à ton alignement. ":"") + (o.ok ? (o.auto ? "Sans jet de dé" : `${o.label} ${sg(o.b)} contre DD ${o.dd}${o.adv?", avec avantage":""}`) : o.why||""))}">${k===rec?`<span class="al-tag">${esc(al)} · le tien</span>`:""}${o.lbl}<small>${o.ok ? (o.auto || !o.label ? esc(o.sub||"") : `${esc(o.label)} ${sg(o.b)} · DD ${o.dd}${o.adv?" · avantage":""}`) : esc(o.why||"")}</small></button>`;
   return `<div class="renc"><p class="renc-h"><b>🐾 ${esc(rUc(rencName(R,"indef")))}</b> · attitude : ${ATT_N[R.att]} · ${R.dist} m · ${R.vu ? (pl?"vues":"vue")+" à temps" : (pl?"surgies":"surgie")+" à l'improviste"}</p><p class="lede">${ATT_TXT[R.att][pl?1:0]}.</p><div class="renc-opts">${["combat","fuir","ignorer","effrayer","apprivoiser","nourrir"].map(k=>btn(k, O[k])).join("")}</div></div>`
    + `<div class="field"><label for="g-act">Ou autre chose ?</label><textarea id="g-act" placeholder="Ex. : « Je grimpe à un arbre et j'attends qu'elle s'en aille. »"></textarea></div><div class="row" style="justify-content:flex-end"><button type="button" class="btn primary" data-g="send">Agir</button></div>`; }
 function tameBeast(R){ const s = beastStats(R.nom); if(G.compagnon) compGone(G.compagnon, "a cédé la place à une autre bête"); G.compagnon = {esp:R.nom, nom:R.nom, ca:s.ca, pv:s.pv, pvmax:s.pv, att:s.att, deg:s.deg, type:s.type, dress:0, train:true}; }
