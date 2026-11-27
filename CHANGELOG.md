@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.139.0 — 2026-11-27
+- Corrections et améliorations : les scènes à tests répétés se concluent, suggestions d'actions plus variées et plus fidèles aux alignements, initiative corrigée dans le résumé de la forge.
+
 ## 0.138.0 — 2026-11-27
 - Améliorations : en voyage, un feu de camp et un compagnon qui monte la garde (compagnon animal, allié ou familier) permettent le repos long.
 
