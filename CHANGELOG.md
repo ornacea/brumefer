@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.146.1 — 2026-11-27
+- Corrections et améliorations : une menace ne compte plus comme un coup fatal, et les actions proposées après un combat sont écrites à la première personne.
+
 ## 0.146.0 — 2026-11-27
 - Améliorations : carnet, prise de notes à Haut-Givre.
 
