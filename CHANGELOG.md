@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.140.2 — 2026-11-27
+- Corrections et améliorations : un refus d'un personnage ne bloque plus une demande faite pour quelqu'un d'autre, les actions proposées ne gaspillent plus une potion pour une égratignure.
+
 ## 0.140.1 — 2026-11-27
 - Corrections et améliorations : le maître du jeu ne relance plus une poursuite déjà perdue, les actions proposées n'utilisent plus d'objet que le héros n'a pas, moins de paragraphes répétés dans le récit.
 
