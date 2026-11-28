@@ -498,7 +498,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.149.2</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.149.3</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -914,6 +914,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.149.3","d":"2026-11-28","items":["Corrections et améliorations : correctif d'une partie en cours."]},
 {"v":"0.149.2","d":"2026-11-27","items":["Corrections et améliorations : un proche qui appelle un pris par son prénom suffit à le délivrer."]},
 {"v":"0.149.1","d":"2026-11-27","items":["Corrections et améliorations : le récit ne commente plus les règles du jeu."]},
 {"v":"0.149.0","d":"2026-11-27","items":["Corrections et améliorations : délivrer un pris de la Brume demande désormais qu'un proche lui dise son nom, ou le rituel de cendre et de prière ; un récit ne s'affiche plus entre guillemets parasites."]},
@@ -4479,6 +4480,7 @@ const FIX_JOUEUR = [{id:"vorn-ruben", hero:"Vornadar", fuse:[[/colporteu/, "Rube
 {id:"vorn-hg", hero:"Vornadar", si:/Menue-Craie/,
   hag:["Oudin Garrigue","Gautier Pujol","Gaubert Brisval","Thibaud Bastide","Bertille Faure","Ysembart Taillefer","Jehan Morel","Mahaut Vellard","Aymon Pujol"],
   mj:"Toutes les robes grises croisées par Vornadar depuis Haut-Givre étaient des pris de Haut-Givre, et il n'y en a pas d'autres : au défilé de la Gorge des Loups, Oudin Garrigue (l'homme aux bottes perdues), Aélis Taillefer (la plus petite, qui pleurait), Aymon Pujol, Gautier Pujol, Jehan Morel et Mahaut Vellard ; dans la ravine, le lendemain, Gaubert Brisval (le grand au fil de brume, « Soixante-Trois »), Thibaud Bastide (la barbe givrée au bout de corde), Bertille Faure (la femme maigre au carnet de toile), Ysembart Taillefer, Jehan Morel et Mahaut Vellard, repris entre-temps ; près du cairn du col, Gautier Pujol (la robe grise du col) ; à Kar-Durim, Oudin Garrigue et Aélis Taillefer (Menue-Craie). Libérés du fil, ils sont hagards et sans nom, inoffensifs : Oudin avec Vornadar à Kar-Durim, Gautier près du cairn, les autres partis vers le Pont du Péager sous la garde de Grondin. Seule Aélis (Menue-Craie) est encore tenue par la voix d'en bas. Aucun n'est au registre des pleurés de Brumefer : leurs familles sont à Haut-Givre (Isolde Garrigue à la Halte du Berger, le doyen Aleaume Brisval, Lothaire Bastide, Benoît Faure, Ermengarde Pujol, Radegonde Taillefer, Gildas Morel, Sidonie Vellard), qui peuvent les reconnaître ; chacun est sauvé quand on lui rend son vrai nom."},
+{id:"vorn-bertille", hero:"Vornadar", sauve:["Bertille Faure"]},
 {id:"vorn-dunra-allie", hero:"Vornadar", allie:["Dunra Brasefer"], pnj:[["Dunra Brasefer", null, "accompagne Vornadar et se bat à ses côtés", null]]},
 {id:"vorn-hadric", hero:"Vornadar", si:/ach[eè]ve le colosse/i, mort:["Hadric Brelle"]},
 {id:"vorn-ilan", hero:"Vornadar", ident:[["Ilan Corbel","Inconnu de la rue des Chandeliers"]], sauve:["Ilan Corbel"]},

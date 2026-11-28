@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.149.3 — 2026-11-28
+- Corrections et améliorations : correctif d'une partie en cours.
+
 ## 0.149.2 — 2026-11-27
 - Corrections et améliorations : un proche qui appelle un pris par son prénom suffit à le délivrer.
 
