@@ -498,7 +498,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
   <header class="top">
     <div class="brand">
       <h1><span>Ironhaze</span>'s Curse</h1>
-      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.149.3</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
+      <p><button type="button" class="ver-btn" id="cl-open" aria-haspopup="dialog" title="Voir le journal des versions"><b class="ver">Version 0.149.4</b><svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button> · Jeu de rôle en solo, règles de la 5ᵉ édition (SRD 5.2). Claude tient le rôle de maître du jeu.</p>
     </div>
     <div class="top-actions">
       <span class="chips slots" id="slots" aria-label="Emplacements de partie"></span>
@@ -914,6 +914,7 @@ footer{margin-top:36px;color:var(--muted);font-size:.8rem;max-width:80ch}
 </script>
 <script type="application/json" id="data-changelog">
 [
+{"v":"0.149.4","d":"2026-11-28","items":["Corrections et améliorations : le carnet suit mieux les événements du récit."]},
 {"v":"0.149.3","d":"2026-11-28","items":["Corrections et améliorations : correctif d'une partie en cours."]},
 {"v":"0.149.2","d":"2026-11-27","items":["Corrections et améliorations : un proche qui appelle un pris par son prénom suffit à le délivrer."]},
 {"v":"0.149.1","d":"2026-11-27","items":["Corrections et améliorations : le récit ne commente plus les règles du jeu."]},
@@ -4088,6 +4089,17 @@ function prisKill(m, said){ if(G.combat) return; const o = m && m.pris && typeof
   const w = z => " " + norm(z).replace(/[^a-z0-9]+/g, " ").trim() + " ", t = w(said||""); if(!PRIS_KILL.test(t) || KILL_THREAT.test(t)) return;
   if(/ (respire encore|survit|epargne|il vit|elle vit) /.test(w(m && m._narr || ""))) return;
   const x = Object.values(prisG()).concat(Object.values(prisHGG())).find(x=>!x.m && x.e==="pris" && [x.b, x.nom].some(v=>v && t.includes(w(v)))); if(x) prisSet(x, "mort", "achevé par le héros"); }
+/* Filet de sécurité : le MJ raconte une délivrance et la consigne au carnet (statut ou fait « délivrée », « rendu à son nom »)
+   sans "pris.sauve" ni "vrai"/"proche" : la page rend tout de même le pris à son nom. Négations, futurs et attentes ignorés. */
+const PRIS_DELIV = / (delivre|delivree|delivres|delivrees|libere de la brume|liberee de la brume|rendue? a son nom|arrachee? a la brume|a retrouve son nom) /;
+const PRIS_DELIV_NO = / (pas|plus|jamais|non|encore pris|encore prise|a delivrer|attend|attendent|sera|seront|doit|doivent|devra|pourra|pourrait|espere|reste a|si|avant|pour etre|quand|lorsque|faudra) /;
+const prisDelivTxt = t => { const z = " " + nk(t) + " "; return PRIS_DELIV.test(z) && !PRIS_DELIV_NO.test(z); };
+function prisDelivNet(m){ if(!m || typeof m!=="object") return; const faits = asArr(m.faits && m.faits.ajouter);
+  const vivants = () => Object.values(prisG()).concat(Object.values(prisHGG())).filter(x=>x && !x.m && x.e==="pris");
+  (asArr(m.notes && m.notes.pnj)).forEach(p=>{ if(!p || !p.nom || !prisDelivTxt(p.statut)) return; const x = prisFind(p.vrai || p.nom); if(x && !x.m && x.e==="pris") prisSet(x, "sauve", "rendu à son nom"); });
+  faits.forEach(f=>String(f||"").split(/[.;]/).forEach(c=>{ if(!prisDelivTxt(c)) return; const z = " " + nk(c) + " ";
+    vivants().filter(x=>z.includes(" " + nk(x.nom) + " ")).forEach(x=>prisSet(x, "sauve", "rendu à son nom")); }));
+}
 /* ===== REGISTRE DES PLEURÉS : objet que Mirelle ou le greffier Odilon Marc peut confier au héros ; tous les noms civils de Brumefer,
    noms de Brume révélés seulement pour les sauvés ; lu dans l'état courant, donc à jour à chaque changement du décompte ===== */
 let regOpen = false;
@@ -4481,6 +4493,7 @@ const FIX_JOUEUR = [{id:"vorn-ruben", hero:"Vornadar", fuse:[[/colporteu/, "Rube
   hag:["Oudin Garrigue","Gautier Pujol","Gaubert Brisval","Thibaud Bastide","Bertille Faure","Ysembart Taillefer","Jehan Morel","Mahaut Vellard","Aymon Pujol"],
   mj:"Toutes les robes grises croisées par Vornadar depuis Haut-Givre étaient des pris de Haut-Givre, et il n'y en a pas d'autres : au défilé de la Gorge des Loups, Oudin Garrigue (l'homme aux bottes perdues), Aélis Taillefer (la plus petite, qui pleurait), Aymon Pujol, Gautier Pujol, Jehan Morel et Mahaut Vellard ; dans la ravine, le lendemain, Gaubert Brisval (le grand au fil de brume, « Soixante-Trois »), Thibaud Bastide (la barbe givrée au bout de corde), Bertille Faure (la femme maigre au carnet de toile), Ysembart Taillefer, Jehan Morel et Mahaut Vellard, repris entre-temps ; près du cairn du col, Gautier Pujol (la robe grise du col) ; à Kar-Durim, Oudin Garrigue et Aélis Taillefer (Menue-Craie). Libérés du fil, ils sont hagards et sans nom, inoffensifs : Oudin avec Vornadar à Kar-Durim, Gautier près du cairn, les autres partis vers le Pont du Péager sous la garde de Grondin. Seule Aélis (Menue-Craie) est encore tenue par la voix d'en bas. Aucun n'est au registre des pleurés de Brumefer : leurs familles sont à Haut-Givre (Isolde Garrigue à la Halte du Berger, le doyen Aleaume Brisval, Lothaire Bastide, Benoît Faure, Ermengarde Pujol, Radegonde Taillefer, Gildas Morel, Sidonie Vellard), qui peuvent les reconnaître ; chacun est sauvé quand on lui rend son vrai nom."},
 {id:"vorn-bertille", hero:"Vornadar", sauve:["Bertille Faure"]},
+{id:"vorn-mahaut", hero:"Vornadar", sauve:["Mahaut Vellard"]},
 {id:"vorn-dunra-allie", hero:"Vornadar", allie:["Dunra Brasefer"], pnj:[["Dunra Brasefer", null, "accompagne Vornadar et se bat à ses côtés", null]]},
 {id:"vorn-hadric", hero:"Vornadar", si:/ach[eè]ve le colosse/i, mort:["Hadric Brelle"]},
 {id:"vorn-ilan", hero:"Vornadar", ident:[["Ilan Corbel","Inconnu de la rue des Chandeliers"]], sauve:["Ilan Corbel"]},
@@ -6742,6 +6755,7 @@ function applyMeta(m, said){
   objG(); applyObj(m.objectifs);
   try{ lantObjCheck(); partSync(); }catch(e){ console.error(e); }
   try{ applyNotes(m); }catch(e){}
+  try{ prisDelivNet(m); }catch(e){ console.error(e); }
   notSync();
   if(m.temps && typeof m.temps==="object"){ const t = G.temps || {}, date0 = t.date, met0 = t.meteo, narr = m._narr || "", cue = TIME_CUE.test(norm((said||"")+" "+narr)) || /voyag|march|route|chemin|attend|dor[ms]|sommeil|journee|jours?\b|semaines?|camp|repos/.test(norm(said||"")); calInit();
     if(m.temps.meteo){ const w = String(m.temps.meteo).slice(0,80); if(norm(w)!==norm(met0||"")) t.metAt = G.clock; t.meteo = w; }

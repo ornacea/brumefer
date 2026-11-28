@@ -2,6 +2,9 @@
 
 Format : MAJEUR.MINEUR.CORRECTIF (versioning sémantique).
 
+## 0.149.4 — 2026-11-28
+- Corrections et améliorations : le carnet suit mieux les événements du récit.
+
 ## 0.149.3 — 2026-11-28
 - Corrections et améliorations : correctif d'une partie en cours.
 
